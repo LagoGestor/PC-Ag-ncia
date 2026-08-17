@@ -19,6 +19,7 @@ model Tarefa {
   tipo         String   @default("")
   responsavel  String
   descricao    String   @default("")
+  link         String   @default("")
   solicitacao  String   @default("")
   feedback     String   @default("")
   entrega      String   @default("")

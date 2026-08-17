@@ -134,6 +134,7 @@ export default function Home() {
         tipo: t.tipo,
         responsavel: t.responsavel,
         descricao: t.descricao,
+        link: t.link,
         solicitacao: data,
         feedback: "",
         entrega: data,

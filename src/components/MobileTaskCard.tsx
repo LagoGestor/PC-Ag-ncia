@@ -27,6 +27,7 @@ export interface MobileTarefa {
   tipo: string;
   responsavel: string;
   descricao: string;
+  link: string;
   solicitacao: string;
   feedback: string;
   entrega: string;
@@ -62,7 +63,27 @@ export function MobileTaskCard({ t, showResponsavel }: { t: MobileTarefa; showRe
         {t.solicitacao && <span className="mob-date-sub">Solicit. {fmtDate(t.solicitacao)}</span>}
       </div>
 
-      {open && <div className="mob-desc">{t.descricao || "Sem descrição."}</div>}
+      {open && (
+        <>
+          <div className="mob-desc">{t.descricao || "Sem descrição."}</div>
+          <div className="desc-link-row">
+            <span className="desc-link-label">Possui Link:</span>
+            {t.link ? (
+              <a
+                className="desc-link-btn"
+                href={t.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Sim. Clique aqui para abrir
+              </a>
+            ) : (
+              <span>Não.</span>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }

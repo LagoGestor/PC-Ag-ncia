@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
       tipo: body.tipo ?? "",
       responsavel: body.responsavel,
       descricao: body.descricao ?? "",
+      link: body.link ?? "",
       solicitacao: body.solicitacao ?? "",
       feedback: body.feedback ?? "",
       entrega: body.entrega ?? "",

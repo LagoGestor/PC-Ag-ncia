@@ -9,6 +9,7 @@ type FormState = {
   tipo: string;
   responsavel: string;
   descricao: string;
+  link: string;
   solicitacao: string;
   feedback: string;
   entrega: string;
@@ -21,6 +22,7 @@ const empty = (): FormState => ({
   tipo: "",
   responsavel: "",
   descricao: "",
+  link: "",
   solicitacao: new Date().toISOString().split("T")[0],
   feedback: "",
   entrega: "",
@@ -49,6 +51,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate }: Props)
         tipo: editing.tipo,
         responsavel: editing.responsavel,
         descricao: editing.descricao,
+        link: editing.link,
         solicitacao: editing.solicitacao,
         feedback: editing.feedback,
         entrega: editing.entrega,
@@ -162,6 +165,17 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate }: Props)
               placeholder="Detalhes, contexto, observações..."
               value={form.descricao}
               onChange={(e) => set("descricao", e.target.value)}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Link</label>
+            <input
+              type="url"
+              className="form-control"
+              placeholder="https://..."
+              value={form.link}
+              onChange={(e) => set("link", e.target.value)}
             />
           </div>
 

@@ -94,6 +94,19 @@ export function TaskCard({ t, onEdit, onToggleArchive, onDelete, onDragStart }: 
         {t.descricao || <i style={{ opacity: 0.4 }}>Sem descrição</i>}
       </div>
 
+      {expanded && (
+        <div className="desc-link-row">
+          <span className="desc-link-label">Possui Link:</span>
+          {t.link ? (
+            <a className="desc-link-btn" href={t.link} target="_blank" rel="noopener noreferrer">
+              Sim. Clique aqui para abrir
+            </a>
+          ) : (
+            <span>Não.</span>
+          )}
+        </div>
+      )}
+
       <div className="card-dates">
         <div className="date-item">
           <span className="date-label">Solicit.</span>

@@ -9,6 +9,7 @@ const FIELDS = [
   "tipo",
   "responsavel",
   "descricao",
+  "link",
   "solicitacao",
   "feedback",
   "entrega",

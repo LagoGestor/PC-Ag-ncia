@@ -709,6 +709,34 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 }
 .overdue-date { color: var(--danger) !important; font-weight: 700; }
 
+/* ── LINK INDICATOR (shown only in expanded card detail) ── */
+.desc-link-row {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+  font-size: 0.85em;
+  color: var(--fg-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.desc-link-label { font-weight: 600; color: var(--fg); }
+.desc-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: var(--accent-dim);
+  border: 1px solid var(--border-accent);
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.desc-link-btn:hover { background: var(--accent); color: #000; }
+
 /* ── RESPONSÁVEIS (desktop grid) ── */
 .resp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px; }
 .resp-card {

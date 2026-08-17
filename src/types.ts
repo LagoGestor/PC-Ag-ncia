@@ -7,6 +7,7 @@ export interface Tarefa {
   tipo: string;
   responsavel: string;
   descricao: string;
+  link: string;
   solicitacao: string;
   feedback: string;
   entrega: string;
