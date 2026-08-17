@@ -255,6 +255,8 @@ a { color: inherit; text-decoration: none; }
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  overflow-wrap: break-word;
+  word-break: break-word;
   cursor: pointer;
   margin-bottom: 10px;
   transition: var(--transition);
@@ -707,6 +709,8 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   color: var(--fg);
   line-height: 1.65;
   white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .overdue-date { color: var(--danger) !important; font-weight: 700; }
 
