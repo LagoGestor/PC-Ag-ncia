@@ -605,7 +605,8 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 
 /* ── MOBILE VIEWS ── */
 .mobile-shell {
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   overflow-y: auto;
   background: var(--bg);
   color: var(--fg);
