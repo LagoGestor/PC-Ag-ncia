@@ -627,7 +627,7 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   display: flex; align-items: center; gap: 10px;
   font-family: var(--font-head);
   font-weight: 800;
-  font-size: 1.05em;
+  font-size: 1.15em;
   color: var(--fg);
   min-width: 0;
 }
@@ -640,7 +640,7 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   border-radius: 99px;
   padding: 4px 13px;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 13px;
   font-family: var(--font-head);
 }
 
@@ -660,7 +660,7 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--fg-muted);
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
@@ -669,7 +669,7 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 .mobile-chip.active { background: var(--accent-dim); border-color: var(--border-accent); color: var(--accent); }
 
 .mobile-list { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-.mobile-empty { text-align: center; color: var(--fg-muted); padding: 60px 20px; font-size: 14px; }
+.mobile-empty { text-align: center; color: var(--fg-muted); padding: 60px 20px; font-size: 15px; }
 
 .mob-card {
   background: var(--surface);
@@ -681,27 +681,28 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 }
 .mob-card:active { background: var(--surface2); }
 .mob-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-.mob-tipo { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent); }
-.mob-title { font-family: var(--font-head); font-size: 1.08em; font-weight: 700; line-height: 1.4; color: var(--fg); margin-bottom: 10px; }
+.mob-card .card-badge { font-size: 10.5px; }
+.mob-tipo { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent); }
+.mob-title { font-family: var(--font-head); font-size: 1.18em; font-weight: 700; line-height: 1.4; color: var(--fg); margin-bottom: 10px; }
 .mob-meta {
-  font-size: 12.5px;
+  font-size: 13.5px;
   color: var(--fg-muted);
   display: flex; align-items: center; flex-wrap: wrap; gap: 4px;
   margin-bottom: 12px;
 }
 .mob-dates {
   display: flex; align-items: center; justify-content: space-between;
-  font-size: 12.5px;
+  font-size: 13.5px;
   padding-top: 12px;
   border-top: 1px solid var(--border);
 }
 .mob-dates i { margin-right: 5px; opacity: 0.7; }
-.mob-date-sub { color: var(--fg-muted); font-size: 11.5px; }
+.mob-date-sub { color: var(--fg-muted); font-size: 12.5px; }
 .mob-desc {
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px dashed var(--border);
-  font-size: 13px;
+  font-size: 14.5px;
   color: var(--fg);
   line-height: 1.65;
   white-space: pre-wrap;
@@ -725,5 +726,5 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 
 /* ── MOBILE: header solo (individual page) ── */
 .mobile-header-solo { padding: 22px 18px; }
-.mobile-header-solo .mobile-header-title { gap: 14px; font-size: 1.2em; }
+.mobile-header-solo .mobile-header-title { gap: 14px; font-size: 1.3em; }
 .mobile-header-solo .avatar-badge { box-shadow: 0 0 0 3px var(--accent-dim); }
