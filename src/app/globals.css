@@ -69,6 +69,7 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 1px solid var(--border);
   gap: 16px;
   flex-shrink: 0;
+  min-width: 0;
   position: relative;
   z-index: 100;
 }
@@ -162,6 +163,7 @@ a { color: inherit; text-decoration: none; }
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+  min-width: 0;
   overflow-x: auto;
 }
 .sum-pill {
@@ -183,7 +185,7 @@ a { color: inherit; text-decoration: none; }
 .sum-total { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--fg-muted); font-weight: 600; flex-shrink: 0; }
 
 #view-container { display: grid; grid-template-rows: auto 1fr; min-width: 0; overflow: hidden; }
-#view-nav { display: flex; align-items: center; justify-content: space-between; padding: 10px 24px; border-bottom: 1px solid var(--border); gap: 16px; flex-shrink: 0; }
+#view-nav { display: flex; align-items: center; justify-content: space-between; padding: 10px 24px; border-bottom: 1px solid var(--border); gap: 16px; flex-shrink: 0; min-width: 0; }
 .view-tabs { display: flex; gap: 4px; }
 .tab-btn {
   padding: 6px 14px;
