@@ -756,3 +756,50 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 .mobile-header-solo { padding: 22px 18px; }
 .mobile-header-solo .mobile-header-title { gap: 14px; font-size: 1.3em; }
 .mobile-header-solo .avatar-badge { box-shadow: 0 0 0 3px var(--accent-dim); }
+
+/* ── RESPONSIVE: MAIN APP (Lista/Cards/Kanban/Agenda/etc.) ON SMALL SCREENS ── */
+@media (max-width: 768px) {
+  #app { height: 100vh; height: 100dvh; }
+
+  #topbar {
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    gap: 8px 12px;
+  }
+  .search-wrap { order: 3; flex-basis: 100%; max-width: 100%; }
+
+  #summary-bar { padding: 8px 14px; }
+
+  #view-nav { padding: 8px 14px; gap: 8px; flex-wrap: nowrap; }
+  .view-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+  }
+  .view-tabs::-webkit-scrollbar { display: none; }
+  .tab-btn { flex-shrink: 0; padding: 6px 10px; font-size: 11px; white-space: nowrap; }
+
+  #visualizacao { padding: 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  .card-grid, .archive-grid { grid-template-columns: 1fr; }
+  /* action buttons rely on :hover which doesn't exist on touch — keep always visible */
+  .card-actions { opacity: 1; }
+
+  .table-wrap { -webkit-overflow-scrolling: touch; }
+
+  .kanban-board { -webkit-overflow-scrolling: touch; }
+  .kanban-col { min-width: 240px; }
+
+  .calendar-grid { min-width: 700px; }
+  .week-grid,
+  .fixas-grid { min-width: 760px; }
+
+  .agenda-nav .agenda-label { min-width: 0; font-size: 12px; }
+
+  .modal-box { padding: 20px; width: 92%; }
+  .form-row { flex-direction: column; gap: 0; }
+
+  .resp-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+  .resp-card { padding: 18px 10px; }
+}
