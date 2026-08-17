@@ -74,6 +74,18 @@ export const FOTOS_RESPONSAVEL: Record<string, string> = {
   "Voluntário": "/img/perfil_voluntario.jpg",
 };
 
+// Used only for share previews (WhatsApp/OG image) — cropped/optimized for that format.
+export const WHATSAPP_FOTOS_RESPONSAVEL: Record<string, string> = {
+  "Leonardo Felix": "/img/whatsapp_perfil_leo.jpg",
+  "Ana Júlia": "/img/whatsapp_perfil_anajulia.jpg",
+  "Anna Beatriz": "/img/whatsapp_perfil_annabea.jpg",
+  "Dayane Prado": "/img/whatsapp_perfil_dayane.jpg",
+  "Júlia Viegas": "/img/whatsapp_perfil_julia.jpg",
+  "Voluntário": "/img/whatsapp_perfil_voluntario.jpg",
+};
+
+export const WHATSAPP_FOTO_AGENCIA = "/img/whatsapp_perfil_agencia.jpg";
+
 export const ICONES_AREA: Record<string, string> = {
   "Comunicação": "/img/icone_follow.png",
   "Hero": "/img/icone_hero.png",

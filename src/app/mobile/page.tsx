@@ -1,8 +1,19 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import { RESPONSAVEIS, slugify } from "@/types";
+import { RESPONSAVEIS, WHATSAPP_FOTO_AGENCIA, slugify } from "@/types";
 import { MobileTaskCard } from "@/components/MobileTaskCard";
 
 export const dynamic = "force-dynamic";
+
+const title = "Lista de Atividades - Geral";
+const description = "Todas as tarefas da Agência LBC.";
+
+export const metadata: Metadata = {
+  title,
+  description,
+  openGraph: { title, description, images: [{ url: WHATSAPP_FOTO_AGENCIA }] },
+  twitter: { card: "summary", title, description, images: [WHATSAPP_FOTO_AGENCIA] },
+};
 
 export default async function MobileMasterPage() {
   const tarefas = await prisma.tarefa.findMany({

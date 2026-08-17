@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { RESPONSAVEIS, FOTOS_RESPONSAVEL, slugify } from "@/types";
+import { RESPONSAVEIS, WHATSAPP_FOTOS_RESPONSAVEL, slugify } from "@/types";
 import { MobileTaskCard } from "@/components/MobileTaskCard";
 import { Avatar } from "@/components/Avatar";
 
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = `Lista de Atividades - ${responsavel}`;
   const description = `Tarefas de ${responsavel} na Agência LBC.`;
-  const foto = FOTOS_RESPONSAVEL[responsavel];
+  const foto = WHATSAPP_FOTOS_RESPONSAVEL[responsavel];
 
   return {
     title,
