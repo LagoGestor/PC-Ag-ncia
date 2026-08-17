@@ -105,6 +105,7 @@ export function AgendaView({ list, onOpenDetail }: Props) {
       </div>
 
       {mode === "mes" ? (
+        <div className="grid-scroll-wrap">
         <div className="calendar-grid">
           {WEEKDAYS.map((w) => (
             <div key={w} className="calendar-weekday">
@@ -135,7 +136,9 @@ export function AgendaView({ list, onOpenDetail }: Props) {
             );
           })}
         </div>
+        </div>
       ) : (
+        <div className="grid-scroll-wrap">
         <div className="week-grid">
           {getWeekDays(anchor).map((d) => {
             const key = toKey(d);
@@ -163,6 +166,7 @@ export function AgendaView({ list, onOpenDetail }: Props) {
               </div>
             );
           })}
+        </div>
         </div>
       )}
     </div>

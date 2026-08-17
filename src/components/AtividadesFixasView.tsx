@@ -66,6 +66,7 @@ export function AtividadesFixasView({ list, onOpenDetail }: Props) {
           <p>As atividades recorrentes da semana aparecerão aqui.</p>
         </div>
       ) : (
+        <div className="grid-scroll-wrap">
         <div className="fixas-grid">
           {DIAS_SEMANA.map((dia) => {
             const items = byDay.get(dia) ?? [];
@@ -96,6 +97,7 @@ export function AtividadesFixasView({ list, onOpenDetail }: Props) {
               </div>
             );
           })}
+        </div>
         </div>
       )}
     </div>
