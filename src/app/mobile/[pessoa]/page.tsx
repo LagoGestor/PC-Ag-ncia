@@ -1,6 +1,7 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { RESPONSAVEIS, slugify } from "@/types";
+import { RESPONSAVEIS, FOTOS_RESPONSAVEL, slugify } from "@/types";
 import { MobileTaskCard } from "@/components/MobileTaskCard";
 import { Avatar } from "@/components/Avatar";
 
@@ -12,6 +13,32 @@ export async function generateStaticParams() {
 
 interface Props {
   params: Promise<{ pessoa: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { pessoa } = await params;
+  const responsavel = RESPONSAVEIS.find((r) => slugify(r) === pessoa);
+  if (!responsavel) return {};
+
+  const title = `Lista de Atividades - ${responsavel}`;
+  const description = `Tarefas de ${responsavel} na Agência LBC.`;
+  const foto = FOTOS_RESPONSAVEL[responsavel];
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: foto ? [{ url: foto }] : undefined,
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+      images: foto ? [foto] : undefined,
+    },
+  };
 }
 
 export default async function MobilePessoaPage({ params }: Props) {

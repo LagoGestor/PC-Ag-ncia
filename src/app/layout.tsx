@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://agencialbc.vercel.app"),
   title: "Gestor de Tarefas",
   description: "Gestão de tarefas da agência",
 };
