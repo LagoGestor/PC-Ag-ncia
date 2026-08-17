@@ -15,6 +15,11 @@ export function ResponsaveisView() {
       </div>
 
       <div className="resp-grid">
+        <Link href="/mobile" className="resp-card">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="avatar-badge avatar-badge-photo" style={{ width: 96, height: 96 }} src="/img/perfil_agencia.jpg" alt="Geral" />
+          <span className="resp-card-name">Geral</span>
+        </Link>
         {RESPONSAVEIS.map((r) => (
           <Link key={r} href={`/mobile/${slugify(r)}`} className="resp-card">
             <Avatar name={r} size={96} />
