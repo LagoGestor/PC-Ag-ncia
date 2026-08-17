@@ -213,6 +213,7 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px;
+  min-width: 0;
   position: relative;
   transition: var(--transition);
 }
