@@ -141,7 +141,7 @@ export function AgendaView({ list, onOpenDetail }: Props) {
                             onOpenDetail(t);
                           }}
                         >
-                          <Avatar name={t.responsavel} size={18} />
+                          <Avatar name={t.responsavel} size={18} ringColor={STATUS_COLORS[t.status]} />
                           <span>{t.tarefa}</span>
                         </div>
                       ))}
@@ -199,7 +199,7 @@ export function AgendaView({ list, onOpenDetail }: Props) {
                       <div className="week-task-title">{t.tarefa}</div>
                       <div className="week-task-meta">
                         <span className="week-task-resp resp-inline">
-                          <Avatar name={t.responsavel} size={14} /> {t.responsavel}
+                          <Avatar name={t.responsavel} size={14} ringColor={STATUS_COLORS[t.status]} /> {t.responsavel}
                         </span>
                         <span className={`card-badge ${STATUS_BADGE_CLASS[t.status] || ""}`}>{t.status}</span>
                       </div>

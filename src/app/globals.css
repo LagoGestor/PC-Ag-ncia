@@ -820,7 +820,8 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   .card-actions { opacity: 1; }
 
   .table-wrap { -webkit-overflow-scrolling: touch; }
-  table { min-width: 440px; }
+  table { min-width: 0; }
+  .tarefa-link:hover, .tarefa-link:active { color: var(--accent); }
   .status-dot { width: 14px; height: 14px; }
   td { padding: 10px 8px; }
 

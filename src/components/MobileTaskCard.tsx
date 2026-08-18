@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { STATUS_BADGE_CLASS } from "@/types";
+import { STATUS_BADGE_CLASS, STATUS_COLORS } from "@/types";
 import { Avatar } from "./Avatar";
 
 function fmtDate(d: string) {
@@ -51,7 +51,7 @@ export function MobileTaskCard({ t, showResponsavel }: { t: MobileTarefa; showRe
         <span>{t.area}</span>
         {showResponsavel && (
           <span className="resp-inline">
-            · <Avatar name={t.responsavel} size={16} /> {t.responsavel}
+            · <Avatar name={t.responsavel} size={16} ringColor={STATUS_COLORS[t.status]} /> {t.responsavel}
           </span>
         )}
       </div>

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-  const tarefas = await prisma.tarefa.findMany({ orderBy: { createdAt: "desc" } });
+  const tarefas = await prisma.tarefa.findMany({ orderBy: { entrega: "asc" } });
   return NextResponse.json(tarefas);
 }
 

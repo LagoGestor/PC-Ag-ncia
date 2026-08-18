@@ -1,6 +1,6 @@
 "use client";
 
-import { DIAS_SEMANA, Tarefa } from "@/types";
+import { DIAS_SEMANA, STATUS_COLORS, Tarefa } from "@/types";
 import { Avatar } from "./Avatar";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
@@ -89,7 +89,7 @@ export function AtividadesFixasView({ list, onOpenDetail }: Props) {
                           {t.tarefa}
                         </div>
                         <div className="fixas-item-resp">
-                          <Avatar name={t.responsavel} />
+                          <Avatar name={t.responsavel} ringColor={STATUS_COLORS[t.status]} />
                           <span>{t.responsavel}</span>
                         </div>
                       </div>

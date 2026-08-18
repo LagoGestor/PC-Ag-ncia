@@ -63,7 +63,7 @@ export function TaskCard({ t, onEdit, onToggleArchive, onDelete, onDragStart }: 
             {t.area}
             {t.tipo ? ` · ${t.tipo}` : ""} ·{" "}
             <span className="resp-inline">
-              <Avatar name={t.responsavel} size={14} /> {t.responsavel}
+              <Avatar name={t.responsavel} size={14} ringColor={color} /> {t.responsavel}
             </span>
           </div>
         </div>
