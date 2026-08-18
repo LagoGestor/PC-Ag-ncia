@@ -23,6 +23,7 @@ model Tarefa {
   solicitacao  String   @default("")
   feedback     String   @default("")
   entrega      String   @default("")
+  horarioPublicacao String @default("")
   status       String   @default("Ativa")
   arquivada    Boolean  @default(false)
   fixa         Boolean  @default(false)

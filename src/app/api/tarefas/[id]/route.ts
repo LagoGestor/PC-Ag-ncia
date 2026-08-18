@@ -13,6 +13,7 @@ const FIELDS = [
   "solicitacao",
   "feedback",
   "entrega",
+  "horarioPublicacao",
   "status",
   "diaSemana",
 ] as const;

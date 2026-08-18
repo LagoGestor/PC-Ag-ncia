@@ -108,10 +108,6 @@ export function TaskCard({ t, onEdit, onToggleArchive, onDelete, onDragStart }: 
       )}
 
       <div className="card-dates">
-        <div className="date-item">
-          <span className="date-label">Solicit.</span>
-          <span className="date-val">{fmtDate(t.solicitacao)}</span>
-        </div>
         {t.feedback && (
           <div className="date-item">
             <span className="date-label">Feedback</span>
@@ -121,6 +117,10 @@ export function TaskCard({ t, onEdit, onToggleArchive, onDelete, onDragStart }: 
         <div className="date-item">
           <span className="date-label">Entrega</span>
           <span className={`date-val ${overdue ? "overdue-date" : ""}`}>{fmtDate(t.entrega)}</span>
+        </div>
+        <div className="date-item">
+          <span className="date-label">Postar às</span>
+          <span className="date-val">{t.horarioPublicacao || "—"}</span>
         </div>
       </div>
     </div>

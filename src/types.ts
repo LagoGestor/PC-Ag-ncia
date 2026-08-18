@@ -11,6 +11,7 @@ export interface Tarefa {
   solicitacao: string;
   feedback: string;
   entrega: string;
+  horarioPublicacao: string;
   status: Status;
   arquivada: boolean;
   fixa: boolean;

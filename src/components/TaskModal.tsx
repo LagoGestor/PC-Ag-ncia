@@ -13,6 +13,7 @@ type FormState = {
   solicitacao: string;
   feedback: string;
   entrega: string;
+  horarioPublicacao: string;
   status: Status;
 };
 
@@ -26,6 +27,7 @@ const empty = (): FormState => ({
   solicitacao: new Date().toISOString().split("T")[0],
   feedback: "",
   entrega: "",
+  horarioPublicacao: "",
   status: "Ativa",
 });
 
@@ -55,6 +57,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate }: Props)
         solicitacao: editing.solicitacao,
         feedback: editing.feedback,
         entrega: editing.entrega,
+        horarioPublicacao: editing.horarioPublicacao,
         status: editing.status,
       });
     } else {
@@ -211,6 +214,15 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate }: Props)
                 value={form.entrega}
                 onChange={(e) => set("entrega", e.target.value)}
                 required
+              />
+            </div>
+            <div className="form-group">
+              <label>Horário de Publicação</label>
+              <input
+                type="time"
+                className="form-control"
+                value={form.horarioPublicacao}
+                onChange={(e) => set("horarioPublicacao", e.target.value)}
               />
             </div>
           </div>

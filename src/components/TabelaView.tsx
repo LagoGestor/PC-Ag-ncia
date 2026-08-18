@@ -156,10 +156,11 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
           <col style={{ width: "8%" }} />
           <col style={{ width: "7%" }} />
           <col style={{ width: "10%" }} />
-          <col style={{ width: "25%" }} />
+          <col style={{ width: "19%" }} />
           <col style={{ width: "7%" }} />
           <col style={{ width: "7%" }} />
           <col style={{ width: "7%" }} />
+          <col style={{ width: "6%" }} />
           <col style={{ width: "7%" }} />
           <col style={{ width: "7%" }} />
         </colgroup>
@@ -248,6 +249,11 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
             </th>
             <th>
               <div className="th-inner">
+                <span className="th-label">Postar às</span>
+              </div>
+            </th>
+            <th>
+              <div className="th-inner">
                 <span className="th-label">Status</span>
                 <select className="th-filter" value={fv("status")} onChange={(e) => setFilter("status", e.target.value)}>
                   <option value="">Todos</option>
@@ -293,6 +299,7 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
                 <td>{fmtDate(t.solicitacao)}</td>
                 <td>{fmtDate(t.feedback)}</td>
                 <td className={overdue ? "overdue-date" : ""}>{fmtDate(t.entrega)}</td>
+                <td>{t.horarioPublicacao || "—"}</td>
                 <td>
                   <span className={`card-badge ${STATUS_BADGE_CLASS[t.status] || ""}`}>{t.status}</span>
                 </td>

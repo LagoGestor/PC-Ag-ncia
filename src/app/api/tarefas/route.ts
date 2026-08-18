@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
       solicitacao: body.solicitacao ?? "",
       feedback: body.feedback ?? "",
       entrega: body.entrega ?? "",
+      horarioPublicacao: body.horarioPublicacao ?? "",
       status: body.status ?? "Ativa",
       fixa,
       diaSemana: body.diaSemana ?? "",

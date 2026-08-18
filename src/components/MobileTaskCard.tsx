@@ -31,6 +31,7 @@ export interface MobileTarefa {
   solicitacao: string;
   feedback: string;
   entrega: string;
+  horarioPublicacao: string;
   status: string;
 }
 
@@ -66,6 +67,12 @@ export function MobileTaskCard({ t, showResponsavel }: { t: MobileTarefa; showRe
       {open && (
         <>
           <div className="mob-desc">{t.descricao || "Sem descrição."}</div>
+          {t.horarioPublicacao && (
+            <div className="desc-link-row">
+              <span className="desc-link-label">Postar às:</span>
+              <span>{t.horarioPublicacao}</span>
+            </div>
+          )}
           <div className="desc-link-row">
             <span className="desc-link-label">Possui Link:</span>
             {t.link ? (
