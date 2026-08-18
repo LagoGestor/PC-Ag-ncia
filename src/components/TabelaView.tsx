@@ -88,46 +88,16 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
       <div className="table-wrap">
         <table>
           <colgroup>
-            <col style={{ width: "19%" }} />
             <col style={{ width: "11%" }} />
-            <col style={{ width: "11%" }} />
-            <col style={{ width: "14%" }} />
-            <col style={{ width: "24%" }} />
-            <col style={{ width: "12%" }} />
-            <col style={{ width: "5%" }} />
-            <col style={{ width: "4%" }} />
+            <col style={{ width: "36%" }} />
+            <col style={{ width: "16%" }} />
+            <col style={{ width: "17%" }} />
+            <col style={{ width: "10%" }} />
+            <col style={{ width: "10%" }} />
           </colgroup>
           <thead>
             <tr>
-              <th>
-                <div className="th-inner">
-                  <span className="th-label">TAREFA</span>
-                  <input className="th-filter" placeholder="Filtrar..." value={fv("tarefa")} onChange={(e) => setFilter("tarefa", e.target.value)} />
-                </div>
-              </th>
-              <th>
-                <div className="th-inner">
-                  <span className="th-label">ÁREA</span>
-                  <select className="th-filter" value={fv("area")} onChange={(e) => setFilter("area", e.target.value)}>
-                    <option value="">Todas</option>
-                    {AREAS.map((a) => (
-                      <option key={a}>{a}</option>
-                    ))}
-                  </select>
-                </div>
-              </th>
-              <th>
-                <div className="th-inner">
-                  <span className="th-label">TIPO</span>
-                  <select className="th-filter" value={fv("tipo")} onChange={(e) => setFilter("tipo", e.target.value)}>
-                    <option value="">Todos</option>
-                    {TIPOS.map((tp) => (
-                      <option key={tp}>{tp}</option>
-                    ))}
-                  </select>
-                </div>
-              </th>
-              <th>
+              <th style={{ textAlign: "center" }}>
                 <div className="th-inner">
                   <span className="th-label">TIME</span>
                   <select className="th-filter" value={fv("responsavel")} onChange={(e) => setFilter("responsavel", e.target.value)}>
@@ -140,8 +110,19 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
               </th>
               <th>
                 <div className="th-inner">
-                  <span className="th-label">DESCRIÇÃO</span>
-                  <input className="th-filter" placeholder="Filtrar..." value={fv("descricao")} onChange={(e) => setFilter("descricao", e.target.value)} />
+                  <span className="th-label">TAREFA</span>
+                  <input className="th-filter" placeholder="Filtrar..." value={fv("tarefa")} onChange={(e) => setFilter("tarefa", e.target.value)} />
+                </div>
+              </th>
+              <th>
+                <div className="th-inner">
+                  <span className="th-label">TIPO</span>
+                  <select className="th-filter" value={fv("tipo")} onChange={(e) => setFilter("tipo", e.target.value)}>
+                    <option value="">Todos</option>
+                    {TIPOS.map((tp) => (
+                      <option key={tp}>{tp}</option>
+                    ))}
+                  </select>
                 </div>
               </th>
               <th>
@@ -173,34 +154,24 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
           <tbody>
             {filtered.map((t) => {
               const overdue = isOverdue(t.entrega) && t.status !== "Concluído" && t.status !== "Cancelado";
-              const descKey = `${t.id}-desc`;
               const titleKey = `${t.id}-title`;
               return (
                 <tr key={t.id}>
+                  <td style={{ textAlign: "center" }}>
+                    <Avatar name={t.responsavel} size={26} />
+                  </td>
                   <td
-                    className={`expandable task-name-cell${expandedCells.has(titleKey) ? " expanded" : ""}`}
+                    className={`expandable-clamp2${expandedCells.has(titleKey) ? " expanded" : ""}`}
                     onClick={() => toggleExpand(titleKey)}
                   >
                     <b>{t.tarefa}</b>
                   </td>
-                  <td>{t.area}</td>
                   <td>{t.tipo || "—"}</td>
-                  <td>
-                    <span className="resp-inline">
-                      <Avatar name={t.responsavel} size={16} /> {t.responsavel}
-                    </span>
-                  </td>
-                  <td
-                    className={`expandable${expandedCells.has(descKey) ? " expanded" : ""}`}
-                    onClick={() => toggleExpand(descKey)}
-                  >
-                    {t.descricao || "—"}
-                  </td>
                   <td className={overdue ? "overdue-date" : ""}>{fmtDate(t.entrega)}</td>
                   <td style={{ textAlign: "center" }}>
                     <span className="status-dot" style={{ background: STATUS_COLORS[t.status] }} title={t.status} />
                   </td>
-                  <td>
+                  <td style={{ textAlign: "center" }}>
                     <div className="tbl-actions">
                       <button className="tbl-action-icon" onClick={() => onEdit(t)} title="Editar">
                         <i className="fas fa-pen" />

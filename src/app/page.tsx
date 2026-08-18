@@ -245,19 +245,19 @@ export default function Home() {
             {isMobile ? (
               <>
                 <button className={`tab-btn${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>
-                  <i className="fas fa-th-large" /> CARDS
+                  CARDS
                 </button>
                 <button className={`tab-btn${view === "tabela" ? " active" : ""}`} onClick={() => setView("tabela")}>
-                  <i className="fas fa-table" /> LISTA
+                  LISTA
                 </button>
                 <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
-                  <i className="fas fa-users" /> TIME
+                  TIME
                 </button>
                 <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
-                  <i className="fas fa-calendar-days" /> AGENDA
+                  AGENDA
                 </button>
                 <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
-                  <i className="fas fa-repeat" /> FIXO
+                  FIXO
                 </button>
                 <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")} title="Arquivo">
                   <i className="fas fa-box-archive" />

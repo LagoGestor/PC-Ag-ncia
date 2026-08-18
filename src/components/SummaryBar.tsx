@@ -30,7 +30,8 @@ export function SummaryBar({ tarefas, statusFilter, onToggle }: Props) {
         </div>
       ))}
       <div className="sum-total">
-        <i className="fas fa-layer-group" /> Total: <b>{visible.length}</b>
+        <i className="fas fa-layer-group" />
+        <span className="sum-total-label">Total:</span> <b>{visible.length}</b>
       </div>
     </div>
   );

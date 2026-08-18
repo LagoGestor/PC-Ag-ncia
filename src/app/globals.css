@@ -332,6 +332,24 @@ tbody tr:hover td { background: rgba(255,255,255,0.02); }
 td.expandable { cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 td.expandable:hover { color: var(--accent); }
 td.expandable.expanded { white-space: pre-wrap; word-break: break-word; overflow: visible; max-width: none; }
+
+td.expandable-clamp2 {
+  cursor: pointer;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  line-height: 1.35;
+}
+td.expandable-clamp2:hover { color: var(--accent); }
+td.expandable-clamp2.expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
 .sort-btn { background: none; border: none; color: var(--fg-muted); cursor: pointer; padding: 0 2px; font-size: 9px; transition: var(--transition); line-height: 1; }
 .sort-btn:hover { color: var(--accent); }
 .tbl-actions { display: flex; gap: 6px; justify-content: center; }
@@ -777,11 +795,13 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   .search-wrap { order: 3; flex-basis: 100%; max-width: 100%; }
 
   #summary-bar { padding: 10px 14px; gap: 8px; }
-  .sum-pill { padding: 7px; gap: 0; }
-  .sum-pill .dot { width: 16px; height: 16px; }
-  .sum-pill .label,
-  .sum-pill .count { display: none; }
-  .sum-total { display: none; }
+  .sum-pill { padding: 6px 8px; gap: 5px; }
+  .sum-pill .dot { width: 9px; height: 9px; }
+  .sum-pill .label { display: none; }
+  .sum-pill .count { font-size: 11px; }
+  .sum-total { gap: 4px; font-size: 10px; }
+  .sum-total-label { display: none; }
+  .sum-total b { font-size: 12px; font-family: var(--font-head); }
 
   #view-nav { padding: 8px 14px; gap: 8px; flex-wrap: nowrap; }
   .view-tabs {
@@ -800,8 +820,9 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   .card-actions { opacity: 1; }
 
   .table-wrap { -webkit-overflow-scrolling: touch; }
-  table { min-width: 560px; }
+  table { min-width: 440px; }
   .status-dot { width: 14px; height: 14px; }
+  td { padding: 10px 8px; }
 
   .grid-scroll-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
