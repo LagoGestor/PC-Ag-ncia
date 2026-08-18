@@ -204,6 +204,9 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate }: Props)
                 onChange={(e) => set("feedback", e.target.value)}
               />
             </div>
+          </div>
+
+          <div className="form-row">
             <div className="form-group">
               <label>
                 Entrega <span>*</span>
