@@ -144,6 +144,7 @@ export default function Home() {
         solicitacao: data,
         feedback: "",
         entrega: data,
+        horarioPublicacao: "",
         status: "Ativa",
       });
       setTarefas((prev) => [created, ...prev]);
