@@ -17,6 +17,8 @@ import { ResponsaveisView } from "@/components/ResponsaveisView";
 import { DirecionarView } from "@/components/DirecionarView";
 import { TaskModal } from "@/components/TaskModal";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import { ReportModal } from "@/components/ReportModal";
+import { fmtDate } from "@/components/TaskCard";
 
 export default function Home() {
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
@@ -29,6 +31,7 @@ export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Tarefa | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Tarefa | null>(null);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
 
   const { toasts, toast } = useToasts();
   const isMobile = useIsMobile();
@@ -169,6 +172,44 @@ export default function Home() {
     }
   }
 
+  async function gerarRelatorio(inicio: string, fim: string) {
+    const list = tarefas.filter(
+      (t) =>
+        !t.arquivada &&
+        !t.fixa &&
+        t.responsavel !== RESPONSAVEL_ARMAZENAR &&
+        t.entrega &&
+        t.entrega >= inicio &&
+        t.entrega <= fim
+    );
+
+    if (!list.length) {
+      toast("Nenhuma atividade encontrada nesse período", "info");
+      return;
+    }
+
+    const { default: jsPDF } = await import("jspdf");
+    const { default: autoTable } = await import("jspdf-autotable");
+
+    const doc = new jsPDF();
+    doc.setFontSize(14);
+    doc.text("Relatório de Atividades", 14, 16);
+    doc.setFontSize(10);
+    doc.text(`Período: ${fmtDate(inicio)} a ${fmtDate(fim)}`, 14, 23);
+
+    autoTable(doc, {
+      startY: 28,
+      head: [["Tarefa", "Área", "Tipo", "Responsável", "Status"]],
+      body: list.map((t) => [t.tarefa, t.area, t.tipo || "—", t.responsavel, t.status]),
+      styles: { fontSize: 8, cellPadding: 3 },
+      headStyles: { fillColor: [15, 26, 20] },
+    });
+
+    doc.save(`relatorio_atividades_${inicio}_a_${fim}.pdf`);
+    toast(`Relatório gerado com ${list.length} atividade(s)`, "success");
+    setReportModalOpen(false);
+  }
+
   function exportarJSON() {
     const blob = new Blob([JSON.stringify(tarefas, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
@@ -226,6 +267,15 @@ export default function Home() {
               <i className="fas fa-ellipsis-v" />
             </button>
             <div className="dropdown-menu">
+              <button
+                className="dropdown-item"
+                onClick={() => {
+                  setDropdownOpen(false);
+                  setReportModalOpen(true);
+                }}
+              >
+                <i className="fas fa-file-pdf" /> Gerar Relatório
+              </button>
               <button className="dropdown-item" onClick={exportarJSON}>
                 <i className="fas fa-file-code" /> Exportar JSON
               </button>
@@ -346,6 +396,8 @@ export default function Home() {
         onCancel={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
       />
+
+      <ReportModal open={reportModalOpen} onClose={() => setReportModalOpen(false)} onGenerate={gerarRelatorio} />
     </div>
   );
 }
