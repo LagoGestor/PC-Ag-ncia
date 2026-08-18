@@ -266,25 +266,25 @@ export default function Home() {
             ) : (
               <>
                 <button className={`tab-btn${view === "tabela" ? " active" : ""}`} onClick={() => setView("tabela")}>
-                  <i className="fas fa-table" /> Lista
+                  <i className="fas fa-table" /> LISTA
                 </button>
                 <button className={`tab-btn${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>
-                  <i className="fas fa-th-large" /> Cards
+                  <i className="fas fa-th-large" /> CARDS
                 </button>
                 <button className={`tab-btn${view === "kanban" ? " active" : ""}`} onClick={() => setView("kanban")}>
-                  <i className="fas fa-columns" /> Kanban
+                  <i className="fas fa-columns" /> KANBAN
                 </button>
                 <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
-                  <i className="fas fa-calendar-days" /> Agenda
+                  <i className="fas fa-calendar-days" /> AGENDA
                 </button>
                 <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
-                  <i className="fas fa-repeat" /> Atividades da Semana
+                  <i className="fas fa-repeat" /> ATIVIDADES DA SEMANA
                 </button>
                 <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")}>
-                  <i className="fas fa-box-archive" /> Arquivo
+                  <i className="fas fa-box-archive" /> ARQUIVO
                 </button>
                 <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
-                  <i className="fas fa-users" /> Responsável
+                  <i className="fas fa-users" /> TIME
                 </button>
               </>
             )}

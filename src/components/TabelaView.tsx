@@ -88,8 +88,9 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
       <div className="table-wrap">
         <table className="table-lista-mobile">
           <colgroup>
-            <col style={{ width: "20%" }} />
-            <col style={{ width: "80%" }} />
+            <col style={{ width: "16%" }} />
+            <col style={{ width: "60%" }} />
+            <col style={{ width: "24%" }} />
           </colgroup>
           <thead>
             <tr>
@@ -110,19 +111,37 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
                   <input className="th-filter" placeholder="Filtrar..." value={fv("tarefa")} onChange={(e) => setFilter("tarefa", e.target.value)} />
                 </div>
               </th>
+              <th>
+                <div className="th-inner">
+                  <span className="th-label">
+                    PRAZO
+                    <span className="th-sort">
+                      <button className="sort-btn" onClick={() => setSort({ field: "entrega", asc: true })}>▲</button>
+                      <button className="sort-btn" onClick={() => setSort({ field: "entrega", asc: false })}>▼</button>
+                    </span>
+                  </span>
+                  <input type="date" className="th-filter" value={fv("entrega")} onChange={(e) => setFilter("entrega", e.target.value)} />
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
-            {filtered.map((t) => (
-              <tr key={t.id}>
-                <td style={{ textAlign: "center", verticalAlign: "top" }}>
-                  <Avatar name={t.responsavel} size={26} ringColor={STATUS_COLORS[t.status]} />
-                </td>
-                <td className="expandable-clamp2 tarefa-link" style={{ verticalAlign: "top" }} onClick={() => onEdit(t)}>
-                  <b>{t.tarefa}</b>
-                </td>
-              </tr>
-            ))}
+            {filtered.map((t) => {
+              const overdue = isOverdue(t.entrega) && t.status !== "Concluído" && t.status !== "Cancelado";
+              return (
+                <tr key={t.id}>
+                  <td style={{ textAlign: "center", verticalAlign: "top" }}>
+                    <Avatar name={t.responsavel} size={26} ringColor={STATUS_COLORS[t.status]} />
+                  </td>
+                  <td className="expandable-clamp2 tarefa-link" style={{ verticalAlign: "top" }} onClick={() => onEdit(t)}>
+                    <b>{t.tarefa}</b>
+                  </td>
+                  <td className={overdue ? "overdue-date" : ""} style={{ verticalAlign: "top" }}>
+                    {fmtDate(t.entrega)}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
