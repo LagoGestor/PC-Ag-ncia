@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AREAS, RESPONSAVEIS, STATUSES, STATUS_BADGE_CLASS, Tarefa, TIPOS } from "@/types";
+import { AREAS, RESPONSAVEIS, STATUSES, STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa, TIPOS } from "@/types";
 import { fmtDate, isOverdue } from "./TaskCard";
 import { Avatar } from "./Avatar";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface Filters {
   tarefa: string;
@@ -37,6 +38,7 @@ interface Props {
 }
 
 export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
+  const isMobile = useIsMobile();
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [sort, setSort] = useState<{ field: keyof Tarefa; asc: boolean } | null>(null);
   const [expandedCells, setExpandedCells] = useState<Set<string>>(new Set());
@@ -80,6 +82,139 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
   }, [list, filters, sort]);
 
   const fv = (k: keyof Filters) => filters[k];
+
+  if (isMobile) {
+    return (
+      <div className="table-wrap">
+        <table>
+          <colgroup>
+            <col style={{ width: "19%" }} />
+            <col style={{ width: "11%" }} />
+            <col style={{ width: "11%" }} />
+            <col style={{ width: "14%" }} />
+            <col style={{ width: "24%" }} />
+            <col style={{ width: "12%" }} />
+            <col style={{ width: "5%" }} />
+            <col style={{ width: "4%" }} />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>
+                <div className="th-inner">
+                  <span className="th-label">TAREFA</span>
+                  <input className="th-filter" placeholder="Filtrar..." value={fv("tarefa")} onChange={(e) => setFilter("tarefa", e.target.value)} />
+                </div>
+              </th>
+              <th>
+                <div className="th-inner">
+                  <span className="th-label">ÁREA</span>
+                  <select className="th-filter" value={fv("area")} onChange={(e) => setFilter("area", e.target.value)}>
+                    <option value="">Todas</option>
+                    {AREAS.map((a) => (
+                      <option key={a}>{a}</option>
+                    ))}
+                  </select>
+                </div>
+              </th>
+              <th>
+                <div className="th-inner">
+                  <span className="th-label">TIPO</span>
+                  <select className="th-filter" value={fv("tipo")} onChange={(e) => setFilter("tipo", e.target.value)}>
+                    <option value="">Todos</option>
+                    {TIPOS.map((tp) => (
+                      <option key={tp}>{tp}</option>
+                    ))}
+                  </select>
+                </div>
+              </th>
+              <th>
+                <div className="th-inner">
+                  <span className="th-label">TIME</span>
+                  <select className="th-filter" value={fv("responsavel")} onChange={(e) => setFilter("responsavel", e.target.value)}>
+                    <option value="">Todos</option>
+                    {RESPONSAVEIS.map((r) => (
+                      <option key={r}>{r}</option>
+                    ))}
+                  </select>
+                </div>
+              </th>
+              <th>
+                <div className="th-inner">
+                  <span className="th-label">DESCRIÇÃO</span>
+                  <input className="th-filter" placeholder="Filtrar..." value={fv("descricao")} onChange={(e) => setFilter("descricao", e.target.value)} />
+                </div>
+              </th>
+              <th>
+                <div className="th-inner">
+                  <span className="th-label">
+                    PRAZO
+                    <span className="th-sort">
+                      <button className="sort-btn" onClick={() => setSort({ field: "entrega", asc: true })}>▲</button>
+                      <button className="sort-btn" onClick={() => setSort({ field: "entrega", asc: false })}>▼</button>
+                    </span>
+                  </span>
+                  <input type="date" className="th-filter" value={fv("entrega")} onChange={(e) => setFilter("entrega", e.target.value)} />
+                </div>
+              </th>
+              <th style={{ textAlign: "center" }}>
+                <div className="th-inner">
+                  <span className="th-label" title="Status">
+                    <i className="fas fa-circle-half-stroke" />
+                  </span>
+                </div>
+              </th>
+              <th style={{ textAlign: "center" }}>
+                <div className="th-inner">
+                  <span className="th-label">AÇÃO</span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((t) => {
+              const overdue = isOverdue(t.entrega) && t.status !== "Concluído" && t.status !== "Cancelado";
+              const descKey = `${t.id}-desc`;
+              const titleKey = `${t.id}-title`;
+              return (
+                <tr key={t.id}>
+                  <td
+                    className={`expandable task-name-cell${expandedCells.has(titleKey) ? " expanded" : ""}`}
+                    onClick={() => toggleExpand(titleKey)}
+                  >
+                    <b>{t.tarefa}</b>
+                  </td>
+                  <td>{t.area}</td>
+                  <td>{t.tipo || "—"}</td>
+                  <td>
+                    <span className="resp-inline">
+                      <Avatar name={t.responsavel} size={16} /> {t.responsavel}
+                    </span>
+                  </td>
+                  <td
+                    className={`expandable${expandedCells.has(descKey) ? " expanded" : ""}`}
+                    onClick={() => toggleExpand(descKey)}
+                  >
+                    {t.descricao || "—"}
+                  </td>
+                  <td className={overdue ? "overdue-date" : ""}>{fmtDate(t.entrega)}</td>
+                  <td style={{ textAlign: "center" }}>
+                    <span className="status-dot" style={{ background: STATUS_COLORS[t.status] }} title={t.status} />
+                  </td>
+                  <td>
+                    <div className="tbl-actions">
+                      <button className="tbl-action-icon" onClick={() => onEdit(t)} title="Editar">
+                        <i className="fas fa-pen" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
 
   return (
     <div className="table-wrap">

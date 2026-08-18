@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
 import { useToasts } from "@/hooks/useToasts";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { Status, Tarefa, View } from "@/types";
 import { ToastContainer } from "@/components/ToastContainer";
 import { SummaryBar } from "@/components/SummaryBar";
@@ -29,6 +30,11 @@ export default function Home() {
   const [deleteTarget, setDeleteTarget] = useState<Tarefa | null>(null);
 
   const { toasts, toast } = useToasts();
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    if (isMobile && view === "kanban") setView("dashboard");
+  }, [isMobile, view]);
 
   useEffect(() => {
     api
@@ -236,27 +242,52 @@ export default function Home() {
       <div id="view-container">
         <div id="view-nav">
           <div className="view-tabs">
-            <button className={`tab-btn${view === "tabela" ? " active" : ""}`} onClick={() => setView("tabela")}>
-              <i className="fas fa-table" /> Lista
-            </button>
-            <button className={`tab-btn${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>
-              <i className="fas fa-th-large" /> Cards
-            </button>
-            <button className={`tab-btn${view === "kanban" ? " active" : ""}`} onClick={() => setView("kanban")}>
-              <i className="fas fa-columns" /> Kanban
-            </button>
-            <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
-              <i className="fas fa-calendar-days" /> Agenda
-            </button>
-            <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
-              <i className="fas fa-repeat" /> Atividades da Semana
-            </button>
-            <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")}>
-              <i className="fas fa-box-archive" /> Arquivo
-            </button>
-            <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
-              <i className="fas fa-users" /> Responsável
-            </button>
+            {isMobile ? (
+              <>
+                <button className={`tab-btn${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>
+                  <i className="fas fa-th-large" /> CARDS
+                </button>
+                <button className={`tab-btn${view === "tabela" ? " active" : ""}`} onClick={() => setView("tabela")}>
+                  <i className="fas fa-table" /> LISTA
+                </button>
+                <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
+                  <i className="fas fa-users" /> TIME
+                </button>
+                <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
+                  <i className="fas fa-calendar-days" /> AGENDA
+                </button>
+                <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
+                  <i className="fas fa-repeat" /> FIXO
+                </button>
+                <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")} title="Arquivo">
+                  <i className="fas fa-box-archive" />
+                </button>
+              </>
+            ) : (
+              <>
+                <button className={`tab-btn${view === "tabela" ? " active" : ""}`} onClick={() => setView("tabela")}>
+                  <i className="fas fa-table" /> Lista
+                </button>
+                <button className={`tab-btn${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>
+                  <i className="fas fa-th-large" /> Cards
+                </button>
+                <button className={`tab-btn${view === "kanban" ? " active" : ""}`} onClick={() => setView("kanban")}>
+                  <i className="fas fa-columns" /> Kanban
+                </button>
+                <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
+                  <i className="fas fa-calendar-days" /> Agenda
+                </button>
+                <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
+                  <i className="fas fa-repeat" /> Atividades da Semana
+                </button>
+                <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")}>
+                  <i className="fas fa-box-archive" /> Arquivo
+                </button>
+                <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
+                  <i className="fas fa-users" /> Responsável
+                </button>
+              </>
+            )}
           </div>
           <div className="view-actions" />
         </div>

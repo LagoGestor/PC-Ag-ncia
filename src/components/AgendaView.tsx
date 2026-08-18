@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa } from "@/types";
 import { Avatar } from "./Avatar";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 type Mode = "mes" | "semana";
 
@@ -40,8 +41,10 @@ interface Props {
 }
 
 export function AgendaView({ list, onOpenDetail }: Props) {
+  const isMobile = useIsMobile();
   const [mode, setMode] = useState<Mode>("mes");
   const [anchor, setAnchor] = useState(() => new Date());
+  const [expandedDay, setExpandedDay] = useState<string | null>(null);
 
   const byDay = useMemo(() => {
     const map = new Map<string, Tarefa[]>();
@@ -117,6 +120,46 @@ export function AgendaView({ list, onOpenDetail }: Props) {
             const tasks = byDay.get(key) ?? [];
             const outside = d.getMonth() !== anchor.getMonth();
             const isToday = sameDay(d, today);
+            const isExpanded = isMobile && expandedDay === key;
+
+            if (isMobile) {
+              return (
+                <div
+                  key={key}
+                  className={`calendar-cell${outside ? " outside" : ""}${isToday ? " today" : ""}${isExpanded ? " expanded" : ""}`}
+                  onClick={() => tasks.length > 0 && setExpandedDay(isExpanded ? null : key)}
+                >
+                  <div className="calendar-daynum">{d.getDate()}</div>
+                  {isExpanded ? (
+                    <div className="calendar-cell-detail">
+                      {tasks.map((t) => (
+                        <div
+                          key={t.id}
+                          className="calendar-detail-item"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onOpenDetail(t);
+                          }}
+                        >
+                          <Avatar name={t.responsavel} size={18} />
+                          <span>{t.tarefa}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="calendar-chip-row">
+                      {tasks.slice(0, 3).map((t) => (
+                        <span key={t.id} className="calendar-tipo-chip" style={{ background: STATUS_COLORS[t.status] || "var(--gray)" }}>
+                          {t.tipo || "•"}
+                        </span>
+                      ))}
+                      {tasks.length > 3 && <span className="calendar-chip-more">+{tasks.length - 3}</span>}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
             return (
               <div key={key} className={`calendar-cell${outside ? " outside" : ""}${isToday ? " today" : ""}`}>
                 <div className="calendar-daynum">{d.getDate()}</div>

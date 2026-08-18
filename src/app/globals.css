@@ -715,6 +715,7 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   word-break: break-word;
 }
 .overdue-date { color: var(--danger) !important; font-weight: 700; }
+.status-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
 
 /* ── LINK INDICATOR (shown only in expanded card detail) ── */
 .desc-link-row {
@@ -775,7 +776,12 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   }
   .search-wrap { order: 3; flex-basis: 100%; max-width: 100%; }
 
-  #summary-bar { padding: 8px 14px; }
+  #summary-bar { padding: 10px 14px; gap: 8px; }
+  .sum-pill { padding: 7px; gap: 0; }
+  .sum-pill .dot { width: 16px; height: 16px; }
+  .sum-pill .label,
+  .sum-pill .count { display: none; }
+  .sum-total { display: none; }
 
   #view-nav { padding: 8px 14px; gap: 8px; flex-wrap: nowrap; }
   .view-tabs {
@@ -794,14 +800,42 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   .card-actions { opacity: 1; }
 
   .table-wrap { -webkit-overflow-scrolling: touch; }
-
-  .kanban-board { -webkit-overflow-scrolling: touch; }
-  .kanban-col { min-width: 240px; }
+  table { min-width: 560px; }
+  .status-dot { width: 14px; height: 14px; }
 
   .grid-scroll-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .calendar-grid { min-width: 700px; }
+
+  /* Month calendar: keep the 7-day grid but let it fit the screen — no horizontal scroll */
+  .calendar-grid { min-width: 0; }
+  .calendar-weekday { padding: 4px 2px; font-size: 8.5px; }
+  .calendar-cell { min-height: 56px; padding: 4px; gap: 3px; }
+  .calendar-daynum { font-size: 10px; }
+  .calendar-chip-row { display: flex; flex-wrap: wrap; gap: 2px; }
+  .calendar-tipo-chip {
+    font-size: 6.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #000;
+    padding: 1px 3px;
+    border-radius: 3px;
+    line-height: 1.4;
+  }
+  .calendar-chip-more { font-size: 6.5px; color: var(--fg-muted); font-weight: 700; }
+  .calendar-cell-detail { display: flex; flex-direction: column; gap: 6px; padding-top: 2px; }
+  .calendar-detail-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 10.5px;
+    color: var(--fg);
+    line-height: 1.3;
+    background: var(--surface2);
+    border-radius: 6px;
+    padding: 4px 6px;
+  }
+  .calendar-detail-item .avatar-badge { flex-shrink: 0; }
+
+  /* Week grid + Atividades da Semana: stack one day below the other, full width */
   .week-grid,
-  .fixas-grid { min-width: 760px; }
+  .fixas-grid { grid-template-columns: 1fr; min-width: 0; gap: 10px; }
 
   .agenda-nav .agenda-label { min-width: 0; font-size: 12px; }
 

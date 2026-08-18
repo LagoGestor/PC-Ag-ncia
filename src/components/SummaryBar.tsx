@@ -22,6 +22,7 @@ export function SummaryBar({ tarefas, statusFilter, onToggle }: Props) {
           key={s}
           className={`sum-pill${statusFilter === s ? " active" : ""}`}
           onClick={() => onToggle(s)}
+          title={`${s}: ${counts[s]}`}
         >
           <div className="dot" style={{ background: STATUS_COLORS[s] }} />
           <span className="label">{s}</span>

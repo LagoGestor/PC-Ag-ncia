@@ -2,6 +2,7 @@
 
 import { DIAS_SEMANA, Tarefa } from "@/types";
 import { Avatar } from "./Avatar";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const TIPO_COLORS: Record<string, string> = {
   Post: "#4ade80",
@@ -30,6 +31,7 @@ interface Props {
 }
 
 export function AtividadesFixasView({ list, onOpenDetail }: Props) {
+  const isMobile = useIsMobile();
   const byDay = new Map<string, Tarefa[]>();
   for (const t of list) {
     const dia = t.diaSemana || "Sem dia";
@@ -44,7 +46,7 @@ export function AtividadesFixasView({ list, onOpenDetail }: Props) {
     <div>
       <div className="fixas-header">
         <div>
-          <h2 className="fixas-title">Atividades da Semana</h2>
+          <h2 className="fixas-title">{isMobile ? "Atividades fixas da semana" : "Atividades da Semana"}</h2>
           <p className="fixas-subtitle">Rotina fixa de Comunicação — se repete toda semana, sempre nos mesmos dias.</p>
         </div>
         {tiposUsados.length > 0 && (
