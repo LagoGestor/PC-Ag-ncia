@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import { RESPONSAVEIS, WHATSAPP_FOTO_AGENCIA, slugify } from "@/types";
+import { RESPONSAVEIS_VISIVEIS, RESPONSAVEL_ARMAZENAR, WHATSAPP_FOTO_AGENCIA, slugify } from "@/types";
 import { MobileTaskCard } from "@/components/MobileTaskCard";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default async function MobileMasterPage() {
   const tarefas = await prisma.tarefa.findMany({
-    where: { fixa: false, arquivada: false },
+    where: { fixa: false, arquivada: false, responsavel: { not: RESPONSAVEL_ARMAZENAR } },
     orderBy: { entrega: "asc" },
   });
 
@@ -35,7 +35,7 @@ export default async function MobileMasterPage() {
         <a href="/mobile" className="mobile-chip active">
           Todos
         </a>
-        {RESPONSAVEIS.map((r) => (
+        {RESPONSAVEIS_VISIVEIS.map((r) => (
           <a key={r} href={`/mobile/${slugify(r)}`} className="mobile-chip">
             {r}
           </a>

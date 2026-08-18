@@ -1,4 +1,4 @@
-export type Status = "Ativa" | "Pendente" | "Atrasada" | "Concluído" | "Cancelado";
+export type Status = "Ativa" | "Pendente" | "Atrasada" | "Concluído" | "Cancelado" | "Inativa";
 
 export interface Tarefa {
   id: string;
@@ -37,8 +37,11 @@ export const TIPOS = [
   "Outro",
 ];
 
+export const RESPONSAVEL_ARMAZENAR = "Armazenar";
+
 export const RESPONSAVEIS = [
-  "Leonardo Felix",
+  RESPONSAVEL_ARMAZENAR,
+  "Leo Felix",
   "Ana Júlia",
   "Anna Beatriz",
   "Júlia Viegas",
@@ -46,7 +49,11 @@ export const RESPONSAVEIS = [
   "Voluntário",
 ];
 
-export const STATUSES: Status[] = ["Ativa", "Pendente", "Atrasada", "Concluído", "Cancelado"];
+// Everyone except "Armazenar" — used for the team roster, mobile person pages and filter dropdowns.
+// Tasks assigned to "Armazenar" are only visible in the DIRECIONAR view.
+export const RESPONSAVEIS_VISIVEIS = RESPONSAVEIS.filter((r) => r !== RESPONSAVEL_ARMAZENAR);
+
+export const STATUSES: Status[] = ["Ativa", "Pendente", "Atrasada", "Concluído", "Cancelado", "Inativa"];
 
 export const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 
@@ -56,6 +63,7 @@ export const STATUS_COLORS: Record<string, string> = {
   Atrasada: "#f87171",
   Concluído: "#38bdf8",
   Cancelado: "#6b7280",
+  Inativa: "#ffffff",
 };
 
 export const STATUS_BADGE_CLASS: Record<string, string> = {
@@ -64,10 +72,11 @@ export const STATUS_BADGE_CLASS: Record<string, string> = {
   Atrasada: "badge-atrasada",
   Concluído: "badge-concluido",
   Cancelado: "badge-cancelado",
+  Inativa: "badge-inativa",
 };
 
 export const FOTOS_RESPONSAVEL: Record<string, string> = {
-  "Leonardo Felix": "/img/perfil_leo.jpg",
+  "Leo Felix": "/img/perfil_leo.jpg",
   "Ana Júlia": "/img/perfil_anajulia.jpg",
   "Anna Beatriz": "/img/perfil_annabea.jpg",
   "Dayane Prado": "/img/perfil_dayane.jpg",
@@ -77,7 +86,7 @@ export const FOTOS_RESPONSAVEL: Record<string, string> = {
 
 // Used only for share previews (WhatsApp/OG image) — cropped/optimized for that format.
 export const WHATSAPP_FOTOS_RESPONSAVEL: Record<string, string> = {
-  "Leonardo Felix": "/img/whatsapp_perfil_leo.jpg",
+  "Leo Felix": "/img/whatsapp_perfil_leo.jpg",
   "Ana Júlia": "/img/whatsapp_perfil_anajulia.jpg",
   "Anna Beatriz": "/img/whatsapp_perfil_annabea.jpg",
   "Dayane Prado": "/img/whatsapp_perfil_dayane.jpg",
@@ -94,7 +103,7 @@ export const ICONES_AREA: Record<string, string> = {
   "Missão Global": "/img/icone_missao.png",
 };
 
-export type View = "dashboard" | "tabela" | "kanban" | "arquivadas" | "agenda" | "semanal" | "responsaveis";
+export type View = "dashboard" | "tabela" | "kanban" | "arquivadas" | "agenda" | "semanal" | "responsaveis" | "direcionar";
 
 const DIACRITICS_RE = new RegExp("[\\u0300-\\u036f]", "g");
 

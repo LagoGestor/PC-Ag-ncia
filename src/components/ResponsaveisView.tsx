@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { RESPONSAVEIS, slugify } from "@/types";
+import { RESPONSAVEIS_VISIVEIS, slugify } from "@/types";
 import { Avatar } from "./Avatar";
 
 export function ResponsaveisView() {
@@ -20,7 +20,7 @@ export function ResponsaveisView() {
           <img className="avatar-badge avatar-badge-photo" style={{ width: 96, height: 96 }} src="/img/perfil_agencia.jpg" alt="Geral" />
           <span className="resp-card-name">Geral</span>
         </Link>
-        {RESPONSAVEIS.map((r) => (
+        {RESPONSAVEIS_VISIVEIS.map((r) => (
           <Link key={r} href={`/mobile/${slugify(r)}`} className="resp-card">
             <Avatar name={r} size={96} />
             <span className="resp-card-name">{r}</span>

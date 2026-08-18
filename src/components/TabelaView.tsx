@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AREAS, RESPONSAVEIS, STATUSES, STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa, TIPOS } from "@/types";
+import { AREAS, RESPONSAVEIS_VISIVEIS, STATUSES, STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa, TIPOS } from "@/types";
 import { fmtDate, isOverdue } from "./TaskCard";
 import { Avatar } from "./Avatar";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -99,7 +99,7 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
                   <span className="th-label">TIME</span>
                   <select className="th-filter" value={fv("responsavel")} onChange={(e) => setFilter("responsavel", e.target.value)}>
                     <option value="">Todos</option>
-                    {RESPONSAVEIS.map((r) => (
+                    {RESPONSAVEIS_VISIVEIS.map((r) => (
                       <option key={r}>{r}</option>
                     ))}
                   </select>
@@ -199,7 +199,7 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
                 <span className="th-label">Responsável</span>
                 <select className="th-filter" value={fv("responsavel")} onChange={(e) => setFilter("responsavel", e.target.value)}>
                   <option value="">Todos</option>
-                  {RESPONSAVEIS.map((r) => (
+                  {RESPONSAVEIS_VISIVEIS.map((r) => (
                     <option key={r}>{r}</option>
                   ))}
                 </select>

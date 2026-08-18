@@ -1,6 +1,6 @@
 "use client";
 
-import { STATUSES, STATUS_COLORS, Tarefa } from "@/types";
+import { RESPONSAVEL_ARMAZENAR, STATUSES, STATUS_COLORS, Tarefa } from "@/types";
 
 interface Props {
   tarefas: Tarefa[];
@@ -9,8 +9,8 @@ interface Props {
 }
 
 export function SummaryBar({ tarefas, statusFilter, onToggle }: Props) {
-  const visible = tarefas.filter((t) => !t.arquivada);
-  const counts: Record<string, number> = { Ativa: 0, Pendente: 0, Atrasada: 0, "Concluído": 0, Cancelado: 0 };
+  const visible = tarefas.filter((t) => !t.arquivada && t.responsavel !== RESPONSAVEL_ARMAZENAR);
+  const counts: Record<string, number> = { Ativa: 0, Pendente: 0, Atrasada: 0, "Concluído": 0, Cancelado: 0, Inativa: 0 };
   visible.forEach((t) => {
     if (counts[t.status] !== undefined) counts[t.status]++;
   });

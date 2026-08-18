@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { RESPONSAVEIS, WHATSAPP_FOTOS_RESPONSAVEL, slugify } from "@/types";
+import { RESPONSAVEIS_VISIVEIS, WHATSAPP_FOTOS_RESPONSAVEL, slugify } from "@/types";
 import { MobileTaskCard } from "@/components/MobileTaskCard";
 import { Avatar } from "@/components/Avatar";
 
 export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
-  return RESPONSAVEIS.map((r) => ({ pessoa: slugify(r) }));
+  return RESPONSAVEIS_VISIVEIS.map((r) => ({ pessoa: slugify(r) }));
 }
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { pessoa } = await params;
-  const responsavel = RESPONSAVEIS.find((r) => slugify(r) === pessoa);
+  const responsavel = RESPONSAVEIS_VISIVEIS.find((r) => slugify(r) === pessoa);
   if (!responsavel) return {};
 
   const title = `Lista de Atividades - ${responsavel}`;
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function MobilePessoaPage({ params }: Props) {
   const { pessoa } = await params;
-  const responsavel = RESPONSAVEIS.find((r) => slugify(r) === pessoa);
+  const responsavel = RESPONSAVEIS_VISIVEIS.find((r) => slugify(r) === pessoa);
   if (!responsavel) notFound();
 
   const tarefas = await prisma.tarefa.findMany({

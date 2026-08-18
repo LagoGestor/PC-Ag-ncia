@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
 import { useToasts } from "@/hooks/useToasts";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { Status, Tarefa, View } from "@/types";
+import { RESPONSAVEL_ARMAZENAR, Status, Tarefa, View } from "@/types";
 import { ToastContainer } from "@/components/ToastContainer";
 import { SummaryBar } from "@/components/SummaryBar";
 import { DashboardView } from "@/components/DashboardView";
@@ -14,6 +14,7 @@ import { ArquivadasView } from "@/components/ArquivadasView";
 import { AgendaView } from "@/components/AgendaView";
 import { AtividadesFixasView } from "@/components/AtividadesFixasView";
 import { ResponsaveisView } from "@/components/ResponsaveisView";
+import { DirecionarView } from "@/components/DirecionarView";
 import { TaskModal } from "@/components/TaskModal";
 import { ConfirmModal } from "@/components/ConfirmModal";
 
@@ -33,7 +34,7 @@ export default function Home() {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (isMobile && view === "kanban") setView("dashboard");
+    if (isMobile && (view === "kanban" || view === "direcionar")) setView("dashboard");
   }, [isMobile, view]);
 
   useEffect(() => {
@@ -54,6 +55,8 @@ export default function Home() {
 
   const filtered = useMemo(() => {
     let list = tarefas.filter((t) => {
+      if (view === "direcionar") return t.responsavel === RESPONSAVEL_ARMAZENAR;
+      if (t.responsavel === RESPONSAVEL_ARMAZENAR) return false;
       if (view === "arquivadas") return t.arquivada;
       if (view === "semanal") return t.fixa && !t.arquivada;
       return !t.arquivada && !t.fixa;
@@ -272,20 +275,23 @@ export default function Home() {
                 <button className={`tab-btn${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>
                   <i className="fas fa-th-large" /> CARDS
                 </button>
-                <button className={`tab-btn${view === "kanban" ? " active" : ""}`} onClick={() => setView("kanban")}>
-                  <i className="fas fa-columns" /> KANBAN
+                <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
+                  <i className="fas fa-users" /> TIME
                 </button>
                 <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
                   <i className="fas fa-calendar-days" /> AGENDA
                 </button>
                 <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
-                  <i className="fas fa-repeat" /> ATIVIDADES DA SEMANA
+                  <i className="fas fa-repeat" /> FIXOS
+                </button>
+                <button className={`tab-btn${view === "kanban" ? " active" : ""}`} onClick={() => setView("kanban")}>
+                  <i className="fas fa-columns" /> KANBAN
+                </button>
+                <button className={`tab-btn${view === "direcionar" ? " active" : ""}`} onClick={() => setView("direcionar")}>
+                  <i className="fas fa-arrow-right-arrow-left" /> DIRECIONAR
                 </button>
                 <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")}>
                   <i className="fas fa-box-archive" /> ARQUIVO
-                </button>
-                <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
-                  <i className="fas fa-users" /> TIME
                 </button>
               </>
             )}
@@ -316,6 +322,8 @@ export default function Home() {
             <AgendaView list={filtered} onOpenDetail={openEdit} />
           ) : view === "semanal" ? (
             <AtividadesFixasView list={filtered} onOpenDetail={openEdit} />
+          ) : view === "direcionar" ? (
+            <DirecionarView list={filtered} onEdit={openEdit} onToggleArchive={handleToggleArchive} onDelete={setDeleteTarget} />
           ) : (
             <ResponsaveisView />
           )}
