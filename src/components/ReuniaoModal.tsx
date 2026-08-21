@@ -52,7 +52,7 @@ export function ReuniaoModal({ open, editing, onClose, onSave }: Props) {
   }
 
   return (
-    <div className="modal-overlay open" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="modal-overlay open">
       <div className="modal-box" style={{ maxWidth: 420 }}>
         <div className="modal-header">
           <span className="modal-title">{editing ? "Editar Reunião" : "Nova Reunião"}</span>

@@ -83,7 +83,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate }: Props)
   }
 
   return (
-    <div className="modal-overlay open" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="modal-overlay open">
       <div className="modal-box">
         <div className="modal-header">
           <span className="modal-title">{editing ? "Editar Tarefa" : "Nova Tarefa"}</span>

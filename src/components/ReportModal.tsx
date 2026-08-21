@@ -15,7 +15,7 @@ export function ReportModal({ open, onClose, onGenerate }: Props) {
   if (!open) return null;
 
   return (
-    <div className="modal-overlay open" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="modal-overlay open">
       <div className="modal-box" style={{ maxWidth: 380 }}>
         <div className="modal-header">
           <span className="modal-title">Gerar Relatório</span>
