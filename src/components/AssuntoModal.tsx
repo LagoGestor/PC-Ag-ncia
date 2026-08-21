@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { Assunto } from "@/types";
 
 interface FormState {
   tema: string;
@@ -13,20 +14,29 @@ const empty = (): FormState => ({ tema: "", descricao: "", encaminhamento: "", r
 
 interface Props {
   open: boolean;
+  editing: Assunto | null;
   onClose: () => void;
-  onSave: (data: FormState) => void;
+  onSave: (data: FormState, id?: string) => void;
 }
 
-export function AssuntoModal({ open, onClose, onSave }: Props) {
+export function AssuntoModal({ open, editing, onClose, onSave }: Props) {
   const [form, setForm] = useState<FormState>(empty());
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (open) {
+    if (!open) return;
+    if (editing) {
+      setForm({
+        tema: editing.tema,
+        descricao: editing.descricao,
+        encaminhamento: editing.encaminhamento,
+        responsavel: editing.responsavel,
+      });
+    } else {
       setForm(empty());
-      setError("");
     }
-  }, [open]);
+    setError("");
+  }, [open, editing]);
 
   if (!open) return null;
 
@@ -40,14 +50,14 @@ export function AssuntoModal({ open, onClose, onSave }: Props) {
       setError("Preencha o tema do assunto");
       return;
     }
-    onSave(form);
+    onSave(form, editing?.id);
   }
 
   return (
     <div className="modal-overlay open" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="modal-box" style={{ maxWidth: 480 }}>
         <div className="modal-header">
-          <span className="modal-title">Novo Assunto</span>
+          <span className="modal-title">{editing ? "Editar Assunto" : "Novo Assunto"}</span>
           <button className="modal-close" onClick={onClose}>
             <i className="fas fa-times" />
           </button>

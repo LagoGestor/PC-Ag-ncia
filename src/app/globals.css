@@ -567,9 +567,11 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 .reuniao-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; cursor: pointer; }
 .reuniao-card-data { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--fg); display: flex; align-items: center; gap: 8px; }
 .reuniao-card-meta { display: flex; align-items: center; gap: 14px; margin-top: 8px; font-size: 12px; color: var(--fg-muted); flex-wrap: wrap; }
-.reuniao-card-top > i { color: var(--fg-muted); margin-top: 4px; }
+.reuniao-card-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.reuniao-card-actions > i { color: var(--fg-muted); margin-left: 4px; }
 .reuniao-assuntos { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
 .assunto-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; }
+.assunto-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .assunto-tema { font-family: var(--font-head); font-weight: 700; font-size: 13px; color: var(--fg); }
 .assunto-field { font-size: 12px; color: var(--fg); margin-top: 8px; white-space: pre-wrap; }
 .assunto-field-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--fg-muted); font-weight: 700; display: block; margin-bottom: 3px; }

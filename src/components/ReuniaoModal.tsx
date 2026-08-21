@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { Modalidade } from "@/types";
+import { Modalidade, Reuniao } from "@/types";
 
 interface FormState {
   data: string;
@@ -17,20 +17,24 @@ const empty = (): FormState => ({
 
 interface Props {
   open: boolean;
+  editing: Reuniao | null;
   onClose: () => void;
-  onSave: (data: FormState) => void;
+  onSave: (data: FormState, id?: string) => void;
 }
 
-export function ReuniaoModal({ open, onClose, onSave }: Props) {
+export function ReuniaoModal({ open, editing, onClose, onSave }: Props) {
   const [form, setForm] = useState<FormState>(empty());
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (open) {
+    if (!open) return;
+    if (editing) {
+      setForm({ data: editing.data, participantes: editing.participantes, modalidade: editing.modalidade });
+    } else {
       setForm(empty());
-      setError("");
     }
-  }, [open]);
+    setError("");
+  }, [open, editing]);
 
   if (!open) return null;
 
@@ -44,14 +48,14 @@ export function ReuniaoModal({ open, onClose, onSave }: Props) {
       setError("Preencha a data da reunião");
       return;
     }
-    onSave(form);
+    onSave(form, editing?.id);
   }
 
   return (
     <div className="modal-overlay open" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="modal-box" style={{ maxWidth: 420 }}>
         <div className="modal-header">
-          <span className="modal-title">Nova Reunião</span>
+          <span className="modal-title">{editing ? "Editar Reunião" : "Nova Reunião"}</span>
           <button className="modal-close" onClick={onClose}>
             <i className="fas fa-times" />
           </button>

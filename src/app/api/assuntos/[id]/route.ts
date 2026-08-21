@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 type Params = { params: Promise<{ id: string }> };
 
-const FIELDS = ["data", "participantes", "modalidade"] as const;
+const FIELDS = ["tema", "descricao", "encaminhamento", "responsavel"] as const;
 
 export async function PUT(req: NextRequest, { params }: Params) {
   const { id } = await params;
@@ -14,17 +14,13 @@ export async function PUT(req: NextRequest, { params }: Params) {
     if (body[field] !== undefined) data[field] = body[field];
   }
 
-  const reuniao = await prisma.reuniao.update({
-    where: { id },
-    data,
-    include: { assuntos: { orderBy: { createdAt: "asc" } } },
-  });
+  const assunto = await prisma.assunto.update({ where: { id }, data });
 
-  return NextResponse.json(reuniao);
+  return NextResponse.json(assunto);
 }
 
 export async function DELETE(_req: NextRequest, { params }: Params) {
   const { id } = await params;
-  await prisma.reuniao.delete({ where: { id } });
+  await prisma.assunto.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

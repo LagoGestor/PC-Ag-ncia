@@ -3,11 +3,12 @@
 interface Props {
   open: boolean;
   text: string;
+  title?: string;
   onCancel: () => void;
   onConfirm: () => void;
 }
 
-export function ConfirmModal({ open, text, onCancel, onConfirm }: Props) {
+export function ConfirmModal({ open, text, title = "Apagar tarefa?", onCancel, onConfirm }: Props) {
   if (!open) return null;
   return (
     <div className="modal-overlay open" onClick={(e) => e.target === e.currentTarget && onCancel()}>
@@ -15,7 +16,7 @@ export function ConfirmModal({ open, text, onCancel, onConfirm }: Props) {
         <div className="confirm-icon">
           <i className="fas fa-trash" />
         </div>
-        <h3>Apagar tarefa?</h3>
+        <h3>{title}</h3>
         <p>{text}</p>
         <div className="form-footer" style={{ justifyContent: "center" }}>
           <button className="btn btn-ghost" onClick={onCancel}>

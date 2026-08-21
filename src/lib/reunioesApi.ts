@@ -14,6 +14,15 @@ export const reunioesApi = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     }).then((r) => json(r)),
+
+  update: (id: string, data: { data: string; participantes: string; modalidade: string }): Promise<Reuniao> =>
+    fetch(`/api/reunioes/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }).then((r) => json(r)),
+
+  remove: (id: string): Promise<void> => fetch(`/api/reunioes/${id}`, { method: "DELETE" }).then(() => undefined),
 };
 
 export const assuntosApi = {
@@ -29,4 +38,16 @@ export const assuntosApi = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     }).then((r) => json(r)),
+
+  update: (
+    id: string,
+    data: { tema: string; descricao: string; encaminhamento: string; responsavel: string }
+  ): Promise<Assunto> =>
+    fetch(`/api/assuntos/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }).then((r) => json(r)),
+
+  remove: (id: string): Promise<void> => fetch(`/api/assuntos/${id}`, { method: "DELETE" }).then(() => undefined),
 };
