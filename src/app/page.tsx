@@ -313,14 +313,14 @@ export default function Home() {
                 <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
                   AGENDA
                 </button>
+                <button className={`tab-btn${view === "reunioes" ? " active" : ""}`} onClick={() => setView("reunioes")}>
+                  REUNIÃO
+                </button>
                 <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
                   FIXO
                 </button>
                 <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")} title="Arquivo">
                   <i className="fas fa-box-archive" />
-                </button>
-                <button className={`tab-btn${view === "reunioes" ? " active" : ""}`} onClick={() => setView("reunioes")}>
-                  REUNIÕES
                 </button>
               </>
             ) : (
@@ -337,6 +337,9 @@ export default function Home() {
                 <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
                   <i className="fas fa-calendar-days" /> AGENDA
                 </button>
+                <button className={`tab-btn${view === "reunioes" ? " active" : ""}`} onClick={() => setView("reunioes")}>
+                  <i className="fas fa-people-group" /> REUNIÃO
+                </button>
                 <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
                   <i className="fas fa-repeat" /> FIXOS
                 </button>
@@ -348,9 +351,6 @@ export default function Home() {
                 </button>
                 <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")}>
                   <i className="fas fa-box-archive" /> ARQUIVO
-                </button>
-                <button className={`tab-btn${view === "reunioes" ? " active" : ""}`} onClick={() => setView("reunioes")}>
-                  <i className="fas fa-people-group" /> REUNIÕES
                 </button>
               </>
             )}
