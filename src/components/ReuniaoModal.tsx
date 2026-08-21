@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { Modalidade, Reuniao } from "@/types";
+import { Modalidade, PARTICIPANTES_OPCOES, Reuniao } from "@/types";
 
 interface FormState {
   data: string;
@@ -76,13 +76,12 @@ export function ReuniaoModal({ open, editing, onClose, onSave }: Props) {
 
           <div className="form-group">
             <label>Participantes</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Quem participou da reunião"
-              value={form.participantes}
-              onChange={(e) => set("participantes", e.target.value)}
-            />
+            <select className="form-control" value={form.participantes} onChange={(e) => set("participantes", e.target.value)}>
+              <option value="">Selecione...</option>
+              {PARTICIPANTES_OPCOES.map((p) => (
+                <option key={p}>{p}</option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">

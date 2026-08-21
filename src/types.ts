@@ -117,6 +117,8 @@ export type View =
 export const MODALIDADES = ["Presencial", "Online"] as const;
 export type Modalidade = (typeof MODALIDADES)[number];
 
+export const PARTICIPANTES_OPCOES = ["Pr. Esdras + Agência", "Agência", "Individual", "Específico"];
+
 export interface Assunto {
   id: string;
   reuniaoId: string;
