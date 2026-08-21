@@ -31,3 +31,25 @@ model Tarefa {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+model Reuniao {
+  id            String    @id @default(cuid())
+  data          String    @default("")
+  participantes String    @default("")
+  modalidade    String    @default("Presencial")
+  assuntos      Assunto[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Assunto {
+  id             String   @id @default(cuid())
+  reuniaoId      String
+  reuniao        Reuniao  @relation(fields: [reuniaoId], references: [id], onDelete: Cascade)
+  tema           String   @default("")
+  descricao      String   @default("")
+  encaminhamento String   @default("")
+  responsavel    String   @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}

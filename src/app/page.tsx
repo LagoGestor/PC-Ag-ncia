@@ -15,6 +15,7 @@ import { AgendaView } from "@/components/AgendaView";
 import { AtividadesFixasView } from "@/components/AtividadesFixasView";
 import { ResponsaveisView } from "@/components/ResponsaveisView";
 import { DirecionarView } from "@/components/DirecionarView";
+import { ReunioesView } from "@/components/ReunioesView";
 import { TaskModal } from "@/components/TaskModal";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { ReportModal } from "@/components/ReportModal";
@@ -287,11 +288,13 @@ export default function Home() {
         </div>
       </div>
 
-      <SummaryBar
-        tarefas={tarefas}
-        statusFilter={statusFilter}
-        onToggle={(s) => setStatusFilter((cur) => (cur === s ? null : s))}
-      />
+      {view !== "reunioes" && (
+        <SummaryBar
+          tarefas={tarefas}
+          statusFilter={statusFilter}
+          onToggle={(s) => setStatusFilter((cur) => (cur === s ? null : s))}
+        />
+      )}
 
       <div id="view-container">
         <div id="view-nav">
@@ -315,6 +318,9 @@ export default function Home() {
                 </button>
                 <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")} title="Arquivo">
                   <i className="fas fa-box-archive" />
+                </button>
+                <button className={`tab-btn${view === "reunioes" ? " active" : ""}`} onClick={() => setView("reunioes")}>
+                  REUNIÕES
                 </button>
               </>
             ) : (
@@ -342,6 +348,9 @@ export default function Home() {
                 </button>
                 <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")}>
                   <i className="fas fa-box-archive" /> ARQUIVO
+                </button>
+                <button className={`tab-btn${view === "reunioes" ? " active" : ""}`} onClick={() => setView("reunioes")}>
+                  <i className="fas fa-people-group" /> REUNIÕES
                 </button>
               </>
             )}
@@ -374,6 +383,8 @@ export default function Home() {
             <AtividadesFixasView list={filtered} onOpenDetail={openEdit} />
           ) : view === "direcionar" ? (
             <DirecionarView list={filtered} onEdit={openEdit} onToggleArchive={handleToggleArchive} onDelete={setDeleteTarget} />
+          ) : view === "reunioes" ? (
+            <ReunioesView />
           ) : (
             <ResponsaveisView />
           )}

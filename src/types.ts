@@ -103,7 +103,36 @@ export const ICONES_AREA: Record<string, string> = {
   "Missão Global": "/img/icone_missao.png",
 };
 
-export type View = "dashboard" | "tabela" | "kanban" | "arquivadas" | "agenda" | "semanal" | "responsaveis" | "direcionar";
+export type View =
+  | "dashboard"
+  | "tabela"
+  | "kanban"
+  | "arquivadas"
+  | "agenda"
+  | "semanal"
+  | "responsaveis"
+  | "direcionar"
+  | "reunioes";
+
+export const MODALIDADES = ["Presencial", "Online"] as const;
+export type Modalidade = (typeof MODALIDADES)[number];
+
+export interface Assunto {
+  id: string;
+  reuniaoId: string;
+  tema: string;
+  descricao: string;
+  encaminhamento: string;
+  responsavel: string;
+}
+
+export interface Reuniao {
+  id: string;
+  data: string;
+  participantes: string;
+  modalidade: Modalidade;
+  assuntos: Assunto[];
+}
 
 const DIACRITICS_RE = new RegExp("[\\u0300-\\u036f]", "g");
 
