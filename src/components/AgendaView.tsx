@@ -37,6 +37,18 @@ function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+function hexToRgb(hex: string): [number, number, number] {
+  const clean = hex.replace("#", "");
+  const n = parseInt(clean, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+const TIPO_FILTRO_LABEL: Record<TipoFiltro, string> = {
+  todas: "Todas as Entregas",
+  cronograma: "Cronograma de Postagens",
+  fora: "Tarefas fora das Redes",
+};
+
 interface Props {
   list: Tarefa[];
   onOpenDetail: (t: Tarefa) => void;
@@ -86,6 +98,125 @@ export function AgendaView({ list, onOpenDetail }: Props) {
     setAnchor(new Date());
   }
 
+  async function handleGerarRelatorio() {
+    const { default: jsPDF } = await import("jspdf");
+    const pageW = 280;
+    const pageH = 157.5; // 16:9
+    const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: [pageW, pageH] });
+
+    const marginX = 8;
+    const gridTop = 20;
+    const gridBottom = pageH - 6;
+    const gridH = gridBottom - gridTop;
+    const gridW = pageW - marginX * 2;
+    const cols = 7;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(20, 20, 20);
+    doc.text("Agenda", marginX, 10);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(90, 90, 90);
+    doc.text(`${label}  ·  Filtro: ${TIPO_FILTRO_LABEL[tipoFiltro]}`, marginX, 16);
+
+    if (mode === "mes") {
+      const rows = 6;
+      const cellW = gridW / cols;
+      const cellH = gridH / rows;
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7.5);
+      doc.setTextColor(90, 90, 90);
+      WEEKDAYS.forEach((w, i) => {
+        doc.text(w, marginX + i * cellW + cellW / 2, gridTop - 2, { align: "center" });
+      });
+
+      getMonthGrid(anchor).forEach((d, i) => {
+        const col = i % 7;
+        const row = Math.floor(i / 7);
+        const x = marginX + col * cellW;
+        const y = gridTop + row * cellH;
+        const outside = d.getMonth() !== anchor.getMonth();
+
+        if (outside) {
+          doc.setFillColor(246, 246, 246);
+          doc.rect(x, y, cellW, cellH, "F");
+        }
+        doc.setDrawColor(215, 215, 215);
+        doc.rect(x, y, cellW, cellH);
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7);
+        const dayShade = outside ? 175 : 35;
+        doc.setTextColor(dayShade, dayShade, dayShade);
+        doc.text(String(d.getDate()), x + 1.5, y + 4.5);
+
+        const dayTasks = byDay.get(toKey(d)) ?? [];
+        const maxLines = Math.max(Math.floor((cellH - 7) / 3.3), 0);
+        let ty = y + 8.5;
+        doc.setFont("helvetica", "normal");
+        dayTasks.slice(0, maxLines).forEach((t) => {
+          const [r, g, b] = hexToRgb(STATUS_COLORS[t.status] || "#6b7280");
+          doc.setFillColor(r, g, b);
+          doc.rect(x + 1.3, ty - 1.9, 1.4, 1.4, "F");
+          doc.setFontSize(5.8);
+          doc.setTextColor(60, 60, 60);
+          const txt = `${t.horarioPublicacao ? t.horarioPublicacao + " " : ""}${t.tarefa}`;
+          doc.text(doc.splitTextToSize(txt, cellW - 4)[0] || "", x + 3.3, ty);
+          ty += 3.3;
+        });
+        if (dayTasks.length > maxLines) {
+          doc.setFontSize(5.5);
+          doc.setTextColor(150, 150, 150);
+          doc.text(`+${dayTasks.length - maxLines} mais`, x + 3.3, ty);
+        }
+      });
+    } else {
+      const cellW = gridW / cols;
+
+      getWeekDays(anchor).forEach((d, i) => {
+        const x = marginX + i * cellW;
+
+        doc.setDrawColor(215, 215, 215);
+        doc.rect(x, gridTop, cellW, gridH);
+        doc.setFillColor(244, 245, 247);
+        doc.rect(x, gridTop, cellW, 9, "F");
+        doc.setDrawColor(215, 215, 215);
+        doc.rect(x, gridTop, cellW, 9);
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7.5);
+        doc.setTextColor(40, 40, 40);
+        doc.text(`${WEEKDAYS[d.getDay()]}  ${d.getDate()}`, x + cellW / 2, gridTop + 6, { align: "center" });
+
+        const dayTasks = byDay.get(toKey(d)) ?? [];
+        let ty = gridTop + 13;
+        dayTasks.forEach((t) => {
+          if (ty > gridBottom - 3) return;
+          const [r, g, b] = hexToRgb(STATUS_COLORS[t.status] || "#6b7280");
+          doc.setFillColor(r, g, b);
+          doc.rect(x + 1.6, ty - 2.1, 1.6, 1.6, "F");
+
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(6.3);
+          doc.setTextColor(50, 50, 50);
+          const linha1 = `${t.horarioPublicacao ? t.horarioPublicacao + " " : ""}${t.tarefa}`;
+          doc.text(doc.splitTextToSize(linha1, cellW - 5)[0] || "", x + 4, ty);
+          ty += 3;
+
+          doc.setFontSize(5.4);
+          doc.setTextColor(130, 130, 130);
+          const linha2 = `${t.responsavel} · ${t.status}`;
+          doc.text(doc.splitTextToSize(linha2, cellW - 5)[0] || "", x + 4, ty);
+          ty += 4.2;
+        });
+      });
+    }
+
+    doc.save(`agenda_${mode}_${toKey(anchor)}.pdf`);
+  }
+
   const label =
     mode === "mes"
       ? capitalize(anchor.toLocaleDateString("pt-BR", { month: "long", year: "numeric" }))
@@ -120,6 +251,9 @@ export function AgendaView({ list, onOpenDetail }: Props) {
           </button>
           <button className="btn btn-ghost btn-sm" onClick={goToday}>
             Hoje
+          </button>
+          <button className="btn btn-ghost btn-sm" onClick={handleGerarRelatorio}>
+            <i className="fas fa-file-pdf" /> Gerar Relatório
           </button>
         </div>
       </div>
