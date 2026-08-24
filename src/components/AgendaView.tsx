@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa, TIPOS_CRONOGRAMA_POSTAGENS, TIPOS_FORA_DAS_REDES } from "@/types";
+import { FOTOS_RESPONSAVEL, STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa, TIPOS_CRONOGRAMA_POSTAGENS, TIPOS_FORA_DAS_REDES } from "@/types";
 import { Avatar } from "./Avatar";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
@@ -48,6 +48,41 @@ const TIPO_FILTRO_LABEL: Record<TipoFiltro, string> = {
   cronograma: "Cronograma de Postagens",
   fora: "Tarefas fora das Redes",
 };
+
+function initials(name: string) {
+  const parts = name.trim().split(/\s+/);
+  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
+}
+
+function loadImage(url: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+// Crops the source photo into a circular, transparent-background PNG so it drops straight into the PDF.
+async function toCircularAvatarDataURL(url: string, size = 160): Promise<string> {
+  const img = await loadImage(url);
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d")!;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.clip();
+  const s = Math.min(img.naturalWidth, img.naturalHeight);
+  const sx = (img.naturalWidth - s) / 2;
+  const sy = (img.naturalHeight - s) / 2;
+  ctx.drawImage(img, sx, sy, s, s, 0, 0, size, size);
+  ctx.restore();
+  return canvas.toDataURL("image/png");
+}
 
 interface Props {
   list: Tarefa[];
@@ -98,7 +133,128 @@ export function AgendaView({ list, onOpenDetail }: Props) {
     setAnchor(new Date());
   }
 
+  async function handleGerarRelatorioSemanaVertical() {
+    const { default: jsPDF } = await import("jspdf");
+    const pageW = 108;
+    const pageH = 228; // 9:19
+    const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: [pageW, pageH] });
+
+    const marginX = 7;
+    const contentBottom = pageH - 8;
+    const avatarSize = 14;
+    const photoCache = new Map<string, string | null>();
+
+    async function getPhoto(name: string): Promise<string | null> {
+      if (photoCache.has(name)) return photoCache.get(name) ?? null;
+      const url = FOTOS_RESPONSAVEL[name];
+      if (!url) {
+        photoCache.set(name, null);
+        return null;
+      }
+      try {
+        const dataUrl = await toCircularAvatarDataURL(url);
+        photoCache.set(name, dataUrl);
+        return dataUrl;
+      } catch {
+        photoCache.set(name, null);
+        return null;
+      }
+    }
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(20, 20, 20);
+    doc.text("Agenda da Semana", marginX, 15);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.setTextColor(90, 90, 90);
+    doc.text(label, marginX, 23);
+    doc.text(`Filtro: ${TIPO_FILTRO_LABEL[tipoFiltro]}`, marginX, 30);
+
+    let y = 38;
+
+    for (const d of getWeekDays(anchor)) {
+      const dayTasks = byDay.get(toKey(d)) ?? [];
+      const headerH = 13;
+
+      if (y + headerH > contentBottom) {
+        doc.addPage([pageW, pageH], "portrait");
+        y = 10;
+      }
+
+      doc.setDrawColor(225, 225, 225);
+      doc.setFillColor(244, 245, 247);
+      doc.rect(marginX, y, pageW - marginX * 2, headerH, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(15);
+      doc.setTextColor(30, 30, 30);
+      doc.text(`${WEEKDAYS[d.getDay()]}  ${d.getDate()}`, marginX + 3, y + 9);
+      y += headerH + 5;
+
+      if (dayTasks.length === 0) {
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.setTextColor(170, 170, 170);
+        doc.text("Sem tarefas", marginX + 3, y + 3);
+        y += 11;
+        continue;
+      }
+
+      for (const t of dayTasks) {
+        const rowH = avatarSize + 5;
+        if (y + rowH > contentBottom) {
+          doc.addPage([pageW, pageH], "portrait");
+          y = 10;
+        }
+
+        const photo = await getPhoto(t.responsavel);
+        const cx = marginX + avatarSize / 2;
+        const cy = y + avatarSize / 2;
+        if (photo) {
+          doc.addImage(photo, "PNG", marginX, y, avatarSize, avatarSize);
+        } else {
+          const [r, g, b] = hexToRgb("#1c2a1f");
+          doc.setFillColor(r, g, b);
+          doc.circle(cx, cy, avatarSize / 2, "F");
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(11);
+          doc.setTextColor(74, 222, 128);
+          doc.text(initials(t.responsavel), cx, cy + 1.5, { align: "center" });
+        }
+
+        const textX = marginX + avatarSize + 4;
+        const textW = pageW - marginX * 2 - avatarSize - 4;
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12.5);
+        doc.setTextColor(30, 30, 30);
+        const tituloTxt = `${t.horarioPublicacao ? t.horarioPublicacao + "  " : ""}${t.tarefa}`;
+        const tituloLinhas: string[] = doc.splitTextToSize(tituloTxt, textW);
+        doc.text(tituloLinhas.slice(0, 2), textX, y + 5.5);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(120, 120, 120);
+        doc.text(`${t.responsavel} · ${t.status}`, textX, y + avatarSize - 1);
+
+        const [sr, sg, sb] = hexToRgb(STATUS_COLORS[t.status] || "#6b7280");
+        doc.setFillColor(sr, sg, sb);
+        doc.circle(marginX + avatarSize - 1.6, y + avatarSize - 1.6, 1.6, "F");
+
+        y += rowH + 3;
+      }
+
+      y += 5;
+    }
+
+    doc.save(`agenda_semana_vertical_${toKey(anchor)}.pdf`);
+  }
+
   async function handleGerarRelatorio() {
+    if (mode === "semana" && isMobile) {
+      await handleGerarRelatorioSemanaVertical();
+      return;
+    }
     const { default: jsPDF } = await import("jspdf");
     const pageW = 280;
     const pageH = 157.5; // 16:9
