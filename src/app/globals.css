@@ -498,8 +498,8 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 .agenda-toggle button.active { background: var(--accent-dim); color: var(--accent); }
 .agenda-tipo-filter { max-width: 100%; overflow-x: auto; margin-bottom: 14px; }
 .agenda-tipo-filter button { white-space: nowrap; flex-shrink: 0; }
-.agenda-nav { display: flex; align-items: center; gap: 10px; }
-.agenda-nav button {
+.agenda-nav { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.agenda-nav button:not(.btn) {
   width: 28px; height: 28px;
   border-radius: 6px;
   border: 1px solid var(--border);
@@ -509,8 +509,9 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   display: flex; align-items: center; justify-content: center;
   transition: var(--transition);
   font-size: 11px;
+  flex-shrink: 0;
 }
-.agenda-nav button:hover { border-color: var(--border-accent); color: var(--accent); }
+.agenda-nav button:not(.btn):hover { border-color: var(--border-accent); color: var(--accent); }
 .agenda-nav .agenda-label { font-family: var(--font-head); font-weight: 700; font-size: 13px; min-width: 160px; text-align: center; }
 
 .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
