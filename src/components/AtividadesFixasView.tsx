@@ -5,10 +5,12 @@ import { Avatar } from "./Avatar";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 const TIPO_COLORS: Record<string, string> = {
-  Post: "#4ade80",
+  Post: "#ef4444",
   Reels: "#38bdf8",
   Story: "#c084fc",
   "Carrossel Design": "#8b5cf6",
+  "Carrossel Simples": "#4ade80",
+  Card: "#f97316",
   VOD: "#f472b6",
   Wathsapp: "#22c55e",
   "Gráfica": "#fb923c",
