@@ -8,6 +8,7 @@ const TIPO_COLORS: Record<string, string> = {
   Post: "#4ade80",
   Reels: "#38bdf8",
   Story: "#c084fc",
+  "Carrossel Design": "#8b5cf6",
   VOD: "#f472b6",
   Wathsapp: "#22c55e",
   "Gráfica": "#fb923c",
