@@ -496,6 +496,8 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   font-family: var(--font-body);
 }
 .agenda-toggle button.active { background: var(--accent-dim); color: var(--accent); }
+.agenda-tipo-filter { max-width: 100%; overflow-x: auto; margin-bottom: 14px; }
+.agenda-tipo-filter button { white-space: nowrap; flex-shrink: 0; }
 .agenda-nav { display: flex; align-items: center; gap: 10px; }
 .agenda-nav button {
   width: 28px; height: 28px;

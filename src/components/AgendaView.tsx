@@ -1,11 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa } from "@/types";
+import { STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa, TIPOS_CRONOGRAMA_POSTAGENS, TIPOS_FORA_DAS_REDES } from "@/types";
 import { Avatar } from "./Avatar";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 type Mode = "mes" | "semana";
+type TipoFiltro = "todas" | "cronograma" | "fora";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
@@ -45,10 +46,17 @@ export function AgendaView({ list, onOpenDetail }: Props) {
   const [mode, setMode] = useState<Mode>("mes");
   const [anchor, setAnchor] = useState(() => new Date());
   const [expandedDay, setExpandedDay] = useState<string | null>(null);
+  const [tipoFiltro, setTipoFiltro] = useState<TipoFiltro>("todas");
+
+  const listFiltrada = useMemo(() => {
+    if (tipoFiltro === "todas") return list;
+    const conjunto = tipoFiltro === "cronograma" ? TIPOS_CRONOGRAMA_POSTAGENS : TIPOS_FORA_DAS_REDES;
+    return list.filter((t) => conjunto.includes(t.tipo));
+  }, [list, tipoFiltro]);
 
   const byDay = useMemo(() => {
     const map = new Map<string, Tarefa[]>();
-    for (const t of list) {
+    for (const t of listFiltrada) {
       if (!t.entrega) continue;
       const arr = map.get(t.entrega) ?? [];
       arr.push(t);
@@ -63,7 +71,7 @@ export function AgendaView({ list, onOpenDetail }: Props) {
       });
     }
     return map;
-  }, [list]);
+  }, [listFiltrada]);
 
   const today = new Date();
 
@@ -113,6 +121,18 @@ export function AgendaView({ list, onOpenDetail }: Props) {
             Hoje
           </button>
         </div>
+      </div>
+
+      <div className="agenda-toggle agenda-tipo-filter">
+        <button className={tipoFiltro === "todas" ? "active" : ""} onClick={() => setTipoFiltro("todas")}>
+          Todas as Entregas
+        </button>
+        <button className={tipoFiltro === "cronograma" ? "active" : ""} onClick={() => setTipoFiltro("cronograma")}>
+          Cronograma de Postagens
+        </button>
+        <button className={tipoFiltro === "fora" ? "active" : ""} onClick={() => setTipoFiltro("fora")}>
+          Tarefas fora das Redes
+        </button>
       </div>
 
       {mode === "mes" ? (

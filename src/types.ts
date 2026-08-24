@@ -30,13 +30,32 @@ export const TIPOS = [
   "Gráfica",
   "Impulsionamento",
   "LED",
-  "Outro",
   "PDF",
   "Post",
   "PPT",
   "Reels",
   "Site",
   "Story",
+  "Thumbnail",
+  "VOD",
+  "Wathsapp",
+  "Outro",
+];
+
+// Tipo groupings used by the Agenda's "Cronograma de Postagens" / "Tarefas fora das Redes" filter.
+export const TIPOS_CRONOGRAMA_POSTAGENS = ["Card", "Carrossel Design", "Carrossel Simples", "Reels", "Story", "Post"];
+
+export const TIPOS_FORA_DAS_REDES = [
+  "Administrativo",
+  "Documentação",
+  "Fotografia",
+  "Gráfica",
+  "Impulsionamento",
+  "LED",
+  "Outro",
+  "PDF",
+  "PPT",
+  "Site",
   "Thumbnail",
   "VOD",
   "Wathsapp",
