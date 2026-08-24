@@ -411,6 +411,9 @@ export function AgendaView({ list, onOpenDetail }: Props) {
           <button className="btn btn-ghost btn-sm" onClick={handleGerarRelatorio}>
             <i className="fas fa-file-pdf" /> Gerar Relatório
           </button>
+          <button className="btn btn-ghost btn-sm" onClick={handleGerarRelatorioSemanaVertical}>
+            <i className="fas fa-mobile-screen-button" /> Gerar Relatório Mobile
+          </button>
         </div>
       </div>
 
