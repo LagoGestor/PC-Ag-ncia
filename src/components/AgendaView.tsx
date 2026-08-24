@@ -28,7 +28,8 @@ function getMonthGrid(anchor: Date): Date[] {
 
 function getWeekDays(anchor: Date): Date[] {
   const day = anchor.getDay();
-  const start = new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate() - day);
+  const diffToMonday = (day + 6) % 7;
+  const start = new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate() - diffToMonday);
   return Array.from({ length: 7 }, (_, i) => new Date(start.getFullYear(), start.getMonth(), start.getDate() + i));
 }
 
