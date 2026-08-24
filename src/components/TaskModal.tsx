@@ -220,7 +220,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate }: Props)
               />
             </div>
             <div className="form-group">
-              <label>Horário de Publicação</label>
+              <label>Horário de Entrega/Publicação</label>
               <input
                 type="time"
                 className="form-control"

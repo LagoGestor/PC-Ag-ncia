@@ -21,20 +21,23 @@ export interface Tarefa {
 export const AREAS = ["Comunicação", "Hero", "Lagoinha", "Missão Global"];
 
 export const TIPOS = [
+  "Administrativo",
+  "Carrossel Design",
+  "Documentação",
+  "Fotografia",
+  "Gráfica",
+  "Impulsionamento",
+  "LED",
+  "Outro",
+  "PDF",
   "Post",
+  "PPT",
   "Reels",
+  "Site",
   "Story",
+  "Thumbnail",
   "VOD",
   "Wathsapp",
-  "Gráfica",
-  "LED",
-  "Site",
-  "PPT",
-  "PDF",
-  "Thumbnail",
-  "Fotografia",
-  "Documentação",
-  "Outro",
 ];
 
 export const RESPONSAVEL_ARMAZENAR = "Armazenar";
