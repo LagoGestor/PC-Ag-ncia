@@ -22,6 +22,7 @@ export const AREAS = ["Comunicação", "Hero", "Lagoinha", "Missão Global"];
 
 export const TIPOS = [
   "Administrativo",
+  "Card",
   "Carrossel Design",
   "Carrossel Simples",
   "Documentação",
