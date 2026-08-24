@@ -54,6 +54,14 @@ export function AgendaView({ list, onOpenDetail }: Props) {
       arr.push(t);
       map.set(t.entrega, arr);
     }
+    for (const arr of map.values()) {
+      arr.sort((a, b) => {
+        if (!a.horarioPublicacao && !b.horarioPublicacao) return 0;
+        if (!a.horarioPublicacao) return 1;
+        if (!b.horarioPublicacao) return -1;
+        return a.horarioPublicacao.localeCompare(b.horarioPublicacao);
+      });
+    }
     return map;
   }, [list]);
 
@@ -142,7 +150,10 @@ export function AgendaView({ list, onOpenDetail }: Props) {
                           }}
                         >
                           <Avatar name={t.responsavel} size={18} />
-                          <span>{t.tarefa}</span>
+                          <span>
+                            {t.horarioPublicacao && <b>{t.horarioPublicacao} </b>}
+                            {t.tarefa}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -171,6 +182,7 @@ export function AgendaView({ list, onOpenDetail }: Props) {
                     onClick={() => onOpenDetail(t)}
                     title={t.tarefa}
                   >
+                    {t.horarioPublicacao && <b>{t.horarioPublicacao} </b>}
                     {t.tarefa}
                   </div>
                 ))}
@@ -196,7 +208,10 @@ export function AgendaView({ list, onOpenDetail }: Props) {
                 <div className="week-day-body">
                   {tasks.map((t) => (
                     <div key={t.id} className="week-task" onClick={() => onOpenDetail(t)}>
-                      <div className="week-task-title">{t.tarefa}</div>
+                      <div className="week-task-title">
+                        {t.horarioPublicacao && <b>{t.horarioPublicacao} </b>}
+                        {t.tarefa}
+                      </div>
                       <div className="week-task-meta">
                         <span className="week-task-resp resp-inline">
                           <Avatar name={t.responsavel} size={14} /> {t.responsavel}
