@@ -343,11 +343,11 @@ export default function Home() {
                 <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
                   <i className="fas fa-repeat" /> FIXOS
                 </button>
-                <button className={`tab-btn${view === "kanban" ? " active" : ""}`} onClick={() => setView("kanban")}>
-                  <i className="fas fa-columns" /> KANBAN
-                </button>
                 <button className={`tab-btn${view === "direcionar" ? " active" : ""}`} onClick={() => setView("direcionar")}>
                   <i className="fas fa-arrow-right-arrow-left" /> DIRECIONAR
+                </button>
+                <button className={`tab-btn${view === "kanban" ? " active" : ""}`} onClick={() => setView("kanban")}>
+                  <i className="fas fa-columns" /> KANBAN
                 </button>
                 <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")}>
                   <i className="fas fa-box-archive" /> ARQUIVO
