@@ -10,7 +10,6 @@ import { SummaryBar } from "@/components/SummaryBar";
 import { DashboardView } from "@/components/DashboardView";
 import { TabelaView } from "@/components/TabelaView";
 import { KanbanView } from "@/components/KanbanView";
-import { ArquivadasView } from "@/components/ArquivadasView";
 import { AgendaView } from "@/components/AgendaView";
 import { AtividadesFixasView } from "@/components/AtividadesFixasView";
 import { ResponsaveisView } from "@/components/ResponsaveisView";
@@ -366,7 +365,7 @@ export default function Home() {
           ) : view === "dashboard" ? (
             <DashboardView list={filtered} onEdit={openEdit} onToggleArchive={handleToggleArchive} onDelete={setDeleteTarget} />
           ) : view === "tabela" ? (
-            <TabelaView list={filtered} onEdit={openEdit} onToggleArchive={handleToggleArchive} onDelete={setDeleteTarget} />
+            <TabelaView key="tabela" list={filtered} onEdit={openEdit} onToggleArchive={handleToggleArchive} onDelete={setDeleteTarget} />
           ) : view === "kanban" ? (
             <KanbanView
               list={filtered}
@@ -376,7 +375,7 @@ export default function Home() {
               onDrop={handleKanbanDrop}
             />
           ) : view === "arquivadas" ? (
-            <ArquivadasView list={filtered} onEdit={openEdit} onToggleArchive={handleToggleArchive} onDelete={setDeleteTarget} />
+            <TabelaView key="arquivadas" list={filtered} onEdit={openEdit} onToggleArchive={handleToggleArchive} onDelete={setDeleteTarget} />
           ) : view === "agenda" ? (
             <AgendaView list={filtered} onOpenDetail={openEdit} />
           ) : view === "semanal" ? (

@@ -308,8 +308,12 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
                     <button className="tbl-action-icon" onClick={() => onEdit(t)} title="Editar">
                       <i className="fas fa-pen" />
                     </button>
-                    <button className="tbl-action-icon" onClick={() => onToggleArchive(t)} title="Arquivar">
-                      <i className="fas fa-box-archive" />
+                    <button
+                      className="tbl-action-icon"
+                      onClick={() => onToggleArchive(t)}
+                      title={t.arquivada ? "Desarquivar" : "Arquivar"}
+                    >
+                      <i className={`fas ${t.arquivada ? "fa-box-open" : "fa-box-archive"}`} />
                     </button>
                     <button className="tbl-action-icon danger" onClick={() => onDelete(t)} title="Apagar">
                       <i className="fas fa-trash" />
