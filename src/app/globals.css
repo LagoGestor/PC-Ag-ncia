@@ -76,12 +76,13 @@ a { color: inherit; text-decoration: none; }
 
 .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .brand-icon {
-  width: 32px; height: 32px;
-  background: var(--accent);
-  border-radius: 8px;
+  width: 34px; height: 34px;
   display: flex; align-items: center; justify-content: center;
-  color: #000;
-  font-size: 14px;
+  flex-shrink: 0;
+}
+.brand-icon img {
+  width: 100%; height: 100%;
+  object-fit: contain;
 }
 .brand-name { font-family: var(--font-head); font-size: 1.1em; font-weight: 800; letter-spacing: -0.5px; color: var(--fg); }
 .brand-name span { color: var(--accent); }

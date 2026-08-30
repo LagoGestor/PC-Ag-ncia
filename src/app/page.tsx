@@ -238,7 +238,8 @@ export default function Home() {
       <div id="topbar">
         <div className="brand">
           <div className="brand-icon">
-            <i className="fas fa-check-double" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/img/icone_logo_agencia.png" alt="Agência LBC" />
           </div>
           <span className="brand-name">Agência LBC</span>
         </div>
