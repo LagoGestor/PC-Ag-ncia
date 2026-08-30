@@ -18,7 +18,15 @@ export interface Tarefa {
   diaSemana: string;
 }
 
-export const AREAS = ["Comunicação", "Lagoinha", "Missão Global", "Ministérios", "Lagoinha Global", "Regional DF", "Estúdio Podcast"];
+export const AREAS = [
+  "Comunicação",
+  "Lagoinha Brasília",
+  "Ministérios LBC",
+  "Estúdio Podcast",
+  "Regional DF",
+  "Missão Global",
+  "Lagoinha Global",
+];
 
 export const TIPOS = [
   "Administrativo",
@@ -130,7 +138,7 @@ export const WHATSAPP_FOTO_AGENCIA = "/img/whatsapp_perfil_agencia.jpg";
 export const ICONES_AREA: Record<string, string> = {
   "Comunicação": "/img/icone_follow.png",
   "Hero": "/img/icone_hero.png",
-  "Lagoinha": "/img/icone_lagoinha.png",
+  "Lagoinha Brasília": "/img/icone_lagoinha.png",
   "Missão Global": "/img/icone_missao.png",
 };
 
