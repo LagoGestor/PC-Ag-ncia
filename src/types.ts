@@ -74,6 +74,7 @@ export const RESPONSAVEIS = [
   "Anna Beatriz",
   "Júlia Viegas",
   "Dayane Prado",
+  "Caio Emanuel",
   "Voluntário",
 ];
 
@@ -109,6 +110,7 @@ export const FOTOS_RESPONSAVEL: Record<string, string> = {
   "Anna Beatriz": "/img/perfil_annabea.jpg",
   "Dayane Prado": "/img/perfil_dayane.jpg",
   "Júlia Viegas": "/img/perfil_julia.jpg",
+  "Caio Emanuel": "/img/caio_emanuel.jpg",
   "Voluntário": "/img/perfil_voluntario.jpg",
 };
 
@@ -119,6 +121,7 @@ export const WHATSAPP_FOTOS_RESPONSAVEL: Record<string, string> = {
   "Anna Beatriz": "/img/whatsapp_perfil_annabea.jpg",
   "Dayane Prado": "/img/whatsapp_perfil_dayane.jpg",
   "Júlia Viegas": "/img/whatsapp_perfil_julia.jpg",
+  "Caio Emanuel": "/img/whatsapp_perfil_caio.jpg",
   "Voluntário": "/img/whatsapp_perfil_voluntario.jpg",
 };
 
