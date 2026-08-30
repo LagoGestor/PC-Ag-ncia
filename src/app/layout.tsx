@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const title = "Gestor de Tarefas";
+const description = "Gestão de tarefas da agência";
+const shareImage = "/img/whatsapp_perfil_agencialbc.jpg";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://agencialbc.vercel.app"),
-  title: "Gestor de Tarefas",
-  description: "Gestão de tarefas da agência",
+  title,
+  description,
+  openGraph: { title, description, images: [{ url: shareImage }] },
+  twitter: { card: "summary", title, description, images: [shareImage] },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
