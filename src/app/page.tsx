@@ -240,9 +240,7 @@ export default function Home() {
           <div className="brand-icon">
             <i className="fas fa-check-double" />
           </div>
-          <span className="brand-name">
-            Gestor<span>.</span>
-          </span>
+          <span className="brand-name">Agência LBC</span>
         </div>
 
         <div className="search-wrap">
