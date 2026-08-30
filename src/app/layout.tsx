@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   description,
   openGraph: { title, description, images: [{ url: shareImage }] },
   twitter: { card: "summary", title, description, images: [shareImage] },
-  icons: { icon: "/img/icone_logo_agencia.png" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
