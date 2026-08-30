@@ -814,7 +814,14 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
     padding: 10px 14px;
     gap: 8px 12px;
   }
-  .search-wrap { order: 3; flex-basis: 100%; max-width: 100%; }
+  /* Row 1: centered logo/title with the "..." menu pinned to the right.
+     Row 2: full-width "+ Nova Tarefa". Row 3: search bar. */
+  .brand { order: 1; flex: 1 1 auto; justify-content: center; }
+  .top-actions { display: contents; }
+  .top-actions .sep { display: none; }
+  .top-actions .dropdown { order: 2; }
+  .top-actions .btn-accent { order: 3; flex: 1 1 100%; justify-content: center; }
+  .search-wrap { order: 4; flex-basis: 100%; max-width: 100%; }
 
   #summary-bar { padding: 10px 14px; gap: 8px; }
   .sum-pill { padding: 6px 8px; gap: 5px; }
