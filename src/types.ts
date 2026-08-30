@@ -18,7 +18,7 @@ export interface Tarefa {
   diaSemana: string;
 }
 
-export const AREAS = ["Comunicação", "Hero", "Lagoinha", "Missão Global"];
+export const AREAS = ["Comunicação", "Lagoinha", "Missão Global", "Ministérios", "Lagoinha Global", "Regional DF", "Estúdio Podcast"];
 
 export const TIPOS = [
   "Administrativo",
@@ -28,7 +28,9 @@ export const TIPOS = [
   "Documentação",
   "Fotografia",
   "Gráfica",
+  "Gravação",
   "Impulsionamento",
+  "Lagoinha News",
   "LED",
   "PDF",
   "Post",
@@ -50,7 +52,9 @@ export const TIPOS_FORA_DAS_REDES = [
   "Documentação",
   "Fotografia",
   "Gráfica",
+  "Gravação",
   "Impulsionamento",
+  "Lagoinha News",
   "LED",
   "Outro",
   "PDF",
