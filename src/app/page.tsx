@@ -384,7 +384,7 @@ export default function Home() {
           ) : view === "reunioes" ? (
             <ReunioesView />
           ) : (
-            <ResponsaveisView />
+            <ResponsaveisView list={filtered} />
           )}
         </div>
       </div>

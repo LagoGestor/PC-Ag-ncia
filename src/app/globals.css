@@ -800,6 +800,22 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 .resp-card .avatar-badge { box-shadow: 0 0 0 4px var(--accent-dim); }
 .resp-card-name { font-family: var(--font-head); font-weight: 700; font-size: 0.95em; color: var(--fg); text-align: center; }
 
+.detalhamento-list { display: flex; flex-direction: column; gap: 14px; }
+.detalhamento-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.detalhamento-card-header {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+  font-family: var(--font-head); font-weight: 700; font-size: 0.95em; color: var(--fg);
+  margin-bottom: 12px;
+  width: fit-content;
+}
+.detalhamento-card-header:hover { color: var(--accent); }
+.detalhamento-tasks { display: flex; flex-direction: column; gap: 8px; }
+.detalhamento-task-row { display: flex; align-items: center; gap: 10px; }
+.detalhamento-task-row .status-dot { flex-shrink: 0; width: 10px; height: 10px; }
+.detalhamento-task-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; color: var(--fg); }
+.detalhamento-task-date { flex-shrink: 0; font-size: 11.5px; color: var(--fg-muted); font-family: var(--font-head); font-weight: 600; }
+
 /* ── MOBILE: header solo (individual page) ── */
 .mobile-header-solo { padding: 22px 18px; }
 .mobile-header-solo .mobile-header-title { gap: 14px; font-size: 1.3em; }
