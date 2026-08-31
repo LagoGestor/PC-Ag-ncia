@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { STATUS_BADGE_CLASS, Tarefa } from "@/types";
+import { useEffect, useMemo, useState } from "react";
+import { RESPONSAVEL_ARMAZENAR, STATUS_BADGE_CLASS, Tarefa } from "@/types";
+import { api } from "@/lib/api";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
@@ -16,16 +17,20 @@ function getWeekDays(anchor: Date): Date[] {
   return Array.from({ length: 7 }, (_, i) => new Date(start.getFullYear(), start.getMonth(), start.getDate() + i));
 }
 
-interface Props {
-  tarefas: Tarefa[];
-}
-
-export function CronogramaSemanalView({ tarefas }: Props) {
+export function CronogramaSemanalView() {
   const [anchor, setAnchor] = useState(() => new Date());
+  const [tarefas, setTarefas] = useState<Tarefa[] | null>(null);
+
+  useEffect(() => {
+    api
+      .list()
+      .then((all) => setTarefas(all.filter((t) => !t.arquivada && !t.fixa && t.responsavel !== RESPONSAVEL_ARMAZENAR)))
+      .catch(() => setTarefas([]));
+  }, []);
 
   const byDay = useMemo(() => {
     const map = new Map<string, Tarefa[]>();
-    for (const t of tarefas) {
+    for (const t of tarefas ?? []) {
       if (!t.entrega) continue;
       const arr = map.get(t.entrega) ?? [];
       arr.push(t);
@@ -73,33 +78,37 @@ export function CronogramaSemanalView({ tarefas }: Props) {
         </button>
       </div>
 
-      {days.map((d) => {
-        const key = toKey(d);
-        const tasks = byDay.get(key) ?? [];
-        return (
-          <div key={key} className="cronograma-day">
-            <div className="cronograma-day-header">
-              {WEEKDAYS[d.getDay()]} {d.getDate()}
+      {tarefas === null ? (
+        <p className="mobile-empty">Carregando...</p>
+      ) : (
+        days.map((d) => {
+          const key = toKey(d);
+          const tasks = byDay.get(key) ?? [];
+          return (
+            <div key={key} className="cronograma-day">
+              <div className="cronograma-day-header">
+                {WEEKDAYS[d.getDay()]} {d.getDate()}
+              </div>
+              {tasks.length === 0 ? (
+                <div className="fixas-empty">Sem atividades</div>
+              ) : (
+                tasks.map((t) => (
+                  <div key={t.id} className="cronograma-task-row">
+                    <div className="cronograma-task-top">
+                      <span className="cronograma-task-tipo">{t.tipo || "—"}</span>
+                      <span className={`card-badge ${STATUS_BADGE_CLASS[t.status] || ""}`}>{t.status}</span>
+                    </div>
+                    <div className="cronograma-task-bottom">
+                      <span className="cronograma-task-time">{t.horarioPublicacao || "—"}</span>
+                      <span className="cronograma-task-title">{t.tarefa}</span>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
-            {tasks.length === 0 ? (
-              <div className="fixas-empty">Sem atividades</div>
-            ) : (
-              tasks.map((t) => (
-                <div key={t.id} className="cronograma-task-row">
-                  <div className="cronograma-task-top">
-                    <span className="cronograma-task-time">{t.horarioPublicacao || "—"}</span>
-                    <span className="cronograma-task-title">{t.tarefa}</span>
-                  </div>
-                  <div className="cronograma-task-bottom">
-                    <span className="cronograma-task-tipo">{t.tipo || "—"}</span>
-                    <span className={`card-badge ${STATUS_BADGE_CLASS[t.status] || ""}`}>{t.status}</span>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        );
-      })}
+          );
+        })
+      )}
     </div>
   );
 }

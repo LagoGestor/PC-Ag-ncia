@@ -74,7 +74,7 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
       </div>
 
       {cronogramaHabilitado && showCronograma ? (
-        <CronogramaSemanalView tarefas={tarefas} />
+        <CronogramaSemanalView />
       ) : (
         <div className="mobile-list">
           {filtradas.length === 0 ? (
