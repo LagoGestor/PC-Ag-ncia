@@ -801,7 +801,7 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 .resp-card-name { font-family: var(--font-head); font-weight: 700; font-size: 0.95em; color: var(--fg); text-align: center; }
 
 .detalhamento-list { display: grid; grid-template-columns: repeat(7, 1fr); gap: 20px; align-items: start; }
-.detalhamento-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 16px; }
+.detalhamento-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 16px; min-width: 0; }
 .detalhamento-card-header {
   display: flex; align-items: center; gap: 10px;
   text-decoration: none;
