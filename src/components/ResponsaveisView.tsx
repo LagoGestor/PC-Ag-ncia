@@ -4,12 +4,17 @@ import { useState } from "react";
 import Link from "next/link";
 import { RESPONSAVEIS_VISIVEIS, STATUS_COLORS, Tarefa, slugify } from "@/types";
 import { Avatar } from "./Avatar";
-import { fmtDate } from "./TaskCard";
 
 type Modo = "time" | "detalhamento";
 
 interface Props {
   list: Tarefa[];
+}
+
+function fmtDiaMes(d: string) {
+  if (!d) return "—";
+  const [, mes, dia] = d.split("-");
+  return `${dia}/${mes}`;
 }
 
 function ordenarPorEntrega(list: Tarefa[]) {
@@ -58,7 +63,6 @@ export function ResponsaveisView({ list }: Props) {
         </div>
       ) : (
         <div className="detalhamento-list">
-          <DetalhamentoCard nome="Geral" href="/mobile" fotoUrl="/img/perfil_agencia.jpg" tasks={ordenarPorEntrega(list)} />
           {RESPONSAVEIS_VISIVEIS.map((r) => (
             <DetalhamentoCard
               key={r}
@@ -73,26 +77,11 @@ export function ResponsaveisView({ list }: Props) {
   );
 }
 
-function DetalhamentoCard({
-  nome,
-  href,
-  fotoUrl,
-  tasks,
-}: {
-  nome: string;
-  href: string;
-  fotoUrl?: string;
-  tasks: Tarefa[];
-}) {
+function DetalhamentoCard({ nome, href, tasks }: { nome: string; href: string; tasks: Tarefa[] }) {
   return (
     <div className="detalhamento-card">
       <Link href={href} className="detalhamento-card-header">
-        {fotoUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img className="avatar-badge avatar-badge-photo" style={{ width: 28, height: 28 }} src={fotoUrl} alt={nome} />
-        ) : (
-          <Avatar name={nome} size={28} />
-        )}
+        <Avatar name={nome} size={28} />
         <span>{nome}</span>
       </Link>
       <div className="detalhamento-tasks">
@@ -101,9 +90,10 @@ function DetalhamentoCard({
         ) : (
           tasks.map((t) => (
             <div key={t.id} className="detalhamento-task-row">
-              <span className="status-dot" style={{ background: STATUS_COLORS[t.status] || "var(--gray)" }} />
-              <span className="detalhamento-task-title">{t.tarefa}</span>
-              <span className="detalhamento-task-date">{fmtDate(t.entrega)}</span>
+              <span className="detalhamento-task-title" style={{ color: STATUS_COLORS[t.status] || undefined }}>
+                {t.tarefa}
+              </span>
+              <span className="detalhamento-task-date">{fmtDiaMes(t.entrega)}</span>
             </div>
           ))
         )}
