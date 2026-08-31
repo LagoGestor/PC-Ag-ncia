@@ -10,9 +10,6 @@ import { MobileTaskCard } from "./MobileTaskCard";
 import { TaskModal } from "./TaskModal";
 import { CronogramaSemanalView } from "./CronogramaSemanalView";
 
-// Cronograma de Postagens is being rolled out gradually — Voluntário first, as a test.
-const CRONOGRAMA_HABILITADO = ["Voluntário"];
-
 interface Props {
   responsavel: string;
   initialTarefas: Tarefa[];
@@ -24,7 +21,6 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [showCronograma, setShowCronograma] = useState(false);
   const { toasts, toast } = useToasts();
-  const cronogramaHabilitado = CRONOGRAMA_HABILITADO.includes(responsavel);
 
   const filtradas = statusFilter ? tarefas.filter((t) => t.status === statusFilter) : tarefas;
 
@@ -62,18 +58,16 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
         <button className="btn btn-accent" onClick={() => setModalOpen(true)}>
           <i className="fas fa-plus" /> Nova Tarefa
         </button>
-        {cronogramaHabilitado && (
-          <button
-            className={`btn ${showCronograma ? "btn-accent" : "btn-ghost"}`}
-            style={{ marginTop: 10 }}
-            onClick={() => setShowCronograma((v) => !v)}
-          >
-            <i className="fas fa-calendar-week" /> Cronograma de Postagens
-          </button>
-        )}
+        <button
+          className={`btn ${showCronograma ? "btn-accent" : "btn-ghost"}`}
+          style={{ marginTop: 10 }}
+          onClick={() => setShowCronograma((v) => !v)}
+        >
+          <i className="fas fa-calendar-week" /> Cronograma de Postagens
+        </button>
       </div>
 
-      {cronogramaHabilitado && showCronograma ? (
+      {showCronograma ? (
         <CronogramaSemanalView />
       ) : (
         <div className="mobile-list">
