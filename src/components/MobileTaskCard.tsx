@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { STATUS_BADGE_CLASS } from "@/types";
+import { STATUS_BADGE_CLASS, STATUSES } from "@/types";
 import { Avatar } from "./Avatar";
 
 function fmtDate(d: string) {
@@ -35,7 +35,15 @@ export interface MobileTarefa {
   status: string;
 }
 
-export function MobileTaskCard({ t, showResponsavel }: { t: MobileTarefa; showResponsavel?: boolean }) {
+export function MobileTaskCard({
+  t,
+  showResponsavel,
+  onStatusChange,
+}: {
+  t: MobileTarefa;
+  showResponsavel?: boolean;
+  onStatusChange?: (id: string, status: string) => void;
+}) {
   const [open, setOpen] = useState(false);
   const overdue = isOverdue(t.entrega) && t.status !== "Concluído" && t.status !== "Cancelado";
 
@@ -43,7 +51,25 @@ export function MobileTaskCard({ t, showResponsavel }: { t: MobileTarefa; showRe
     <div className="mob-card" onClick={() => setOpen((v) => !v)}>
       <div className="mob-card-top">
         <span className="mob-tipo">{t.tipo || t.area}</span>
-        <span className={`card-badge ${STATUS_BADGE_CLASS[t.status] || ""}`}>{t.status}</span>
+        {onStatusChange ? (
+          <select
+            className={`card-badge card-badge-select ${STATUS_BADGE_CLASS[t.status] || ""}`}
+            value={t.status}
+            onClick={(e) => e.stopPropagation()}
+            onChange={(e) => {
+              e.stopPropagation();
+              onStatusChange(t.id, e.target.value);
+            }}
+          >
+            {STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <span className={`card-badge ${STATUS_BADGE_CLASS[t.status] || ""}`}>{t.status}</span>
+        )}
       </div>
 
       <div className="mob-title">{t.tarefa}</div>

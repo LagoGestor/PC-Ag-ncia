@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { RESPONSAVEIS_VISIVEIS, WHATSAPP_FOTOS_RESPONSAVEL, slugify } from "@/types";
-import { MobileTaskCard } from "@/components/MobileTaskCard";
+import { RESPONSAVEIS_VISIVEIS, Tarefa, WHATSAPP_FOTOS_RESPONSAVEL, slugify } from "@/types";
+import { MobilePessoaClient } from "@/components/MobilePessoaClient";
 import { Avatar } from "@/components/Avatar";
 
 export const dynamic = "force-dynamic";
@@ -61,13 +61,7 @@ export default async function MobilePessoaPage({ params }: Props) {
         <span className="mobile-count">{tarefas.length}</span>
       </header>
 
-      <div className="mobile-list">
-        {tarefas.length === 0 ? (
-          <p className="mobile-empty">Nenhuma tarefa para {responsavel} no momento.</p>
-        ) : (
-          tarefas.map((t) => <MobileTaskCard key={t.id} t={t} />)
-        )}
-      </div>
+      <MobilePessoaClient responsavel={responsavel} initialTarefas={tarefas as unknown as Tarefa[]} />
     </div>
   );
 }

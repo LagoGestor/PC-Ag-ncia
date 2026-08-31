@@ -17,11 +17,11 @@ type FormState = {
   status: Status;
 };
 
-const empty = (): FormState => ({
+const empty = (defaultResponsavel?: string): FormState => ({
   tarefa: "",
   area: "",
   tipo: "",
-  responsavel: "",
+  responsavel: defaultResponsavel ?? "",
   descricao: "",
   link: "",
   solicitacao: new Date().toISOString().split("T")[0],
@@ -37,12 +37,15 @@ interface Props {
   onClose: () => void;
   onSave: (data: FormState, id?: string) => void;
   onGenerate: (t: Tarefa) => void;
+  responsaveisOptions?: string[];
+  defaultResponsavel?: string;
 }
 
-export function TaskModal({ open, editing, onClose, onSave, onGenerate }: Props) {
+export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsaveisOptions, defaultResponsavel }: Props) {
   const [form, setForm] = useState<FormState>(empty());
   const [error, setError] = useState("");
   const [added, setAdded] = useState(false);
+  const opcoesResponsavel = responsaveisOptions ?? RESPONSAVEIS;
 
   useEffect(() => {
     if (!open) return;
@@ -61,11 +64,11 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate }: Props)
         status: editing.status,
       });
     } else {
-      setForm(empty());
+      setForm(empty(defaultResponsavel));
     }
     setError("");
     setAdded(false);
-  }, [open, editing]);
+  }, [open, editing, defaultResponsavel]);
 
   if (!open) return null;
 
@@ -144,7 +147,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate }: Props)
                 <option value="" disabled>
                   Selecione...
                 </option>
-                {RESPONSAVEIS.map((r) => (
+                {opcoesResponsavel.map((r) => (
                   <option key={r}>{r}</option>
                 ))}
               </select>
