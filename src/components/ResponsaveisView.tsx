@@ -9,6 +9,7 @@ type Modo = "time" | "detalhamento";
 
 interface Props {
   list: Tarefa[];
+  onEdit: (t: Tarefa) => void;
 }
 
 function fmtDiaMes(d: string) {
@@ -26,7 +27,7 @@ function ordenarPorEntrega(list: Tarefa[]) {
   });
 }
 
-export function ResponsaveisView({ list }: Props) {
+export function ResponsaveisView({ list, onEdit }: Props) {
   const [modo, setModo] = useState<Modo>("time");
 
   return (
@@ -69,6 +70,7 @@ export function ResponsaveisView({ list }: Props) {
               nome={r}
               href={`/mobile/${slugify(r)}`}
               tasks={ordenarPorEntrega(list.filter((t) => t.responsavel === r))}
+              onEdit={onEdit}
             />
           ))}
         </div>
@@ -77,7 +79,17 @@ export function ResponsaveisView({ list }: Props) {
   );
 }
 
-function DetalhamentoCard({ nome, href, tasks }: { nome: string; href: string; tasks: Tarefa[] }) {
+function DetalhamentoCard({
+  nome,
+  href,
+  tasks,
+  onEdit,
+}: {
+  nome: string;
+  href: string;
+  tasks: Tarefa[];
+  onEdit: (t: Tarefa) => void;
+}) {
   return (
     <div className="detalhamento-card">
       <Link href={href} className="detalhamento-card-header">
@@ -90,7 +102,11 @@ function DetalhamentoCard({ nome, href, tasks }: { nome: string; href: string; t
         ) : (
           tasks.map((t) => (
             <div key={t.id} className="detalhamento-task-row">
-              <span className="detalhamento-task-title" style={{ color: STATUS_COLORS[t.status] || undefined }}>
+              <span
+                className="detalhamento-task-title"
+                style={{ color: STATUS_COLORS[t.status] || undefined }}
+                onClick={() => onEdit(t)}
+              >
                 {t.tarefa}
               </span>
               <span className="detalhamento-task-date">{fmtDiaMes(t.entrega)}</span>
