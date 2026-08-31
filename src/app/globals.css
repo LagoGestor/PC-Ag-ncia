@@ -717,6 +717,38 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 .mobile-list { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 .mobile-actions-row { padding: 16px 16px 0; }
 .mobile-actions-row .btn { width: 100%; justify-content: center; }
+
+.cronograma-semanal { padding: 16px; }
+.cronograma-nav { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 18px; }
+.cronograma-nav button:not(.btn) {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--fg);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.cronograma-nav .agenda-label { font-family: var(--font-head); font-weight: 700; font-size: 13px; }
+.cronograma-day { margin-bottom: 20px; }
+.cronograma-day-header {
+  font-family: var(--font-head); font-weight: 800; font-size: 12.5px;
+  text-transform: uppercase; letter-spacing: 0.5px; color: var(--fg-muted);
+  padding-bottom: 6px; margin-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.cronograma-task-row {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 10px 12px; margin-bottom: 8px;
+}
+.cronograma-task-top { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.cronograma-task-time { font-family: var(--font-head); font-weight: 700; font-size: 12px; color: var(--accent); flex-shrink: 0; }
+.cronograma-task-title { font-weight: 600; font-size: 13.5px; color: var(--fg); }
+.cronograma-task-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cronograma-task-tipo { font-size: 11px; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; }
+.cronograma-task-bottom .card-badge { margin-bottom: 0; }
 .mobile-empty { text-align: center; color: var(--fg-muted); padding: 60px 20px; font-size: 15px; }
 
 .mob-card {
