@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { RESPONSAVEIS_VISIVEIS, Tarefa, WHATSAPP_FOTOS_RESPONSAVEL, slugify } from "@/types";
 import { MobilePessoaClient } from "@/components/MobilePessoaClient";
 import { Avatar } from "@/components/Avatar";
-import { LogoutButton } from "@/components/LogoutButton";
+import { MobileHeaderMenu } from "@/components/MobileHeaderMenu";
 import { getSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -67,7 +67,7 @@ export default async function MobilePessoaPage({ params }: Props) {
         </div>
         <div className="mobile-header-right">
           <span className="mobile-count">{tarefas.length}</span>
-          <LogoutButton className="mobile-logout-btn" />
+          <MobileHeaderMenu />
         </div>
       </header>
 
