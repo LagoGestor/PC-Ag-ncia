@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { RESPONSAVEIS_VISIVEIS, RESPONSAVEL_ARMAZENAR, WHATSAPP_FOTO_AGENCIA, slugify } from "@/types";
-import { MobileTaskCard } from "@/components/MobileTaskCard";
-import { LogoutButton } from "@/components/LogoutButton";
+import { RESPONSAVEIS_VISIVEIS, RESPONSAVEL_ARMAZENAR, Tarefa, WHATSAPP_FOTO_AGENCIA, slugify } from "@/types";
+import { MobilePessoaClient } from "@/components/MobilePessoaClient";
+import { MobileHeaderMenu } from "@/components/MobileHeaderMenu";
 import { getSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -38,7 +38,7 @@ export default async function MobileMasterPage() {
         </div>
         <div className="mobile-header-right">
           <span className="mobile-count">{tarefas.length}</span>
-          <LogoutButton className="mobile-logout-btn" />
+          <MobileHeaderMenu />
         </div>
       </header>
 
@@ -53,13 +53,7 @@ export default async function MobileMasterPage() {
         ))}
       </nav>
 
-      <div className="mobile-list">
-        {tarefas.length === 0 ? (
-          <p className="mobile-empty">Nenhuma tarefa cadastrada.</p>
-        ) : (
-          tarefas.map((t) => <MobileTaskCard key={t.id} t={t} showResponsavel />)
-        )}
-      </div>
+      <MobilePessoaClient initialTarefas={tarefas as unknown as Tarefa[]} />
     </div>
   );
 }

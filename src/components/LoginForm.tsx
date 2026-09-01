@@ -28,6 +28,8 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
       const data = await res.json().catch(() => ({}));
       if (data.nivel === "EXECUTOR" && data.responsavel) {
         window.location.href = `/mobile/${slugify(data.responsavel)}`;
+      } else if (data.nivel === "DIRETOR_CONTEUDO") {
+        window.location.href = "/mobile";
       } else {
         window.location.href = nextPath || "/";
       }

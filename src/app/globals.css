@@ -744,6 +744,8 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
   padding: 10px 12px; margin-bottom: 8px;
 }
+.cronograma-task-row-editable { cursor: pointer; transition: var(--transition); }
+.cronograma-task-row-editable:hover { border-color: var(--border-accent); background: var(--surface2); }
 .cronograma-task-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
 .cronograma-task-time { font-family: var(--font-head); font-weight: 700; font-size: 12px; color: var(--accent); flex-shrink: 0; }
 .cronograma-task-title { font-weight: 600; font-size: 13.5px; color: var(--fg); }

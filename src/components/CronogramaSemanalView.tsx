@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { RESPONSAVEL_ARMAZENAR, STATUS_BADGE_CLASS, Tarefa } from "@/types";
 import { api } from "@/lib/api";
+import { TaskModal } from "./TaskModal";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
@@ -17,9 +18,14 @@ function getWeekDays(anchor: Date): Date[] {
   return Array.from({ length: 7 }, (_, i) => new Date(start.getFullYear(), start.getMonth(), start.getDate() + i));
 }
 
-export function CronogramaSemanalView() {
+interface Props {
+  editable?: boolean;
+}
+
+export function CronogramaSemanalView({ editable = false }: Props) {
   const [anchor, setAnchor] = useState(() => new Date());
   const [tarefas, setTarefas] = useState<Tarefa[] | null>(null);
+  const [editing, setEditing] = useState<Tarefa | null>(null);
 
   useEffect(() => {
     api
@@ -63,6 +69,13 @@ export function CronogramaSemanalView() {
     setAnchor(new Date());
   }
 
+  async function handleSave(data: Omit<Tarefa, "id" | "arquivada" | "fixa" | "diaSemana">, id?: string) {
+    if (!id) return;
+    const updated = await api.update(id, data);
+    setTarefas((prev) => (prev ? prev.map((t) => (t.id === id ? updated : t)) : prev));
+    setEditing(null);
+  }
+
   return (
     <div className="cronograma-semanal">
       <div className="cronograma-nav">
@@ -93,7 +106,11 @@ export function CronogramaSemanalView() {
                 <div className="fixas-empty">Sem atividades</div>
               ) : (
                 tasks.map((t) => (
-                  <div key={t.id} className="cronograma-task-row">
+                  <div
+                    key={t.id}
+                    className={`cronograma-task-row${editable ? " cronograma-task-row-editable" : ""}`}
+                    onClick={editable ? () => setEditing(t) : undefined}
+                  >
                     <div className="cronograma-task-top">
                       <span className="cronograma-task-tipo">{t.tipo || "—"}</span>
                       <span className={`card-badge ${STATUS_BADGE_CLASS[t.status] || ""}`}>{t.status}</span>
@@ -108,6 +125,16 @@ export function CronogramaSemanalView() {
             </div>
           );
         })
+      )}
+
+      {editable && (
+        <TaskModal
+          open={!!editing}
+          editing={editing}
+          onClose={() => setEditing(null)}
+          onSave={handleSave}
+          onGenerate={() => {}}
+        />
       )}
     </div>
   );

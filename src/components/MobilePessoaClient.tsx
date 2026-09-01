@@ -13,7 +13,8 @@ import { useSession } from "./SessionProvider";
 import { canWrite, canChangeStatus } from "@/lib/permissions";
 
 interface Props {
-  responsavel: string;
+  // Omitido = modo "todas as tarefas" (usado pelo Diretor de Conteúdo na página /mobile Geral).
+  responsavel?: string;
   initialTarefas: Tarefa[];
 }
 
@@ -25,14 +26,15 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
   const { toasts, toast } = useToasts();
   const session = useSession();
   const writable = canWrite(session);
-  const canToggleStatus = canChangeStatus(session, responsavel);
+  const canToggleStatus = canChangeStatus(session, responsavel ?? "");
+  const todasAsTarefas = !responsavel;
 
   const filtradas = statusFilter ? tarefas.filter((t) => t.status === statusFilter) : tarefas;
 
   async function handleCreate(data: Omit<Tarefa, "id" | "arquivada" | "fixa" | "diaSemana">) {
     try {
       const created = await api.create(data);
-      if (created.responsavel === responsavel) {
+      if (todasAsTarefas || created.responsavel === responsavel) {
         setTarefas((prev) => [...prev, created].sort((a, b) => (a.entrega || "9999").localeCompare(b.entrega || "9999")));
       }
       toast(
@@ -75,16 +77,25 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
       </div>
 
       {showCronograma ? (
-        <CronogramaSemanalView />
+        <CronogramaSemanalView editable={writable} />
       ) : (
         <div className="mobile-list">
           {filtradas.length === 0 ? (
             <p className="mobile-empty">
-              {statusFilter ? `Nenhuma tarefa com status "${statusFilter}".` : `Nenhuma tarefa para ${responsavel} no momento.`}
+              {statusFilter
+                ? `Nenhuma tarefa com status "${statusFilter}".`
+                : todasAsTarefas
+                  ? "Nenhuma tarefa cadastrada."
+                  : `Nenhuma tarefa para ${responsavel} no momento.`}
             </p>
           ) : (
             filtradas.map((t) => (
-              <MobileTaskCard key={t.id} t={t} onStatusChange={canToggleStatus ? handleStatusChange : undefined} />
+              <MobileTaskCard
+                key={t.id}
+                t={t}
+                showResponsavel={todasAsTarefas}
+                onStatusChange={canToggleStatus ? handleStatusChange : undefined}
+              />
             ))
           )}
         </div>
@@ -96,7 +107,7 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
         onClose={() => setModalOpen(false)}
         onSave={(data) => handleCreate(data)}
         onGenerate={() => {}}
-        responsaveisOptions={[RESPONSAVEL_ARMAZENAR, responsavel]}
+        responsaveisOptions={todasAsTarefas ? undefined : [RESPONSAVEL_ARMAZENAR, responsavel!]}
         defaultResponsavel={responsavel}
       />
 

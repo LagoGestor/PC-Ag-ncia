@@ -55,6 +55,18 @@ export async function proxy(req: NextRequest) {
     }
   }
 
+  // Diretor de Conteúdo usa a mesma casca "mobile" que o Executor, mas sem ficar preso a
+  // uma única pessoa: pode navegar por /mobile (Geral) e por qualquer /mobile/[pessoa].
+  if (session.nivel === "DIRETOR_CONTEUDO" && !isApi) {
+    const permitido = pathname === "/mobile" || pathname.startsWith("/mobile/") || pathname === "/minha-conta";
+    if (!permitido) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/mobile";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
+  }
+
   const isMaster = session.nivel === "MASTER";
 
   if (pathname.startsWith("/cadastrarlogin") && !isMaster) {
