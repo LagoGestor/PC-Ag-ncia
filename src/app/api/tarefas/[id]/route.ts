@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { canWriteTarefa } from "@/lib/permissions";
+import { canWriteTarefa, canChangeStatus } from "@/lib/permissions";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -26,20 +26,29 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
   const existente = await prisma.tarefa.findUnique({ where: { id } });
   if (!existente) return NextResponse.json({ error: "Tarefa não encontrada." }, { status: 404 });
-  if (!canWriteTarefa(session, existente.responsavel)) {
-    return NextResponse.json({ error: "Você não tem permissão para editar esta tarefa." }, { status: 403 });
-  }
 
   const body = await req.json();
+
+  const touchesArquivada = typeof body.arquivada === "boolean";
+  const touchesFixa = typeof body.fixa === "boolean";
+  const camposAlterados = FIELDS.filter((field) => body[field] !== undefined);
+  // Um Executor só pode marcar o status — qualquer outro campo exige Master/Diretor de Conteúdo.
+  const apenasStatus = !touchesArquivada && !touchesFixa && camposAlterados.every((field) => field === "status");
+
+  const permitido = apenasStatus
+    ? canChangeStatus(session, existente.responsavel)
+    : canWriteTarefa(session, existente.responsavel);
+
+  if (!permitido) {
+    return NextResponse.json({ error: "Você não tem permissão para editar esta tarefa." }, { status: 403 });
+  }
 
   const data: Record<string, unknown> = {};
   for (const field of FIELDS) {
     if (body[field] !== undefined) data[field] = body[field];
   }
-  // Um "Responsável Master" só pode gerenciar as próprias tarefas — nunca transferir a tarefa para outra pessoa.
-  if (session?.nivel === "RESPONSAVEL_MASTER") data.responsavel = session.responsavel;
-  if (typeof body.arquivada === "boolean") data.arquivada = body.arquivada;
-  if (typeof body.fixa === "boolean") data.fixa = body.fixa;
+  if (touchesArquivada) data.arquivada = body.arquivada;
+  if (touchesFixa) data.fixa = body.fixa;
 
   const tarefa = await prisma.tarefa.update({ where: { id }, data });
 

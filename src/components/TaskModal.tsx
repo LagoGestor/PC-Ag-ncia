@@ -49,9 +49,8 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
   const [added, setAdded] = useState(false);
   const session = useSession();
   const readOnly = !canWrite(session);
-  const scopedParaResponsavel = session?.nivel === "RESPONSAVEL_MASTER" ? session.responsavel : null;
-  const opcoesResponsavel = scopedParaResponsavel ? [scopedParaResponsavel] : responsaveisOptions ?? RESPONSAVEIS;
-  const responsavelPadrao = scopedParaResponsavel ?? defaultResponsavel;
+  const opcoesResponsavel = responsaveisOptions ?? RESPONSAVEIS;
+  const responsavelPadrao = defaultResponsavel;
 
   useEffect(() => {
     if (!open) return;

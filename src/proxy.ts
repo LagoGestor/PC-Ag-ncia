@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import { slugify } from "@/types";
 
 const SESSION_COOKIE = "agencia_session";
 const PUBLIC_PATHS = new Set(["/login", "/api/auth/login", "/api/auth/logout"]);
@@ -42,6 +43,16 @@ export async function proxy(req: NextRequest) {
     url.search = "";
     url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
+  }
+
+  if (session.nivel === "EXECUTOR" && !isApi) {
+    const ownPath = `/mobile/${slugify(session.responsavel ?? "")}`;
+    if (pathname !== ownPath && pathname !== "/minha-conta") {
+      const url = req.nextUrl.clone();
+      url.pathname = ownPath;
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
   }
 
   const isMaster = session.nivel === "MASTER";

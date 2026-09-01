@@ -6,13 +6,12 @@ import { useToasts } from "@/hooks/useToasts";
 import { ToastContainer } from "./ToastContainer";
 import { ConfirmModal } from "./ConfirmModal";
 
-type Nivel = "MASTER" | "MASTER_LEITURA" | "RESPONSAVEL_MASTER" | "RESPONSAVEL_LEITURA";
+type Nivel = "MASTER" | "DIRETOR_CONTEUDO" | "EXECUTOR";
 
 const NIVEL_LABEL: Record<Nivel, string> = {
   MASTER: "Master",
-  MASTER_LEITURA: "Master Leitura",
-  RESPONSAVEL_MASTER: "Responsável Master",
-  RESPONSAVEL_LEITURA: "Responsável Leitura",
+  DIRETOR_CONTEUDO: "Diretor de Conteúdo",
+  EXECUTOR: "Executor",
 };
 
 interface Usuario {
@@ -29,12 +28,13 @@ const empty = { nome: "", login: "", senha: "", nivel: "MASTER" as Nivel, respon
 export function CadastrarLoginClient() {
   const [usuarios, setUsuarios] = useState<Usuario[] | null>(null);
   const [form, setForm] = useState(empty);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Usuario | null>(null);
   const { toasts, toast } = useToasts();
 
-  const isResponsavelScoped = form.nivel === "RESPONSAVEL_MASTER" || form.nivel === "RESPONSAVEL_LEITURA";
+  const isExecutor = form.nivel === "EXECUTOR";
 
   function carregar() {
     fetch("/api/usuarios")
@@ -46,31 +46,45 @@ export function CadastrarLoginClient() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(carregar, []);
 
+  function startEdit(u: Usuario) {
+    setEditingId(u.id);
+    setForm({ nome: u.nome, login: u.login, senha: "", nivel: u.nivel, responsavel: u.responsavel });
+    setError("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setForm(empty);
+    setError("");
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError("");
-    if (!form.nome.trim() || !form.login.trim() || !form.senha) {
-      setError("Preencha nome, login e senha.");
+    if (!form.nome.trim() || !form.login.trim() || (!editingId && !form.senha)) {
+      setError(editingId ? "Preencha nome e login." : "Preencha nome, login e senha.");
       return;
     }
-    if (isResponsavelScoped && !form.responsavel) {
+    if (isExecutor && !form.responsavel) {
       setError("Selecione o responsável.");
       return;
     }
     setSaving(true);
     try {
-      const res = await fetch("/api/usuarios", {
-        method: "POST",
+      const res = await fetch(editingId ? `/api/usuarios/${editingId}` : "/api/usuarios", {
+        method: editingId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Erro ao criar login.");
+        setError(data.error || "Erro ao salvar login.");
         return;
       }
+      toast(editingId ? `Login "${data.login}" atualizado!` : `Login "${data.login}" criado!`, "success");
+      setEditingId(null);
       setForm(empty);
-      toast(`Login "${data.login}" criado!`, "success");
       carregar();
     } catch {
       setError("Erro de conexão.");
@@ -88,6 +102,7 @@ export function CadastrarLoginClient() {
         toast(data.error || "Erro ao apagar login", "error");
       } else {
         toast("Login apagado", "info");
+        if (editingId === deleteTarget.id) cancelEdit();
         carregar();
       }
     } catch {
@@ -103,6 +118,13 @@ export function CadastrarLoginClient() {
       <p className="fixas-subtitle">Gerencie os acessos ao sistema. Esta página é restrita a contas Master.</p>
 
       <form className="cadastrar-login-form" onSubmit={handleSubmit}>
+        {editingId && (
+          <div className="card-badge badge-cancelado" style={{ marginBottom: 14 }}>
+            <i className="fas fa-pen" style={{ marginRight: 6 }} />
+            Editando login existente
+          </div>
+        )}
+
         <div className="form-group">
           <label>
             Nome <span>*</span>
@@ -134,15 +156,16 @@ export function CadastrarLoginClient() {
           </div>
           <div className="form-group">
             <label>
-              Senha <span>*</span>
+              Senha {!editingId && <span>*</span>}
             </label>
             <input
               type="text"
               className="form-control"
+              placeholder={editingId ? "Deixe em branco para manter a atual" : ""}
               autoComplete="off"
               value={form.senha}
               onChange={(e) => setForm((f) => ({ ...f, senha: e.target.value }))}
-              required
+              required={!editingId}
             />
           </div>
         </div>
@@ -164,7 +187,7 @@ export function CadastrarLoginClient() {
               ))}
             </select>
           </div>
-          {isResponsavelScoped && (
+          {isExecutor && (
             <div className="form-group">
               <label>
                 Responsável <span>*</span>
@@ -188,9 +211,17 @@ export function CadastrarLoginClient() {
 
         {error && <div style={{ color: "var(--danger)", fontSize: 12, marginBottom: 10 }}>{error}</div>}
 
-        <button type="submit" className="btn btn-accent" disabled={saving}>
-          <i className="fas fa-user-plus" /> {saving ? "Criando..." : "Criar login"}
-        </button>
+        <div className="form-footer" style={{ justifyContent: "flex-start" }}>
+          <button type="submit" className="btn btn-accent" disabled={saving}>
+            <i className={`fas ${editingId ? "fa-save" : "fa-user-plus"}`} />{" "}
+            {saving ? "Salvando..." : editingId ? "Salvar alterações" : "Criar login"}
+          </button>
+          {editingId && (
+            <button type="button" className="btn btn-ghost" onClick={cancelEdit}>
+              Cancelar edição
+            </button>
+          )}
+        </div>
       </form>
 
       <h2 className="fixas-title" style={{ fontSize: 16, marginTop: 34 }}>
@@ -214,9 +245,14 @@ export function CadastrarLoginClient() {
                   {u.responsavel ? ` · ${u.responsavel}` : ""}
                 </div>
               </div>
-              <button className="card-action-btn danger" onClick={() => setDeleteTarget(u)} title="Apagar login">
-                <i className="fas fa-trash" />
-              </button>
+              <div className="cadastrar-login-row-actions">
+                <button className="card-action-btn" onClick={() => startEdit(u)} title="Editar login">
+                  <i className="fas fa-pen" />
+                </button>
+                <button className="card-action-btn danger" onClick={() => setDeleteTarget(u)} title="Apagar login">
+                  <i className="fas fa-trash" />
+                </button>
+              </div>
             </div>
           ))
         )}

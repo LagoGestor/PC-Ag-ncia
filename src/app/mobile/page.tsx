@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default async function MobileMasterPage() {
   const session = await getSession();
-  if (session && (session.nivel === "RESPONSAVEL_MASTER" || session.nivel === "RESPONSAVEL_LEITURA")) {
+  if (session && session.nivel === "EXECUTOR") {
     redirect(`/mobile/${slugify(session.responsavel)}`);
   }
 

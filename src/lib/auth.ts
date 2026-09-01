@@ -1,7 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-export type Nivel = "MASTER" | "MASTER_LEITURA" | "RESPONSAVEL_MASTER" | "RESPONSAVEL_LEITURA";
+export type Nivel = "MASTER" | "DIRETOR_CONTEUDO" | "EXECUTOR";
 
 export interface SessionPayload {
   sub: string;

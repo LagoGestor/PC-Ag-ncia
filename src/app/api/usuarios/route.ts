@@ -4,7 +4,7 @@ import { getSession } from "@/lib/auth";
 import { hashPassword } from "@/lib/password";
 import { RESPONSAVEIS_VISIVEIS } from "@/types";
 
-const NIVEIS = ["MASTER", "MASTER_LEITURA", "RESPONSAVEL_MASTER", "RESPONSAVEL_LEITURA"] as const;
+const NIVEIS = ["MASTER", "DIRETOR_CONTEUDO", "EXECUTOR"] as const;
 
 export async function GET() {
   const session = await getSession();
@@ -34,8 +34,8 @@ export async function POST(req: NextRequest) {
   if (senha.length < 4) {
     return NextResponse.json({ error: "A senha deve ter ao menos 4 caracteres." }, { status: 400 });
   }
-  const isResponsavelScoped = nivel === "RESPONSAVEL_MASTER" || nivel === "RESPONSAVEL_LEITURA";
-  if (isResponsavelScoped && !RESPONSAVEIS_VISIVEIS.includes(responsavel)) {
+  const isExecutor = nivel === "EXECUTOR";
+  if (isExecutor && !RESPONSAVEIS_VISIVEIS.includes(responsavel)) {
     return NextResponse.json({ error: "Selecione um responsável válido para esse nível." }, { status: 400 });
   }
 
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 
   const senhaHash = await hashPassword(senha);
   const usuario = await prisma.usuario.create({
-    data: { nome, login, senhaHash, nivel, responsavel: isResponsavelScoped ? responsavel : "" },
+    data: { nome, login, senhaHash, nivel, responsavel: isExecutor ? responsavel : "" },
     select: { id: true, nome: true, login: true, nivel: true, responsavel: true, createdAt: true },
   });
 

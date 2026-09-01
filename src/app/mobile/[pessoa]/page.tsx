@@ -49,7 +49,7 @@ export default async function MobilePessoaPage({ params }: Props) {
   if (!responsavel) notFound();
 
   const session = await getSession();
-  if (session && (session.nivel === "RESPONSAVEL_MASTER" || session.nivel === "RESPONSAVEL_LEITURA") && session.responsavel !== responsavel) {
+  if (session && session.nivel === "EXECUTOR" && session.responsavel !== responsavel) {
     redirect(`/mobile/${slugify(session.responsavel)}`);
   }
 

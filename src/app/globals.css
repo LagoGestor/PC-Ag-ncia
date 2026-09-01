@@ -1064,3 +1064,4 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 .cadastrar-login-row-login { font-weight: 700; color: var(--fg); font-size: 13.5px; }
 .cadastrar-login-row-login-sub { font-weight: 500; color: var(--fg-muted); font-size: 11.5px; }
 .cadastrar-login-row-meta { font-size: 11.5px; color: var(--fg-muted); margin-top: 2px; }
+.cadastrar-login-row-actions { display: flex; gap: 6px; flex-shrink: 0; }

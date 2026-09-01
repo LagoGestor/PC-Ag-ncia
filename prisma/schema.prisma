@@ -56,9 +56,8 @@ model Assunto {
 
 enum NivelAcesso {
   MASTER
-  MASTER_LEITURA
-  RESPONSAVEL_MASTER
-  RESPONSAVEL_LEITURA
+  DIRETOR_CONTEUDO
+  EXECUTOR
 }
 
 model Usuario {

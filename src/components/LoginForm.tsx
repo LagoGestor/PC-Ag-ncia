@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { slugify } from "@/types";
 
 export function LoginForm({ nextPath }: { nextPath: string }) {
   const [login, setLogin] = useState("");
@@ -24,7 +25,12 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
         setLoading(false);
         return;
       }
-      window.location.href = nextPath || "/";
+      const data = await res.json().catch(() => ({}));
+      if (data.nivel === "EXECUTOR" && data.responsavel) {
+        window.location.href = `/mobile/${slugify(data.responsavel)}`;
+      } else {
+        window.location.href = nextPath || "/";
+      }
     } catch {
       setError("Erro de conexão. Tente novamente.");
       setLoading(false);

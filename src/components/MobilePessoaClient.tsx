@@ -10,7 +10,7 @@ import { MobileTaskCard } from "./MobileTaskCard";
 import { TaskModal } from "./TaskModal";
 import { CronogramaSemanalView } from "./CronogramaSemanalView";
 import { useSession } from "./SessionProvider";
-import { canWrite } from "@/lib/permissions";
+import { canWrite, canChangeStatus } from "@/lib/permissions";
 
 interface Props {
   responsavel: string;
@@ -25,6 +25,7 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
   const { toasts, toast } = useToasts();
   const session = useSession();
   const writable = canWrite(session);
+  const canToggleStatus = canChangeStatus(session, responsavel);
 
   const filtradas = statusFilter ? tarefas.filter((t) => t.status === statusFilter) : tarefas;
 
@@ -83,7 +84,7 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
             </p>
           ) : (
             filtradas.map((t) => (
-              <MobileTaskCard key={t.id} t={t} onStatusChange={writable ? handleStatusChange : undefined} />
+              <MobileTaskCard key={t.id} t={t} onStatusChange={canToggleStatus ? handleStatusChange : undefined} />
             ))
           )}
         </div>

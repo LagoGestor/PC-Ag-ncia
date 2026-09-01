@@ -10,9 +10,8 @@ export const metadata: Metadata = {
 
 const NIVEL_LABEL: Record<string, string> = {
   MASTER: "Master",
-  MASTER_LEITURA: "Master Leitura",
-  RESPONSAVEL_MASTER: "Responsável Master",
-  RESPONSAVEL_LEITURA: "Responsável Leitura",
+  DIRETOR_CONTEUDO: "Diretor de Conteúdo",
+  EXECUTOR: "Executor",
 };
 
 export default async function MinhaContaPage() {
