@@ -5,6 +5,7 @@ import { PrismaClient } from "../src/generated/prisma/client";
 import { hashPassword } from "../src/lib/password";
 
 neonConfig.webSocketConstructor = ws;
+neonConfig.poolQueryViaFetch = true;
 
 const NOME_INICIAL = "Leo Felix";
 const LOGIN_INICIAL = "leo.felix";

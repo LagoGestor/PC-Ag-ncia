@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { RESPONSAVEIS_VISIVEIS } from "@/types";
 import { useToasts } from "@/hooks/useToasts";
 import { ToastContainer } from "./ToastContainer";
@@ -17,13 +17,42 @@ const NIVEL_LABEL: Record<Nivel, string> = {
 interface Usuario {
   id: string;
   nome: string;
+  foto: string;
   login: string;
   nivel: Nivel;
   responsavel: string;
   createdAt: string;
 }
 
-const empty = { nome: "", login: "", senha: "", nivel: "MASTER" as Nivel, responsavel: "" };
+const empty = { nome: "", foto: "", login: "", senha: "", nivel: "MASTER" as Nivel, responsavel: "" };
+
+function resizeImageToDataUrl(file: File, maxSize = 320, quality = 0.85): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Erro ao ler arquivo"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Erro ao carregar imagem"));
+      img.onload = () => {
+        const side = Math.min(img.width, img.height);
+        const sx = (img.width - side) / 2;
+        const sy = (img.height - side) / 2;
+        const canvas = document.createElement("canvas");
+        canvas.width = maxSize;
+        canvas.height = maxSize;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Canvas indisponível"));
+          return;
+        }
+        ctx.drawImage(img, sx, sy, side, side, 0, 0, maxSize, maxSize);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 export function CadastrarLoginClient() {
   const [usuarios, setUsuarios] = useState<Usuario[] | null>(null);
@@ -48,7 +77,7 @@ export function CadastrarLoginClient() {
 
   function startEdit(u: Usuario) {
     setEditingId(u.id);
-    setForm({ nome: u.nome, login: u.login, senha: "", nivel: u.nivel, responsavel: u.responsavel });
+    setForm({ nome: u.nome, foto: u.foto, login: u.login, senha: "", nivel: u.nivel, responsavel: u.responsavel });
     setError("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -57,6 +86,18 @@ export function CadastrarLoginClient() {
     setEditingId(null);
     setForm(empty);
     setError("");
+  }
+
+  async function handleFotoChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    try {
+      const dataUrl = await resizeImageToDataUrl(file);
+      setForm((f) => ({ ...f, foto: dataUrl }));
+    } catch {
+      toast("Erro ao processar a imagem", "error");
+    }
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -124,6 +165,29 @@ export function CadastrarLoginClient() {
             Editando login existente
           </div>
         )}
+
+        <div className="form-group">
+          <label>Foto de perfil</label>
+          <div className="cadastrar-login-foto-row">
+            {form.foto ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={form.foto} alt="" className="cadastrar-login-foto-preview" />
+            ) : (
+              <div className="cadastrar-login-foto-placeholder">
+                <i className="fas fa-user" />
+              </div>
+            )}
+            <label className="btn btn-ghost btn-sm">
+              <i className="fas fa-camera" /> {form.foto ? "Trocar foto" : "Anexar foto"}
+              <input type="file" accept="image/*" onChange={handleFotoChange} style={{ display: "none" }} />
+            </label>
+            {form.foto && (
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => setForm((f) => ({ ...f, foto: "" }))}>
+                Remover
+              </button>
+            )}
+          </div>
+        </div>
 
         <div className="form-group">
           <label>
@@ -236,7 +300,15 @@ export function CadastrarLoginClient() {
         ) : (
           usuarios.map((u) => (
             <div key={u.id} className="cadastrar-login-row">
-              <div>
+              <div className="cadastrar-login-row-avatar">
+                {u.foto ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={u.foto} alt="" />
+                ) : (
+                  <i className="fas fa-user" />
+                )}
+              </div>
+              <div className="cadastrar-login-row-info">
                 <div className="cadastrar-login-row-login">
                   {u.nome || u.login} <span className="cadastrar-login-row-login-sub">@{u.login}</span>
                 </div>

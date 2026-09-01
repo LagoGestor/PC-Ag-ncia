@@ -6,6 +6,7 @@ import { confirmarSenhaGravada } from "@/lib/usuarioWrites";
 import { RESPONSAVEIS_VISIVEIS } from "@/types";
 
 const NIVEIS = ["MASTER", "DIRETOR_CONTEUDO", "EXECUTOR"] as const;
+const FOTO_MAX_BYTES = 2 * 1024 * 1024; // 2MB de folga; a imagem já chega comprimida do cliente
 
 export async function GET() {
   const session = await getSession();
@@ -13,7 +14,7 @@ export async function GET() {
 
   const usuarios = await prisma.usuario.findMany({
     orderBy: { createdAt: "asc" },
-    select: { id: true, nome: true, login: true, nivel: true, responsavel: true, createdAt: true },
+    select: { id: true, nome: true, foto: true, login: true, nivel: true, responsavel: true, createdAt: true },
   });
   return NextResponse.json(usuarios);
 }
@@ -24,6 +25,7 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => null);
   const nome = typeof body?.nome === "string" ? body.nome.trim() : "";
+  const foto = typeof body?.foto === "string" ? body.foto : "";
   const login = typeof body?.login === "string" ? body.login.trim() : "";
   const senha = typeof body?.senha === "string" ? body.senha : "";
   const nivel = body?.nivel;
@@ -34,6 +36,9 @@ export async function POST(req: NextRequest) {
   }
   if (senha.length < 4) {
     return NextResponse.json({ error: "A senha deve ter ao menos 4 caracteres." }, { status: 400 });
+  }
+  if (foto.length > FOTO_MAX_BYTES) {
+    return NextResponse.json({ error: "Foto muito grande." }, { status: 400 });
   }
   const isExecutor = nivel === "EXECUTOR";
   if (isExecutor && !RESPONSAVEIS_VISIVEIS.includes(responsavel)) {
@@ -47,8 +52,8 @@ export async function POST(req: NextRequest) {
 
   const senhaHash = await hashPassword(senha);
   const usuario = await prisma.usuario.create({
-    data: { nome, login, senhaHash, nivel, responsavel: isExecutor ? responsavel : "" },
-    select: { id: true, nome: true, login: true, nivel: true, responsavel: true, createdAt: true },
+    data: { nome, foto, login, senhaHash, nivel, responsavel: isExecutor ? responsavel : "" },
+    select: { id: true, nome: true, foto: true, login: true, nivel: true, responsavel: true, createdAt: true },
   });
   await confirmarSenhaGravada(usuario.id, senhaHash);
 

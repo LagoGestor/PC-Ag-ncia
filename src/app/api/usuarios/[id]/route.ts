@@ -6,6 +6,7 @@ import { confirmarSenhaGravada } from "@/lib/usuarioWrites";
 import { RESPONSAVEIS_VISIVEIS } from "@/types";
 
 const NIVEIS = ["MASTER", "DIRETOR_CONTEUDO", "EXECUTOR"] as const;
+const FOTO_MAX_BYTES = 2 * 1024 * 1024; // 2MB de folga; a imagem já chega comprimida do cliente
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -19,6 +20,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
   const body = await req.json().catch(() => null);
   const nome = typeof body?.nome === "string" ? body.nome.trim() : "";
+  const foto = typeof body?.foto === "string" ? body.foto : "";
   const login = typeof body?.login === "string" ? body.login.trim() : "";
   const senha = typeof body?.senha === "string" ? body.senha : "";
   const nivel = body?.nivel;
@@ -29,6 +31,9 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   }
   if (senha && senha.length < 4) {
     return NextResponse.json({ error: "A senha deve ter ao menos 4 caracteres." }, { status: 400 });
+  }
+  if (foto.length > FOTO_MAX_BYTES) {
+    return NextResponse.json({ error: "Foto muito grande." }, { status: 400 });
   }
   const isExecutor = nivel === "EXECUTOR";
   if (isExecutor && !RESPONSAVEIS_VISIVEIS.includes(responsavel)) {
@@ -48,13 +53,13 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   }
 
   const novaSenhaHash = senha ? await hashPassword(senha) : null;
-  const data: Record<string, unknown> = { nome, login, nivel, responsavel: isExecutor ? responsavel : "" };
+  const data: Record<string, unknown> = { nome, foto, login, nivel, responsavel: isExecutor ? responsavel : "" };
   if (novaSenhaHash) data.senhaHash = novaSenhaHash;
 
   const usuario = await prisma.usuario.update({
     where: { id },
     data,
-    select: { id: true, nome: true, login: true, nivel: true, responsavel: true, createdAt: true },
+    select: { id: true, nome: true, foto: true, login: true, nivel: true, responsavel: true, createdAt: true },
   });
   if (novaSenhaHash) await confirmarSenhaGravada(id, novaSenhaHash);
 

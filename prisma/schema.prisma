@@ -63,6 +63,7 @@ enum NivelAcesso {
 model Usuario {
   id          String      @id @default(cuid())
   nome        String      @default("")
+  foto        String      @default("")
   login       String      @unique
   senhaHash   String
   nivel       NivelAcesso
