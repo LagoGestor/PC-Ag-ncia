@@ -439,6 +439,7 @@ td.expandable-clamp2.expanded {
   transition: var(--transition);
 }
 .form-control:focus { border-color: var(--border-accent); background: var(--surface3); box-shadow: 0 0 0 3px var(--accent-dim); }
+.form-control:disabled { opacity: 0.55; cursor: not-allowed; }
 .form-control::placeholder { color: var(--fg-muted); font-weight: 400; }
 .form-control option { background: #1a2a24; color: #fff; }
 textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--font-body); }
@@ -949,3 +950,103 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 
   .detalhamento-list { grid-template-columns: 1fr; gap: 12px; }
 }
+
+/* Sessão / login */
+
+.session-badge {
+  font-size: 11.5px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: var(--fg-muted);
+  padding: 0 4px;
+  white-space: nowrap;
+}
+
+.mobile-header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+.mobile-logout-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--fg-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.mobile-logout-btn:hover { color: var(--danger); border-color: var(--danger-dim); }
+
+.login-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+.login-brand img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; }
+.login-brand span {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 1.2em;
+  color: var(--fg);
+}
+
+.login-error {
+  color: var(--danger);
+  font-size: 12.5px;
+  margin-bottom: 14px;
+}
+
+.login-submit { width: 100%; justify-content: center; margin-top: 6px; }
+
+/* Cadastrar login (admin) */
+
+.cadastrar-login-shell {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+}
+
+.cadastrar-login-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 20px;
+  margin-top: 18px;
+}
+
+.cadastrar-login-list { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+
+.cadastrar-login-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+
+.cadastrar-login-row-login { font-weight: 700; color: var(--fg); font-size: 13.5px; }
+.cadastrar-login-row-meta { font-size: 11.5px; color: var(--fg-muted); margin-top: 2px; }

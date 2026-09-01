@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { AREAS, RESPONSAVEIS, STATUSES, Status, Tarefa, TIPOS } from "@/types";
+import { useSession } from "./SessionProvider";
+import { canWrite } from "@/lib/permissions";
 
 type FormState = {
   tarefa: string;
@@ -45,7 +47,11 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
   const [form, setForm] = useState<FormState>(empty());
   const [error, setError] = useState("");
   const [added, setAdded] = useState(false);
-  const opcoesResponsavel = responsaveisOptions ?? RESPONSAVEIS;
+  const session = useSession();
+  const readOnly = !canWrite(session);
+  const scopedParaResponsavel = session?.nivel === "RESPONSAVEL_MASTER" ? session.responsavel : null;
+  const opcoesResponsavel = scopedParaResponsavel ? [scopedParaResponsavel] : responsaveisOptions ?? RESPONSAVEIS;
+  const responsavelPadrao = scopedParaResponsavel ?? defaultResponsavel;
 
   useEffect(() => {
     if (!open) return;
@@ -64,20 +70,23 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
         status: editing.status,
       });
     } else {
-      setForm(empty(defaultResponsavel));
+      setForm(empty(responsavelPadrao));
     }
     setError("");
     setAdded(false);
-  }, [open, editing, defaultResponsavel]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, editing, responsavelPadrao]);
 
   if (!open) return null;
 
   function set<K extends keyof FormState>(key: K, value: FormState[K]) {
+    if (readOnly) return;
     setForm((f) => ({ ...f, [key]: value }));
   }
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (readOnly) return;
     if (!form.tarefa.trim() || !form.area || !form.responsavel) {
       setError("Preencha os campos obrigatórios");
       return;
@@ -111,6 +120,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
               placeholder="Descreva a tarefa brevemente"
               value={form.tarefa}
               onChange={(e) => set("tarefa", e.target.value)}
+              disabled={readOnly}
               required
             />
           </div>
@@ -124,6 +134,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
                 className="form-control"
                 value={form.area}
                 onChange={(e) => set("area", e.target.value)}
+                disabled={readOnly}
                 required
               >
                 <option value="" disabled>
@@ -142,6 +153,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
                 className="form-control"
                 value={form.responsavel}
                 onChange={(e) => set("responsavel", e.target.value)}
+                disabled={readOnly || opcoesResponsavel.length === 1}
                 required
               >
                 <option value="" disabled>
@@ -154,7 +166,12 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
             </div>
             <div className="form-group">
               <label>Tipo</label>
-              <select className="form-control" value={form.tipo} onChange={(e) => set("tipo", e.target.value)}>
+              <select
+                className="form-control"
+                value={form.tipo}
+                onChange={(e) => set("tipo", e.target.value)}
+                disabled={readOnly}
+              >
                 <option value="">Selecione...</option>
                 {TIPOS.map((tp) => (
                   <option key={tp}>{tp}</option>
@@ -171,6 +188,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
               placeholder="Detalhes, contexto, observações..."
               value={form.descricao}
               onChange={(e) => set("descricao", e.target.value)}
+              disabled={readOnly}
             />
           </div>
 
@@ -182,6 +200,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
               placeholder="https://..."
               value={form.link}
               onChange={(e) => set("link", e.target.value)}
+              disabled={readOnly}
             />
           </div>
 
@@ -195,6 +214,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
                 className="form-control"
                 value={form.solicitacao}
                 onChange={(e) => set("solicitacao", e.target.value)}
+                disabled={readOnly}
                 required
               />
             </div>
@@ -205,6 +225,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
                 className="form-control"
                 value={form.feedback}
                 onChange={(e) => set("feedback", e.target.value)}
+                disabled={readOnly}
               />
             </div>
           </div>
@@ -219,6 +240,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
                 className="form-control"
                 value={form.entrega}
                 onChange={(e) => set("entrega", e.target.value)}
+                disabled={readOnly}
                 required
               />
             </div>
@@ -229,6 +251,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
                 className="form-control"
                 value={form.horarioPublicacao}
                 onChange={(e) => set("horarioPublicacao", e.target.value)}
+                disabled={readOnly}
               />
             </div>
           </div>
@@ -238,14 +261,19 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
               <label>
                 Status <span>*</span>
               </label>
-              <select className="form-control" value={form.status} onChange={(e) => set("status", e.target.value as Status)}>
+              <select
+                className="form-control"
+                value={form.status}
+                onChange={(e) => set("status", e.target.value as Status)}
+                disabled={readOnly}
+              >
                 {STATUSES.map((s) => (
                   <option key={s}>{s}</option>
                 ))}
               </select>
             </div>
 
-            {editing?.fixa && (
+            {editing?.fixa && !readOnly && (
               <div className="form-group">
                 <label>Adicionar à Lista</label>
                 <div className="form-toggle">
@@ -272,11 +300,13 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
 
           <div className="form-footer">
             <button type="button" className="btn btn-ghost" onClick={onClose}>
-              Cancelar
+              {readOnly ? "Fechar" : "Cancelar"}
             </button>
-            <button type="submit" className="btn btn-accent">
-              <i className="fas fa-save" /> Salvar
-            </button>
+            {!readOnly && (
+              <button type="submit" className="btn btn-accent">
+                <i className="fas fa-save" /> Salvar
+              </button>
+            )}
           </div>
         </form>
       </div>

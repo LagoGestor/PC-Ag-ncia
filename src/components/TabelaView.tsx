@@ -5,6 +5,8 @@ import { AREAS, RESPONSAVEIS_VISIVEIS, STATUSES, STATUS_BADGE_CLASS, STATUS_COLO
 import { fmtDate, isOverdue } from "./TaskCard";
 import { Avatar } from "./Avatar";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useSession } from "./SessionProvider";
+import { canWrite } from "@/lib/permissions";
 
 interface Filters {
   tarefa: string;
@@ -39,6 +41,8 @@ interface Props {
 
 export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
   const isMobile = useIsMobile();
+  const session = useSession();
+  const writable = canWrite(session);
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [sort, setSort] = useState<{ field: keyof Tarefa; asc: boolean } | null>(null);
   const [expandedCells, setExpandedCells] = useState<Set<string>>(new Set());
@@ -305,19 +309,23 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
                 </td>
                 <td>
                   <div className="tbl-actions">
-                    <button className="tbl-action-icon" onClick={() => onEdit(t)} title="Editar">
-                      <i className="fas fa-pen" />
+                    <button className="tbl-action-icon" onClick={() => onEdit(t)} title={writable ? "Editar" : "Ver detalhes"}>
+                      <i className={`fas ${writable ? "fa-pen" : "fa-eye"}`} />
                     </button>
-                    <button
-                      className="tbl-action-icon"
-                      onClick={() => onToggleArchive(t)}
-                      title={t.arquivada ? "Desarquivar" : "Arquivar"}
-                    >
-                      <i className={`fas ${t.arquivada ? "fa-box-open" : "fa-box-archive"}`} />
-                    </button>
-                    <button className="tbl-action-icon danger" onClick={() => onDelete(t)} title="Apagar">
-                      <i className="fas fa-trash" />
-                    </button>
+                    {writable && (
+                      <>
+                        <button
+                          className="tbl-action-icon"
+                          onClick={() => onToggleArchive(t)}
+                          title={t.arquivada ? "Desarquivar" : "Arquivar"}
+                        >
+                          <i className={`fas ${t.arquivada ? "fa-box-open" : "fa-box-archive"}`} />
+                        </button>
+                        <button className="tbl-action-icon danger" onClick={() => onDelete(t)} title="Apagar">
+                          <i className="fas fa-trash" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </td>
               </tr>

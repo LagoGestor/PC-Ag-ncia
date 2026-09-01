@@ -9,6 +9,8 @@ import { SummaryBar } from "./SummaryBar";
 import { MobileTaskCard } from "./MobileTaskCard";
 import { TaskModal } from "./TaskModal";
 import { CronogramaSemanalView } from "./CronogramaSemanalView";
+import { useSession } from "./SessionProvider";
+import { canWrite } from "@/lib/permissions";
 
 interface Props {
   responsavel: string;
@@ -21,6 +23,8 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [showCronograma, setShowCronograma] = useState(false);
   const { toasts, toast } = useToasts();
+  const session = useSession();
+  const writable = canWrite(session);
 
   const filtradas = statusFilter ? tarefas.filter((t) => t.status === statusFilter) : tarefas;
 
@@ -55,9 +59,11 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
       <SummaryBar tarefas={tarefas} statusFilter={statusFilter} onToggle={(s) => setStatusFilter((cur) => (cur === s ? null : s))} />
 
       <div className="mobile-actions-row">
-        <button className="btn btn-accent" onClick={() => setModalOpen(true)}>
-          <i className="fas fa-plus" /> Nova Tarefa
-        </button>
+        {writable && (
+          <button className="btn btn-accent" onClick={() => setModalOpen(true)}>
+            <i className="fas fa-plus" /> Nova Tarefa
+          </button>
+        )}
         <button
           className={`btn ${showCronograma ? "btn-accent" : "btn-ghost"}`}
           style={{ marginTop: 10 }}
@@ -76,7 +82,9 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
               {statusFilter ? `Nenhuma tarefa com status "${statusFilter}".` : `Nenhuma tarefa para ${responsavel} no momento.`}
             </p>
           ) : (
-            filtradas.map((t) => <MobileTaskCard key={t.id} t={t} onStatusChange={handleStatusChange} />)
+            filtradas.map((t) => (
+              <MobileTaskCard key={t.id} t={t} onStatusChange={writable ? handleStatusChange : undefined} />
+            ))
           )}
         </div>
       )}

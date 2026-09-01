@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { RESPONSAVEIS_VISIVEIS, Tarefa, WHATSAPP_FOTOS_RESPONSAVEL, slugify } from "@/types";
 import { MobilePessoaClient } from "@/components/MobilePessoaClient";
 import { Avatar } from "@/components/Avatar";
+import { LogoutButton } from "@/components/LogoutButton";
+import { getSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +48,11 @@ export default async function MobilePessoaPage({ params }: Props) {
   const responsavel = RESPONSAVEIS_VISIVEIS.find((r) => slugify(r) === pessoa);
   if (!responsavel) notFound();
 
+  const session = await getSession();
+  if (session && (session.nivel === "RESPONSAVEL_MASTER" || session.nivel === "RESPONSAVEL_LEITURA") && session.responsavel !== responsavel) {
+    redirect(`/mobile/${slugify(session.responsavel)}`);
+  }
+
   const tarefas = await prisma.tarefa.findMany({
     where: { fixa: false, arquivada: false, responsavel },
     orderBy: { entrega: "asc" },
@@ -58,7 +65,10 @@ export default async function MobilePessoaPage({ params }: Props) {
           <Avatar name={responsavel} size={52} />
           <span>{responsavel}</span>
         </div>
-        <span className="mobile-count">{tarefas.length}</span>
+        <div className="mobile-header-right">
+          <span className="mobile-count">{tarefas.length}</span>
+          <LogoutButton className="mobile-logout-btn" />
+        </div>
       </header>
 
       <MobilePessoaClient responsavel={responsavel} initialTarefas={tarefas as unknown as Tarefa[]} />

@@ -5,6 +5,9 @@ import { api } from "@/lib/api";
 import { useToasts } from "@/hooks/useToasts";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { RESPONSAVEL_ARMAZENAR, Status, Tarefa, View } from "@/types";
+import { useSession } from "@/components/SessionProvider";
+import { canWrite } from "@/lib/permissions";
+import { LogoutButton } from "@/components/LogoutButton";
 import { ToastContainer } from "@/components/ToastContainer";
 import { SummaryBar } from "@/components/SummaryBar";
 import { DashboardView } from "@/components/DashboardView";
@@ -35,6 +38,8 @@ export default function Home() {
 
   const { toasts, toast } = useToasts();
   const isMobile = useIsMobile();
+  const session = useSession();
+  const writable = canWrite(session);
 
   useEffect(() => {
     if (isMobile && (view === "kanban" || view === "direcionar")) setView("dashboard");
@@ -257,9 +262,11 @@ export default function Home() {
         </div>
 
         <div className="top-actions">
-          <button className="btn btn-accent" onClick={openNew}>
-            <i className="fas fa-plus" /> Nova Tarefa
-          </button>
+          {writable && (
+            <button className="btn btn-accent" onClick={openNew}>
+              <i className="fas fa-plus" /> Nova Tarefa
+            </button>
+          )}
           <div className="sep" />
           <div className={`dropdown${dropdownOpen ? " open" : ""}`}>
             <button className="btn btn-ghost icon-btn" onClick={() => setDropdownOpen((v) => !v)}>
@@ -283,6 +290,15 @@ export default function Home() {
               </button>
             </div>
           </div>
+          {session && (
+            <>
+              <div className="sep" />
+              <span className="session-badge" title={session.login}>
+                {session.login}
+              </span>
+              <LogoutButton />
+            </>
+          )}
         </div>
       </div>
 

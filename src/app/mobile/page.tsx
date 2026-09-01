@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { RESPONSAVEIS_VISIVEIS, RESPONSAVEL_ARMAZENAR, WHATSAPP_FOTO_AGENCIA, slugify } from "@/types";
 import { MobileTaskCard } from "@/components/MobileTaskCard";
+import { LogoutButton } from "@/components/LogoutButton";
+import { getSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +19,11 @@ export const metadata: Metadata = {
 };
 
 export default async function MobileMasterPage() {
+  const session = await getSession();
+  if (session && (session.nivel === "RESPONSAVEL_MASTER" || session.nivel === "RESPONSAVEL_LEITURA")) {
+    redirect(`/mobile/${slugify(session.responsavel)}`);
+  }
+
   const tarefas = await prisma.tarefa.findMany({
     where: { fixa: false, arquivada: false, responsavel: { not: RESPONSAVEL_ARMAZENAR } },
     orderBy: { entrega: "asc" },
@@ -28,7 +36,10 @@ export default async function MobileMasterPage() {
           <i className="fas fa-layer-group" />
           <span>Todas as Tarefas</span>
         </div>
-        <span className="mobile-count">{tarefas.length}</span>
+        <div className="mobile-header-right">
+          <span className="mobile-count">{tarefas.length}</span>
+          <LogoutButton className="mobile-logout-btn" />
+        </div>
       </header>
 
       <nav className="mobile-nav-chips">

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { ICONES_AREA, STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa } from "@/types";
 import { Avatar } from "./Avatar";
+import { useSession } from "./SessionProvider";
+import { canWrite } from "@/lib/permissions";
 
 function fmtDate(d: string) {
   return d ? d.split("-").reverse().join("/") : "—";
@@ -30,6 +32,8 @@ interface Props {
 
 export function TaskCard({ t, onEdit, onToggleArchive, onDelete, onDragStart }: Props) {
   const [expanded, setExpanded] = useState(false);
+  const session = useSession();
+  const writable = canWrite(session);
   const color = STATUS_COLORS[t.status] || "#666";
   const badgeClass = STATUS_BADGE_CLASS[t.status] || "";
   const icon = ICONES_AREA[t.area] || "";
@@ -39,8 +43,9 @@ export function TaskCard({ t, onEdit, onToggleArchive, onDelete, onDragStart }: 
     <div
       className="task-card"
       style={{ ["--status-color" as string]: color }}
-      draggable
+      draggable={writable}
       onDragStart={(e) => {
+        if (!writable) return;
         e.dataTransfer.setData("text", t.id);
         onDragStart?.(t.id);
       }}
@@ -68,19 +73,23 @@ export function TaskCard({ t, onEdit, onToggleArchive, onDelete, onDragStart }: 
           </div>
         </div>
         <div className="card-actions">
-          <button className="card-action-btn" onClick={() => onEdit(t)} title="Editar">
-            <i className="fas fa-pen" />
+          <button className="card-action-btn" onClick={() => onEdit(t)} title={writable ? "Editar" : "Ver detalhes"}>
+            <i className={`fas ${writable ? "fa-pen" : "fa-eye"}`} />
           </button>
-          <button
-            className="card-action-btn"
-            onClick={() => onToggleArchive(t)}
-            title={t.arquivada ? "Desarquivar" : "Arquivar"}
-          >
-            <i className={`fas ${t.arquivada ? "fa-box-open" : "fa-box-archive"}`} />
-          </button>
-          <button className="card-action-btn danger" onClick={() => onDelete(t)} title="Apagar">
-            <i className="fas fa-trash" />
-          </button>
+          {writable && (
+            <>
+              <button
+                className="card-action-btn"
+                onClick={() => onToggleArchive(t)}
+                title={t.arquivada ? "Desarquivar" : "Arquivar"}
+              >
+                <i className={`fas ${t.arquivada ? "fa-box-open" : "fa-box-archive"}`} />
+              </button>
+              <button className="card-action-btn danger" onClick={() => onDelete(t)} title="Apagar">
+                <i className="fas fa-trash" />
+              </button>
+            </>
+          )}
         </div>
       </div>
 

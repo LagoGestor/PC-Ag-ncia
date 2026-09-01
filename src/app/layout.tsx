@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { getSession } from "@/lib/auth";
+import { SessionProvider } from "@/components/SessionProvider";
 
 const title = "Gestor de Tarefas";
 const description = "Gestão de tarefas da agência";
@@ -13,7 +15,12 @@ export const metadata: Metadata = {
   twitter: { card: "summary", title, description, images: [shareImage] },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const session = await getSession();
+  const clientSession = session
+    ? { login: session.login, nivel: session.nivel, responsavel: session.responsavel }
+    : null;
+
   return (
     <html lang="pt-BR">
       <head>
@@ -26,7 +33,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <SessionProvider session={clientSession}>{children}</SessionProvider>
+      </body>
     </html>
   );
 }

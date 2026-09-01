@@ -8,6 +8,7 @@ import { ToastContainer } from "@/components/ToastContainer";
 import { ReuniaoModal } from "@/components/ReuniaoModal";
 import { AssuntoModal } from "@/components/AssuntoModal";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import { useSession } from "@/components/SessionProvider";
 
 function fmtDate(d: string) {
   return d ? d.split("-").reverse().join("/") : "—";
@@ -30,6 +31,8 @@ export function ReunioesView() {
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget | null>(null);
 
   const { toasts, toast } = useToasts();
+  const session = useSession();
+  const writable = session?.nivel === "MASTER";
 
   useEffect(() => {
     reunioesApi
@@ -134,9 +137,11 @@ export function ReunioesView() {
       <div className="fixas-header">
         <div>
           <h2 className="fixas-title">Pauta de Reunião</h2>
-          <button className="btn btn-accent" style={{ marginTop: 12 }} onClick={openNewReuniao}>
-            <i className="fas fa-plus" /> Nova Reunião
-          </button>
+          {writable && (
+            <button className="btn btn-accent" style={{ marginTop: 12 }} onClick={openNewReuniao}>
+              <i className="fas fa-plus" /> Nova Reunião
+            </button>
+          )}
         </div>
       </div>
 
@@ -171,28 +176,34 @@ export function ReunioesView() {
                     </div>
                   </div>
                   <div className="reuniao-card-actions">
-                    <button className="card-action-btn" onClick={(e) => openEditReuniao(r, e)} title="Editar">
-                      <i className="fas fa-pen" />
-                    </button>
-                    <button
-                      className="card-action-btn danger"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDeleteTarget({ type: "reuniao", id: r.id });
-                      }}
-                      title="Apagar"
-                    >
-                      <i className="fas fa-trash" />
-                    </button>
+                    {writable && (
+                      <>
+                        <button className="card-action-btn" onClick={(e) => openEditReuniao(r, e)} title="Editar">
+                          <i className="fas fa-pen" />
+                        </button>
+                        <button
+                          className="card-action-btn danger"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteTarget({ type: "reuniao", id: r.id });
+                          }}
+                          title="Apagar"
+                        >
+                          <i className="fas fa-trash" />
+                        </button>
+                      </>
+                    )}
                     <i className={`fas fa-chevron-${expanded ? "up" : "down"}`} />
                   </div>
                 </div>
 
                 {expanded && (
                   <div className="reuniao-assuntos">
-                    <button className="btn btn-ghost btn-sm" onClick={(e) => openNewAssunto(r.id, e)}>
-                      <i className="fas fa-plus" /> Novo Assunto
-                    </button>
+                    {writable && (
+                      <button className="btn btn-ghost btn-sm" onClick={(e) => openNewAssunto(r.id, e)}>
+                        <i className="fas fa-plus" /> Novo Assunto
+                      </button>
+                    )}
 
                     {r.assuntos.length === 0 ? (
                       <div className="fixas-empty">Nenhum assunto registrado</div>
@@ -201,21 +212,23 @@ export function ReunioesView() {
                         <div key={a.id} className="assunto-card" onClick={(e) => e.stopPropagation()}>
                           <div className="assunto-card-top">
                             <div className="assunto-tema">{a.tema}</div>
-                            <div className="reuniao-card-actions">
-                              <button className="card-action-btn" onClick={(e) => openEditAssunto(a, e)} title="Editar">
-                                <i className="fas fa-pen" />
-                              </button>
-                              <button
-                                className="card-action-btn danger"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setDeleteTarget({ type: "assunto", id: a.id });
-                                }}
-                                title="Apagar"
-                              >
-                                <i className="fas fa-trash" />
-                              </button>
-                            </div>
+                            {writable && (
+                              <div className="reuniao-card-actions">
+                                <button className="card-action-btn" onClick={(e) => openEditAssunto(a, e)} title="Editar">
+                                  <i className="fas fa-pen" />
+                                </button>
+                                <button
+                                  className="card-action-btn danger"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setDeleteTarget({ type: "assunto", id: a.id });
+                                  }}
+                                  title="Apagar"
+                                >
+                                  <i className="fas fa-trash" />
+                                </button>
+                              </div>
+                            )}
                           </div>
                           {a.descricao && (
                             <div className="assunto-field">

@@ -53,3 +53,20 @@ model Assunto {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
+
+enum NivelAcesso {
+  MASTER
+  MASTER_LEITURA
+  RESPONSAVEL_MASTER
+  RESPONSAVEL_LEITURA
+}
+
+model Usuario {
+  id          String      @id @default(cuid())
+  login       String      @unique
+  senhaHash   String
+  nivel       NivelAcesso
+  responsavel String      @default("")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}

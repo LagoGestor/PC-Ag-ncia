@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma db push --accept-data-loss && prisma generate && next build",
+    "build": "prisma db push --accept-data-loss && prisma generate && tsx scripts/seed-master.ts && next build",
     "start": "next start",
     "lint": "eslint"
   },
@@ -12,6 +12,8 @@
     "@neondatabase/serverless": "^1.1.0",
     "@prisma/adapter-neon": "^7.9.1",
     "@prisma/client": "^7.9.1",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.10",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",
     "next": "16.3.1",
@@ -21,6 +23,7 @@
     "ws": "^8.21.3"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -28,6 +31,7 @@
     "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.3.1",
+    "tsx": "^4.23.13",
     "typescript": "^5"
   },
   "allowScripts": {
