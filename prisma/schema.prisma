@@ -54,13 +54,8 @@ model Assunto {
   updatedAt      DateTime @updatedAt
 }
 
-// TEMP: mantém os valores antigos até os logins existentes serem migrados para os novos
-// (ver plano de migração em duas etapas). Depois disso, os 3 valores antigos abaixo são removidos.
 enum NivelAcesso {
   MASTER
-  MASTER_LEITURA
-  RESPONSAVEL_MASTER
-  RESPONSAVEL_LEITURA
   DIRETOR_CONTEUDO
   EXECUTOR
 }

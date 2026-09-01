@@ -1,8 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-// TEMP: inclui os valores antigos até a migração dos logins existentes terminar.
-export type Nivel = "MASTER" | "MASTER_LEITURA" | "RESPONSAVEL_MASTER" | "RESPONSAVEL_LEITURA" | "DIRETOR_CONTEUDO" | "EXECUTOR";
+export type Nivel = "MASTER" | "DIRETOR_CONTEUDO" | "EXECUTOR";
 
 export interface SessionPayload {
   sub: string;
