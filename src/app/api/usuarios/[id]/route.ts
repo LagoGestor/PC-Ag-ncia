@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession, signSession, SESSION_COOKIE, SESSION_MAX_AGE_SECONDS } from "@/lib/auth";
 import { hashPassword } from "@/lib/password";
+import { confirmarSenhaGravada } from "@/lib/usuarioWrites";
 import { RESPONSAVEIS_VISIVEIS } from "@/types";
 
 const NIVEIS = ["MASTER", "DIRETOR_CONTEUDO", "EXECUTOR"] as const;
@@ -46,14 +47,16 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Já existe um login com esse nome." }, { status: 409 });
   }
 
+  const novaSenhaHash = senha ? await hashPassword(senha) : null;
   const data: Record<string, unknown> = { nome, login, nivel, responsavel: isExecutor ? responsavel : "" };
-  if (senha) data.senhaHash = await hashPassword(senha);
+  if (novaSenhaHash) data.senhaHash = novaSenhaHash;
 
   const usuario = await prisma.usuario.update({
     where: { id },
     data,
     select: { id: true, nome: true, login: true, nivel: true, responsavel: true, createdAt: true },
   });
+  if (novaSenhaHash) await confirmarSenhaGravada(id, novaSenhaHash);
 
   const res = NextResponse.json(usuario);
 

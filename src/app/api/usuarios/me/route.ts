@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession, signSession, SESSION_COOKIE, SESSION_MAX_AGE_SECONDS } from "@/lib/auth";
 import { hashPassword } from "@/lib/password";
+import { confirmarSenhaGravada } from "@/lib/usuarioWrites";
 
 export async function GET() {
   const session = await getSession();
@@ -37,14 +38,16 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Já existe um login com esse nome." }, { status: 409 });
   }
 
+  const novaSenhaHash = senha ? await hashPassword(senha) : null;
   const data: Record<string, unknown> = { nome, login };
-  if (senha) data.senhaHash = await hashPassword(senha);
+  if (novaSenhaHash) data.senhaHash = novaSenhaHash;
 
   const usuario = await prisma.usuario.update({
     where: { id: session.sub },
     data,
     select: { id: true, nome: true, login: true, nivel: true, responsavel: true },
   });
+  if (novaSenhaHash) await confirmarSenhaGravada(session.sub, novaSenhaHash);
 
   const token = await signSession({
     sub: usuario.id,

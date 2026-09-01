@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { hashPassword } from "@/lib/password";
+import { confirmarSenhaGravada } from "@/lib/usuarioWrites";
 import { RESPONSAVEIS_VISIVEIS } from "@/types";
 
 const NIVEIS = ["MASTER", "DIRETOR_CONTEUDO", "EXECUTOR"] as const;
@@ -49,6 +50,7 @@ export async function POST(req: NextRequest) {
     data: { nome, login, senhaHash, nivel, responsavel: isExecutor ? responsavel : "" },
     select: { id: true, nome: true, login: true, nivel: true, responsavel: true, createdAt: true },
   });
+  await confirmarSenhaGravada(usuario.id, senhaHash);
 
   return NextResponse.json(usuario, { status: 201 });
 }
