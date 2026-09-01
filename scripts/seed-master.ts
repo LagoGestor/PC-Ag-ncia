@@ -6,6 +6,7 @@ import { hashPassword } from "../src/lib/password";
 
 neonConfig.webSocketConstructor = ws;
 
+const NOME_INICIAL = "Leo Felix";
 const LOGIN_INICIAL = "leo.felix";
 const SENHA_INICIAL = "*lfa1234";
 
@@ -19,7 +20,7 @@ async function main() {
   } else {
     const senhaHash = await hashPassword(SENHA_INICIAL);
     await prisma.usuario.create({
-      data: { login: LOGIN_INICIAL, senhaHash, nivel: "MASTER", responsavel: "" },
+      data: { nome: NOME_INICIAL, login: LOGIN_INICIAL, senhaHash, nivel: "MASTER", responsavel: "" },
     });
     console.log(`[seed-master] Login Master "${LOGIN_INICIAL}" criado.`);
   }

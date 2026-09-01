@@ -12,7 +12,7 @@ export async function GET() {
 
   const usuarios = await prisma.usuario.findMany({
     orderBy: { createdAt: "asc" },
-    select: { id: true, login: true, nivel: true, responsavel: true, createdAt: true },
+    select: { id: true, nome: true, login: true, nivel: true, responsavel: true, createdAt: true },
   });
   return NextResponse.json(usuarios);
 }
@@ -22,13 +22,14 @@ export async function POST(req: NextRequest) {
   if (session?.nivel !== "MASTER") return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
 
   const body = await req.json().catch(() => null);
+  const nome = typeof body?.nome === "string" ? body.nome.trim() : "";
   const login = typeof body?.login === "string" ? body.login.trim() : "";
   const senha = typeof body?.senha === "string" ? body.senha : "";
   const nivel = body?.nivel;
   const responsavel = typeof body?.responsavel === "string" ? body.responsavel : "";
 
-  if (!login || !senha || !NIVEIS.includes(nivel)) {
-    return NextResponse.json({ error: "Preencha login, senha e nível válidos." }, { status: 400 });
+  if (!nome || !login || !senha || !NIVEIS.includes(nivel)) {
+    return NextResponse.json({ error: "Preencha nome, login, senha e nível válidos." }, { status: 400 });
   }
   if (senha.length < 4) {
     return NextResponse.json({ error: "A senha deve ter ao menos 4 caracteres." }, { status: 400 });
@@ -45,8 +46,8 @@ export async function POST(req: NextRequest) {
 
   const senhaHash = await hashPassword(senha);
   const usuario = await prisma.usuario.create({
-    data: { login, senhaHash, nivel, responsavel: isResponsavelScoped ? responsavel : "" },
-    select: { id: true, login: true, nivel: true, responsavel: true, createdAt: true },
+    data: { nome, login, senhaHash, nivel, responsavel: isResponsavelScoped ? responsavel : "" },
+    select: { id: true, nome: true, login: true, nivel: true, responsavel: true, createdAt: true },
   });
 
   return NextResponse.json(usuario, { status: 201 });

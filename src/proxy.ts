@@ -53,7 +53,7 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (pathname.startsWith("/api/usuarios") && !isMaster) {
+  if (pathname.startsWith("/api/usuarios") && pathname !== "/api/usuarios/me" && !isMaster) {
     return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
   }
 

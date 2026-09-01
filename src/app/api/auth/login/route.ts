@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
 
   const token = await signSession({
     sub: usuario.id,
+    nome: usuario.nome,
     login: usuario.login,
     nivel: usuario.nivel,
     responsavel: usuario.responsavel,

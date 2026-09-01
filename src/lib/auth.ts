@@ -5,6 +5,7 @@ export type Nivel = "MASTER" | "MASTER_LEITURA" | "RESPONSAVEL_MASTER" | "RESPON
 
 export interface SessionPayload {
   sub: string;
+  nome: string;
   login: string;
   nivel: Nivel;
   responsavel: string;
@@ -20,7 +21,7 @@ function getSecretKey() {
 }
 
 export async function signSession(payload: SessionPayload): Promise<string> {
-  return new SignJWT({ login: payload.login, nivel: payload.nivel, responsavel: payload.responsavel })
+  return new SignJWT({ nome: payload.nome, login: payload.login, nivel: payload.nivel, responsavel: payload.responsavel })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(payload.sub)
     .setIssuedAt()
@@ -34,6 +35,7 @@ export async function verifySessionToken(token: string): Promise<SessionPayload 
     if (!payload.sub || !payload.login || !payload.nivel) return null;
     return {
       sub: payload.sub as string,
+      nome: (payload.nome as string) ?? "",
       login: payload.login as string,
       nivel: payload.nivel as Nivel,
       responsavel: (payload.responsavel as string) ?? "",

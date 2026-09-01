@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const session = await getSession();
   const clientSession = session
-    ? { login: session.login, nivel: session.nivel, responsavel: session.responsavel }
+    ? { nome: session.nome, login: session.login, nivel: session.nivel, responsavel: session.responsavel }
     : null;
 
   return (

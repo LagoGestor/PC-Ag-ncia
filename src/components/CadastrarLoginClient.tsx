@@ -17,13 +17,14 @@ const NIVEL_LABEL: Record<Nivel, string> = {
 
 interface Usuario {
   id: string;
+  nome: string;
   login: string;
   nivel: Nivel;
   responsavel: string;
   createdAt: string;
 }
 
-const empty = { login: "", senha: "", nivel: "MASTER" as Nivel, responsavel: "" };
+const empty = { nome: "", login: "", senha: "", nivel: "MASTER" as Nivel, responsavel: "" };
 
 export function CadastrarLoginClient() {
   const [usuarios, setUsuarios] = useState<Usuario[] | null>(null);
@@ -48,8 +49,8 @@ export function CadastrarLoginClient() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError("");
-    if (!form.login.trim() || !form.senha) {
-      setError("Preencha login e senha.");
+    if (!form.nome.trim() || !form.login.trim() || !form.senha) {
+      setError("Preencha nome, login e senha.");
       return;
     }
     if (isResponsavelScoped && !form.responsavel) {
@@ -102,6 +103,21 @@ export function CadastrarLoginClient() {
       <p className="fixas-subtitle">Gerencie os acessos ao sistema. Esta página é restrita a contas Master.</p>
 
       <form className="cadastrar-login-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>
+            Nome <span>*</span>
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Nome que aparece ao lado da foto ao logar"
+            autoComplete="off"
+            value={form.nome}
+            onChange={(e) => setForm((f) => ({ ...f, nome: e.target.value }))}
+            required
+          />
+        </div>
+
         <div className="form-row">
           <div className="form-group">
             <label>
@@ -190,7 +206,9 @@ export function CadastrarLoginClient() {
           usuarios.map((u) => (
             <div key={u.id} className="cadastrar-login-row">
               <div>
-                <div className="cadastrar-login-row-login">{u.login}</div>
+                <div className="cadastrar-login-row-login">
+                  {u.nome || u.login} <span className="cadastrar-login-row-login-sub">@{u.login}</span>
+                </div>
                 <div className="cadastrar-login-row-meta">
                   {NIVEL_LABEL[u.nivel]}
                   {u.responsavel ? ` · ${u.responsavel}` : ""}

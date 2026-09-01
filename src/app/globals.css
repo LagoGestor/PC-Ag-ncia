@@ -859,21 +859,29 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 
 /* ── RESPONSIVE: MAIN APP (Lista/Cards/Kanban/Agenda/etc.) ON SMALL SCREENS ── */
 @media (max-width: 768px) {
-  #app { height: 100vh; height: 100dvh; }
+  #app { height: auto; min-height: 100vh; min-height: 100dvh; overflow: visible; }
 
   #topbar {
     flex-wrap: wrap;
     padding: 10px 14px;
     gap: 8px 12px;
   }
-  /* Row 1: centered logo/title with the "..." menu pinned to the right.
-     Row 2: full-width "+ Nova Tarefa". Row 3: search bar. */
-  .brand { order: 1; flex: 1 1 auto; justify-content: center; }
+  /* Row 1: logo/title on the left, "..." menu pinned to the right.
+     Row 2: logged-in person's photo + name, centered.
+     Row 3: full-width "+ Nova Tarefa". Row 4: search bar. */
+  .brand { order: 1; flex: 1 1 auto; }
   .top-actions { display: contents; }
   .top-actions .sep { display: none; }
   .top-actions .dropdown { order: 2; }
-  .top-actions .btn-accent { order: 3; flex: 1 1 100%; justify-content: center; }
-  .search-wrap { order: 4; flex-basis: 100%; max-width: 100%; }
+  .top-actions .session-identity { order: 3; flex: 1 1 100%; justify-content: center; }
+  .top-actions .btn-accent { order: 4; flex: 1 1 100%; justify-content: center; }
+  .search-wrap { order: 5; flex-basis: 100%; max-width: 100%; }
+
+  /* Let the whole page scroll naturally instead of trapping scroll inside #visualizacao,
+     so the topbar/summary/nav scroll away and free up reading room. */
+  html, body { overflow: auto; }
+  #view-container { overflow: visible; }
+  #visualizacao { overflow-y: visible; }
 
   #summary-bar { padding: 10px 14px; gap: 8px; }
   .sum-pill { padding: 6px 8px; gap: 5px; }
@@ -953,14 +961,19 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 
 /* Sessão / login */
 
-.session-badge {
-  font-size: 11.5px;
+.session-identity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-head);
   font-weight: 700;
-  color: var(--fg-muted);
-  padding: 0 4px;
+  font-size: 12.5px;
+  color: var(--fg);
   white-space: nowrap;
 }
+
+.dropdown-item-danger { color: var(--danger); font-weight: 700; }
+.dropdown-item-danger:hover { background: var(--danger-dim); color: var(--danger); }
 
 .mobile-header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 
@@ -1049,4 +1062,5 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 }
 
 .cadastrar-login-row-login { font-weight: 700; color: var(--fg); font-size: 13.5px; }
+.cadastrar-login-row-login-sub { font-weight: 500; color: var(--fg-muted); font-size: 11.5px; }
 .cadastrar-login-row-meta { font-size: 11.5px; color: var(--fg-muted); margin-top: 2px; }

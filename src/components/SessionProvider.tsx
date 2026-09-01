@@ -4,6 +4,7 @@ import { createContext, ReactNode, useContext } from "react";
 import type { Nivel } from "@/lib/auth";
 
 export interface ClientSession {
+  nome: string;
   login: string;
   nivel: Nivel;
   responsavel: string;

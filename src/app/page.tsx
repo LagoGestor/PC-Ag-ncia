@@ -7,7 +7,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { RESPONSAVEL_ARMAZENAR, Status, Tarefa, View } from "@/types";
 import { useSession } from "@/components/SessionProvider";
 import { canWrite } from "@/lib/permissions";
-import { LogoutButton } from "@/components/LogoutButton";
+import { Avatar } from "@/components/Avatar";
 import { ToastContainer } from "@/components/ToastContainer";
 import { SummaryBar } from "@/components/SummaryBar";
 import { DashboardView } from "@/components/DashboardView";
@@ -238,6 +238,11 @@ export default function Home() {
     setDropdownOpen(false);
   }
 
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    window.location.href = "/login";
+  }
+
   return (
     <div id="app">
       <div id="topbar">
@@ -288,16 +293,19 @@ export default function Home() {
               <button className="dropdown-item" onClick={exportarCSV}>
                 <i className="fas fa-file-csv" /> Exportar CSV
               </button>
+              <a className="dropdown-item" href="/minha-conta">
+                <i className="fas fa-key" /> Alterar Senha
+              </a>
+              <button className="dropdown-item dropdown-item-danger" onClick={handleLogout}>
+                <i className="fas fa-right-from-bracket" /> Sair
+              </button>
             </div>
           </div>
           {session && (
-            <>
-              <div className="sep" />
-              <span className="session-badge" title={session.login}>
-                {session.login}
-              </span>
-              <LogoutButton />
-            </>
+            <div className="session-identity">
+              <Avatar name={session.nome || session.login} size={28} />
+              <span>{session.nome || session.login}</span>
+            </div>
           )}
         </div>
       </div>
