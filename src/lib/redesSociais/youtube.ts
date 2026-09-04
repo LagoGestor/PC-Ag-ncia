@@ -96,3 +96,59 @@ export async function buscarResumoYoutube(accessToken: string): Promise<YoutubeR
     visualizacoesTotais: Number(stats?.viewCount || 0),
   };
 }
+
+export interface YoutubeAnalyticsSemana {
+  visualizacoes: number;
+  inscritosGanhos: number;
+  tempoExibicaoMin: number;
+  duracaoMediaSeg: number;
+  impressoes: number;
+  ctr: number;
+}
+
+// startDate/endDate no formato YYYY-MM-DD. CTR/impressões de canal são um recurso mais novo da
+// API — se a conta não tiver esse dado disponível, devolvemos 0 ali em vez de derrubar o resto.
+export async function buscarAnalyticsYoutube(accessToken: string, startDate: string, endDate: string): Promise<YoutubeAnalyticsSemana> {
+  const base = "https://youtubeanalytics.googleapis.com/v2/reports";
+  const headers = { Authorization: `Bearer ${accessToken}` };
+
+  const basicoParams = new URLSearchParams({
+    ids: "channel==MINE",
+    startDate,
+    endDate,
+    metrics: "views,estimatedMinutesWatched,averageViewDuration,subscribersGained",
+  });
+  const basicoRes = await fetch(`${base}?${basicoParams}`, { headers });
+  const basico = await basicoRes.json();
+  if (!basicoRes.ok) throw new Error(basico.error?.message || "Falha ao buscar YouTube Analytics.");
+  const [views, minutosAssistidos, duracaoMedia, inscritosGanhos] = basico.rows?.[0] || [0, 0, 0, 0];
+
+  let impressoes = 0;
+  let ctr = 0;
+  try {
+    const impParams = new URLSearchParams({
+      ids: "channel==MINE",
+      startDate,
+      endDate,
+      metrics: "impressions,impressionsClickThroughRate",
+    });
+    const impRes = await fetch(`${base}?${impParams}`, { headers });
+    const imp = await impRes.json();
+    if (impRes.ok && imp.rows?.[0]) {
+      impressoes = imp.rows[0][0] || 0;
+      const ctrBruto = imp.rows[0][1] || 0;
+      ctr = ctrBruto <= 1 ? ctrBruto * 100 : ctrBruto; // a API às vezes devolve fração (0-1), às vezes já em %
+    }
+  } catch {
+    // impressões/CTR de canal nem sempre estão disponíveis — segue sem eles.
+  }
+
+  return {
+    visualizacoes: views || 0,
+    inscritosGanhos: inscritosGanhos || 0,
+    tempoExibicaoMin: Math.round(minutosAssistidos || 0),
+    duracaoMediaSeg: Math.round(duracaoMedia || 0),
+    impressoes,
+    ctr,
+  };
+}

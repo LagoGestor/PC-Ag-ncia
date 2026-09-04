@@ -5,6 +5,8 @@ import { SnapshotSemanal } from "@/types";
 import { taxaEngajamentoIg, variacaoPct, fmtVariacao } from "@/lib/performanceInsights";
 import { PerformanceEntryModal } from "./PerformanceEntryModal";
 import { ConfirmModal } from "./ConfirmModal";
+import { ToastContainer } from "./ToastContainer";
+import { useToasts } from "@/hooks/useToasts";
 
 type Aba = "semana" | "comparativo" | "mes";
 
@@ -42,6 +44,8 @@ export function PerformanceView() {
   const [aba, setAba] = useState<Aba>("semana");
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<SnapshotSemanal | null>(null);
+  const [buscando, setBuscando] = useState(false);
+  const { toasts, toast } = useToasts();
 
   function carregar() {
     fetch("/api/performance")
@@ -59,6 +63,27 @@ export function PerformanceView() {
     carregar();
   }
 
+  async function handleBuscarAutomatico() {
+    setBuscando(true);
+    try {
+      const res = await fetch("/api/performance/buscar-automatico", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        toast(data.error || "Erro ao buscar dados automaticamente", "error");
+        return;
+      }
+      if (data.avisos?.length) {
+        data.avisos.forEach((a: string) => toast(a, "info"));
+      }
+      toast("Dados desta semana atualizados!", "success");
+      carregar();
+    } catch {
+      toast("Erro de conexão ao buscar dados", "error");
+    } finally {
+      setBuscando(false);
+    }
+  }
+
   if (snapshots === null) {
     return <div className="empty-state"><p>Carregando...</p></div>;
   }
@@ -73,9 +98,14 @@ export function PerformanceView() {
           <h2 className="fixas-title">Performance das Redes Sociais</h2>
           <p className="fixas-subtitle">Instagram e YouTube — @lagoinhabrasiliacapital</p>
         </div>
-        <button className="btn btn-accent" onClick={() => setModalOpen(true)}>
-          <i className="fas fa-plus" /> Lançar dados da semana
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button className="btn btn-ghost" onClick={handleBuscarAutomatico} disabled={buscando}>
+            <i className={`fas ${buscando ? "fa-spinner fa-spin" : "fa-rotate"}`} /> {buscando ? "Buscando..." : "Buscar automaticamente"}
+          </button>
+          <button className="btn btn-accent" onClick={() => setModalOpen(true)}>
+            <i className="fas fa-plus" /> Lançar dados da semana
+          </button>
+        </div>
       </div>
 
       <div className="agenda-toggle" style={{ margin: "18px 0" }}>
@@ -112,6 +142,7 @@ export function PerformanceView() {
         onCancel={() => setDeleteTarget(null)}
         onConfirm={handleConfirmDelete}
       />
+      <ToastContainer toasts={toasts} />
     </div>
   );
 }
