@@ -71,3 +71,87 @@ model Usuario {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
+
+enum RedeSocial {
+  INSTAGRAM
+  YOUTUBE
+}
+
+// Guarda o token de acesso de cada rede conectada (uma linha por rede).
+model IntegracaoSocial {
+  id             String     @id @default(cuid())
+  rede           RedeSocial @unique
+  accessToken    String     @default("")
+  refreshToken   String     @default("")
+  expiraEm       DateTime?
+  contaId        String     @default("")
+  contaNome      String     @default("")
+  conectadoPor   String     @default("")
+  conectadoEm    DateTime   @default(now())
+  atualizadoEm   DateTime   @updatedAt
+}
+
+// Um "retrato" da semana (segunda a domingo). Uma linha por semana — a base de tudo:
+// sem isso guardado toda semana, comparativos e visão mensal ficam impossíveis de reconstruir depois,
+// já que o Instagram não permite consultar retroativamente tudo que já aconteceu.
+model SnapshotSemanal {
+  id                    String   @id @default(cuid())
+  inicioSemana          String   @unique // YYYY-MM-DD (segunda-feira)
+  fimSemana             String   // YYYY-MM-DD (domingo)
+  origemDados           String   @default("manual") // "manual" | "api"
+
+  // Instagram — feed/reels
+  igSeguidores          Int      @default(0)
+  igSeguidoresGanhos    Int      @default(0)
+  igContasAlcancadas    Int      @default(0)
+  igImpressoes          Int      @default(0)
+  igVisualizacoes       Int      @default(0)
+  igCurtidas            Int      @default(0)
+  igComentarios         Int      @default(0)
+  igCompartilhamentos   Int      @default(0)
+  igSalvamentos         Int      @default(0)
+
+  // Instagram — stories (seção própria: métricas e janela de captura diferentes do feed)
+  igStoriesPublicados   Int      @default(0)
+  igStoriesAlcance      Int      @default(0)
+  igStoriesImpressoes   Int      @default(0)
+  igStoriesRespostas    Int      @default(0)
+  igStoriesSaidas       Int      @default(0)
+  igStoriesAvancos      Int      @default(0)
+  igStoriesVoltas       Int      @default(0)
+
+  // YouTube
+  ytInscritos           Int      @default(0)
+  ytInscritosGanhos     Int      @default(0)
+  ytVisualizacoes       Int      @default(0)
+  ytImpressoes          Int      @default(0)
+  ytCtr                 Float    @default(0)
+  ytTempoExibicaoMin    Int      @default(0)
+  ytDuracaoMediaSeg     Int      @default(0)
+
+  // Análise gerada (IA) a partir dos números desta semana comparados à anterior.
+  diagnostico           String   @default("")
+  recomendacoes         String   @default("")
+
+  posts                 PostSemanal[]
+
+  criadoEm              DateTime @default(now())
+}
+
+model PostSemanal {
+  id                String          @id @default(cuid())
+  snapshotId        String
+  snapshot          SnapshotSemanal @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  rede              RedeSocial
+  tipo              String          @default("") // Reels, Carrossel, Post, Vídeo, Story...
+  titulo            String          @default("")
+  link              String          @default("")
+  publicadoEm       String          @default("")
+  alcance           Int             @default(0)
+  visualizacoes     Int             @default(0)
+  curtidas          Int             @default(0)
+  comentarios       Int             @default(0)
+  compartilhamentos Int             @default(0)
+  salvamentos       Int             @default(0)
+  taxaEngajamento   Float           @default(0)
+}

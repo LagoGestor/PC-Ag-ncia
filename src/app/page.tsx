@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { api } from "@/lib/api";
 import { useToasts } from "@/hooks/useToasts";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -341,6 +342,11 @@ export default function Home() {
                 <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
                   FIXO
                 </button>
+                {writable && (
+                  <Link href="/performance" className="tab-btn">
+                    PERFORMANCE
+                  </Link>
+                )}
                 <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")} title="Arquivo">
                   <i className="fas fa-box-archive" />
                 </button>
@@ -371,6 +377,11 @@ export default function Home() {
                 <button className={`tab-btn${view === "kanban" ? " active" : ""}`} onClick={() => setView("kanban")}>
                   <i className="fas fa-columns" /> KANBAN
                 </button>
+                {writable && (
+                  <Link href="/performance" className="tab-btn">
+                    <i className="fas fa-chart-line" /> PERFORMANCE
+                  </Link>
+                )}
                 <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")}>
                   <i className="fas fa-box-archive" /> ARQUIVO
                 </button>

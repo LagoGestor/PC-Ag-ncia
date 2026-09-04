@@ -56,9 +56,10 @@ export async function proxy(req: NextRequest) {
   }
 
   // Diretor de Conteúdo usa a mesma casca "mobile" que o Executor, mas sem ficar preso a
-  // uma única pessoa: pode navegar por /mobile (Geral) e por qualquer /mobile/[pessoa].
+  // uma única pessoa: pode navegar por /mobile (Geral), qualquer /mobile/[pessoa] e a Performance.
   if (session.nivel === "DIRETOR_CONTEUDO" && !isApi) {
-    const permitido = pathname === "/mobile" || pathname.startsWith("/mobile/") || pathname === "/minha-conta";
+    const permitido =
+      pathname === "/mobile" || pathname.startsWith("/mobile/") || pathname === "/minha-conta" || pathname === "/performance";
     if (!permitido) {
       const url = req.nextUrl.clone();
       url.pathname = "/mobile";
@@ -69,7 +70,7 @@ export async function proxy(req: NextRequest) {
 
   const isMaster = session.nivel === "MASTER";
 
-  if (pathname.startsWith("/cadastrarlogin") && !isMaster) {
+  if ((pathname.startsWith("/cadastrarlogin") || pathname.startsWith("/integracoes-sociais")) && !isMaster) {
     const url = req.nextUrl.clone();
     url.pathname = "/";
     url.search = "";
@@ -77,6 +78,10 @@ export async function proxy(req: NextRequest) {
   }
 
   if (pathname.startsWith("/api/usuarios") && pathname !== "/api/usuarios/me" && !isMaster) {
+    return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
+  }
+
+  if (pathname.startsWith("/api/integracoes") && !isMaster) {
     return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
   }
 

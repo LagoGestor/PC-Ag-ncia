@@ -175,6 +175,70 @@ export interface Reuniao {
   assuntos: Assunto[];
 }
 
+export type RedeSocial = "INSTAGRAM" | "YOUTUBE";
+
+export interface PostSemanal {
+  id: string;
+  rede: RedeSocial;
+  tipo: string;
+  titulo: string;
+  link: string;
+  publicadoEm: string;
+  alcance: number;
+  visualizacoes: number;
+  curtidas: number;
+  comentarios: number;
+  compartilhamentos: number;
+  salvamentos: number;
+  taxaEngajamento: number;
+}
+
+export interface SnapshotSemanal {
+  id: string;
+  inicioSemana: string;
+  fimSemana: string;
+  origemDados: string;
+
+  igSeguidores: number;
+  igSeguidoresGanhos: number;
+  igContasAlcancadas: number;
+  igImpressoes: number;
+  igVisualizacoes: number;
+  igCurtidas: number;
+  igComentarios: number;
+  igCompartilhamentos: number;
+  igSalvamentos: number;
+
+  igStoriesPublicados: number;
+  igStoriesAlcance: number;
+  igStoriesImpressoes: number;
+  igStoriesRespostas: number;
+  igStoriesSaidas: number;
+  igStoriesAvancos: number;
+  igStoriesVoltas: number;
+
+  ytInscritos: number;
+  ytInscritosGanhos: number;
+  ytVisualizacoes: number;
+  ytImpressoes: number;
+  ytCtr: number;
+  ytTempoExibicaoMin: number;
+  ytDuracaoMediaSeg: number;
+
+  diagnostico: string;
+  recomendacoes: string;
+
+  posts: PostSemanal[];
+  criadoEm: string;
+}
+
+export interface IntegracaoStatus {
+  rede: RedeSocial;
+  conectado: boolean;
+  contaNome: string;
+  conectadoEm: string | null;
+}
+
 const DIACRITICS_RE = new RegExp("[\\u0300-\\u036f]", "g");
 
 export function slugify(name: string): string {
