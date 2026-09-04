@@ -104,6 +104,7 @@ export interface YoutubeAnalyticsSemana {
   duracaoMediaSeg: number;
   impressoes: number;
   ctr: number;
+  erroImpressoes?: string;
 }
 
 // startDate/endDate no formato YYYY-MM-DD. CTR/impressões de canal são um recurso mais novo da
@@ -125,6 +126,7 @@ export async function buscarAnalyticsYoutube(accessToken: string, startDate: str
 
   let impressoes = 0;
   let ctr = 0;
+  let erroImpressoes: string | undefined;
   try {
     const impParams = new URLSearchParams({
       ids: "channel==MINE",
@@ -134,13 +136,17 @@ export async function buscarAnalyticsYoutube(accessToken: string, startDate: str
     });
     const impRes = await fetch(`${base}?${impParams}`, { headers });
     const imp = await impRes.json();
-    if (impRes.ok && imp.rows?.[0]) {
+    if (!impRes.ok) {
+      erroImpressoes = imp.error?.message || `HTTP ${impRes.status}`;
+    } else if (imp.rows?.[0]) {
       impressoes = imp.rows[0][0] || 0;
       const ctrBruto = imp.rows[0][1] || 0;
       ctr = ctrBruto <= 1 ? ctrBruto * 100 : ctrBruto; // a API às vezes devolve fração (0-1), às vezes já em %
+    } else {
+      erroImpressoes = "sem linhas retornadas";
     }
-  } catch {
-    // impressões/CTR de canal nem sempre estão disponíveis — segue sem eles.
+  } catch (err) {
+    erroImpressoes = err instanceof Error ? err.message : "erro desconhecido";
   }
 
   return {
@@ -150,5 +156,6 @@ export async function buscarAnalyticsYoutube(accessToken: string, startDate: str
     duracaoMediaSeg: Math.round(duracaoMedia || 0),
     impressoes,
     ctr,
+    erroImpressoes,
   };
 }

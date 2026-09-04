@@ -59,6 +59,7 @@ export async function POST() {
       campos.ytDuracaoMediaSeg = analytics.duracaoMediaSeg;
       campos.ytImpressoes = analytics.impressoes;
       ytCtr = analytics.ctr;
+      if (analytics.erroImpressoes) avisos.push(`YouTube (impressões/CTR): ${analytics.erroImpressoes}.`);
       algumaRedeBuscada = true;
     } catch (err) {
       avisos.push(`YouTube: ${err instanceof Error ? err.message : "erro ao buscar dados"}.`);
