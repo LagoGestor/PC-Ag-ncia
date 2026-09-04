@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { SnapshotSemanal } from "@/types";
 import { taxaEngajamentoIg, variacaoPct, fmtVariacao } from "@/lib/performanceInsights";
 import { PerformanceEntryModal } from "./PerformanceEntryModal";
+import { ConfirmModal } from "./ConfirmModal";
 
 type Aba = "semana" | "comparativo" | "mes";
 
@@ -40,6 +41,7 @@ export function PerformanceView() {
   const [snapshots, setSnapshots] = useState<SnapshotSemanal[] | null>(null);
   const [aba, setAba] = useState<Aba>("semana");
   const [modalOpen, setModalOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<SnapshotSemanal | null>(null);
 
   function carregar() {
     fetch("/api/performance")
@@ -49,6 +51,13 @@ export function PerformanceView() {
   }
 
   useEffect(carregar, []);
+
+  async function handleConfirmDelete() {
+    if (!deleteTarget) return;
+    await fetch(`/api/performance/${deleteTarget.id}`, { method: "DELETE" });
+    setDeleteTarget(null);
+    carregar();
+  }
 
   if (snapshots === null) {
     return <div className="empty-state"><p>Carregando...</p></div>;
@@ -88,7 +97,7 @@ export function PerformanceView() {
           <p>Clique em &quot;Lançar dados da semana&quot; para registrar o primeiro relatório.</p>
         </div>
       ) : aba === "semana" ? (
-        <RelatorioSemana atual={atual} anterior={anterior} />
+        <RelatorioSemana atual={atual} anterior={anterior} onDeletar={() => setDeleteTarget(atual)} />
       ) : aba === "comparativo" ? (
         <Comparativo atual={atual} anterior={anterior} />
       ) : (
@@ -96,11 +105,26 @@ export function PerformanceView() {
       )}
 
       <PerformanceEntryModal open={modalOpen} onClose={() => setModalOpen(false)} onSaved={carregar} />
+      <ConfirmModal
+        open={!!deleteTarget}
+        title="Apagar esta semana?"
+        text={`Os dados lançados para a semana de ${fmtData(deleteTarget?.inicioSemana ?? "")} serão apagados permanentemente.`}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }
 
-function RelatorioSemana({ atual, anterior }: { atual: SnapshotSemanal; anterior: SnapshotSemanal | null }) {
+function RelatorioSemana({
+  atual,
+  anterior,
+  onDeletar,
+}: {
+  atual: SnapshotSemanal;
+  anterior: SnapshotSemanal | null;
+  onDeletar: () => void;
+}) {
   const engAtual = taxaEngajamentoIg(atual);
   const engAnterior = anterior ? taxaEngajamentoIg(anterior) : null;
   const postsOrdenados = [...atual.posts].sort((a, b) => b.taxaEngajamento - a.taxaEngajamento);
@@ -109,9 +133,14 @@ function RelatorioSemana({ atual, anterior }: { atual: SnapshotSemanal; anterior
 
   return (
     <div className="performance-grid">
-      <div className="performance-period">
-        Semana de {fmtData(atual.inicioSemana)} a {fmtData(atual.fimSemana)}
-        {atual.origemDados === "manual" ? " · lançamento manual" : " · via API"}
+      <div className="performance-period" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <span>
+          Semana de {fmtData(atual.inicioSemana)} a {fmtData(atual.fimSemana)}
+          {atual.origemDados === "manual" ? " · lançamento manual" : " · via API"}
+        </span>
+        <button className="card-action-btn danger" onClick={onDeletar} title="Apagar esta semana">
+          <i className="fas fa-trash" />
+        </button>
       </div>
 
       <div className="performance-card">
