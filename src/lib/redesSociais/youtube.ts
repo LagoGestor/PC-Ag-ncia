@@ -107,8 +107,11 @@ export interface YoutubeAnalyticsSemana {
   erroImpressoes?: string;
 }
 
-// startDate/endDate no formato YYYY-MM-DD. CTR/impressões de canal são um recurso mais novo da
-// API — se a conta não tiver esse dado disponível, devolvemos 0 ali em vez de derrubar o resto.
+// startDate/endDate no formato YYYY-MM-DD.
+// Impressões/CTR (aba "Alcance" do YouTube Studio) NÃO são expostas pela YouTube Analytics API
+// pública — é uma limitação confirmada do Google, não um bug daqui. Tentamos mesmo assim (caso
+// a API mude no futuro) mas sempre com fallback gracioso: se falhar, o resto dos dados segue
+// normalmente e o aviso explica que esses dois campos continuam manuais.
 export async function buscarAnalyticsYoutube(accessToken: string, startDate: string, endDate: string): Promise<YoutubeAnalyticsSemana> {
   const base = "https://youtubeanalytics.googleapis.com/v2/reports";
   const headers = { Authorization: `Bearer ${accessToken}` };
