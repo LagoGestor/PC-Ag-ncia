@@ -138,6 +138,20 @@ model SnapshotSemanal {
   criadoEm              DateTime @default(now())
 }
 
+// Aniversário de pastores/líderes. dia/mes ficam separados (em vez de uma data com ano) porque
+// o que importa aqui é sempre o dia+mês recorrente, não um ano de nascimento.
+model Aniversariante {
+  id           String   @id @default(cuid())
+  nome         String
+  ministerio   String   @default("")
+  cargo        String   @default("")
+  instagram    String   @default("")
+  dia          Int?
+  mes          Int?
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+}
+
 model PostSemanal {
   id                String          @id @default(cuid())
   snapshotId        String

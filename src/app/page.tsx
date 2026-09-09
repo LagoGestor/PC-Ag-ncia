@@ -22,6 +22,7 @@ import { ReunioesView } from "@/components/ReunioesView";
 import { TaskModal } from "@/components/TaskModal";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { ReportModal } from "@/components/ReportModal";
+import { AniversariantesBanner } from "@/components/AniversariantesBanner";
 import { fmtDate } from "@/components/TaskCard";
 
 export default function Home() {
@@ -319,6 +320,8 @@ export default function Home() {
         />
       )}
 
+      <AniversariantesBanner />
+
       <div id="view-container">
         <div id="view-nav">
           <div className="view-tabs">
@@ -345,6 +348,11 @@ export default function Home() {
                 {writable && (
                   <Link href="/performance" className="tab-btn">
                     PERFORMANCE
+                  </Link>
+                )}
+                {writable && (
+                  <Link href="/aniversariantes" className="tab-btn">
+                    ANIVERSARIANTES
                   </Link>
                 )}
                 <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")} title="Arquivo">
@@ -380,6 +388,11 @@ export default function Home() {
                 {writable && (
                   <Link href="/performance" className="tab-btn">
                     <i className="fas fa-chart-line" /> PERFORMANCE
+                  </Link>
+                )}
+                {writable && (
+                  <Link href="/aniversariantes" className="tab-btn">
+                    <i className="fas fa-cake-candles" /> ANIVERSARIANTES
                   </Link>
                 )}
                 <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")}>

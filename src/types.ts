@@ -232,6 +232,36 @@ export interface SnapshotSemanal {
   criadoEm: string;
 }
 
+export interface Aniversariante {
+  id: string;
+  nome: string;
+  ministerio: string;
+  cargo: string;
+  instagram: string;
+  dia: number | null;
+  mes: number | null;
+}
+
+export const MESES = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
+];
+
+export function fmtDiaMes(dia: number | null, mes: number | null): string {
+  if (!dia || !mes) return "—";
+  return `${String(dia).padStart(2, "0")}/${String(mes).padStart(2, "0")}`;
+}
+
 export interface IntegracaoStatus {
   rede: RedeSocial;
   conectado: boolean;
