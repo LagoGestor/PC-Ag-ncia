@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useToasts } from "@/hooks/useToasts";
 import { ToastContainer } from "./ToastContainer";
 import { SummaryBar } from "./SummaryBar";
+import { AniversariantesBanner } from "./AniversariantesBanner";
 import { MobileTaskCard } from "./MobileTaskCard";
 import { TaskModal } from "./TaskModal";
 import { CronogramaSemanalView } from "./CronogramaSemanalView";
@@ -60,6 +61,8 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
   return (
     <>
       <SummaryBar tarefas={tarefas} statusFilter={statusFilter} onToggle={(s) => setStatusFilter((cur) => (cur === s ? null : s))} />
+
+      {!todasAsTarefas && <AniversariantesBanner titulo="Aniversariantes da Semana" editable={false} />}
 
       <div className="mobile-actions-row">
         {writable && (

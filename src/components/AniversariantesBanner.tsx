@@ -11,7 +11,13 @@ type SavePayload = { nome: string; ministerio: string; cargo: string; instagram:
 
 const JANELA_DIAS = 15;
 
-export function AniversariantesBanner() {
+interface Props {
+  titulo?: string;
+  // Executor não pode editar/cadastrar aniversariante — só ver nome, data e os destaques.
+  editable?: boolean;
+}
+
+export function AniversariantesBanner({ titulo = "Aniversariantes do mês", editable = true }: Props) {
   const [lista, setLista] = useState<Aniversariante[] | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const [editing, setEditing] = useState<Aniversariante | null>(null);
@@ -53,21 +59,26 @@ export function AniversariantesBanner() {
     <div className="aniversariantes-banner">
       <div className="aniversariantes-banner-body">
         <span className="aniversariantes-banner-title">
-          <i className="fas fa-cake-candles" /> Aniversariantes do mês
+          <i className="fas fa-cake-candles" /> {titulo}
         </span>
         <div className="aniversariantes-banner-chips">
           {proximos.map((a) => {
             const hoje = a.dia && a.mes && diasAteProximoAniversario(a.dia, a.mes) === 0;
             const pastoral = ehCargoPastoral(a.cargo);
-            return (
-              <button
-                key={a.id}
-                className={`aniversariantes-banner-chip${hoje ? " hoje" : ""}`}
-                onClick={() => setEditing(a)}
-              >
+            const conteudo = (
+              <>
                 {pastoral && <i className="fas fa-star aniversariante-icone-pastor" title="Pastor(a)" />} {a.nome}{" "}
                 <span>{fmtDiaMes(a.dia, a.mes)}</span>
+              </>
+            );
+            return editable ? (
+              <button key={a.id} className={`aniversariantes-banner-chip${hoje ? " hoje" : ""}`} onClick={() => setEditing(a)}>
+                {conteudo}
               </button>
+            ) : (
+              <span key={a.id} className={`aniversariantes-banner-chip aniversariantes-banner-chip-static${hoje ? " hoje" : ""}`}>
+                {conteudo}
+              </span>
             );
           })}
         </div>
@@ -76,8 +87,12 @@ export function AniversariantesBanner() {
         <i className="fas fa-times" />
       </button>
 
-      <ToastContainer toasts={toasts} />
-      <AniversarianteModal open={!!editing} editing={editing} onClose={() => setEditing(null)} onSave={handleSave} />
+      {editable && (
+        <>
+          <ToastContainer toasts={toasts} />
+          <AniversarianteModal open={!!editing} editing={editing} onClose={() => setEditing(null)} onSave={handleSave} />
+        </>
+      )}
     </div>
   );
 }

@@ -890,6 +890,8 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
   .sum-pill .dot { width: 9px; height: 9px; }
   .sum-pill .label { display: none; }
   .sum-pill .count { font-size: 11px; }
+
+  .aniversariantes-banner { margin: 14px 14px; padding: 12px 14px; }
   .sum-total { gap: 4px; font-size: 10px; }
   .sum-total-label { display: none; }
   .sum-total b { font-size: 12px; font-family: var(--font-head); }
@@ -1165,6 +1167,9 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 .aniversariantes-banner-chip span { color: var(--fg-muted); margin-left: 4px; }
 .aniversariantes-banner-chip.hoje { font-weight: 700; color: var(--info); border-color: var(--info); }
 .aniversariantes-banner-chip.hoje span { color: var(--info); }
+.aniversariantes-banner-chip-static { cursor: default; }
+.aniversariantes-banner-chip-static:hover { border-color: var(--border); color: var(--fg); }
+.aniversariantes-banner-chip-static.hoje:hover { border-color: var(--info); color: var(--info); }
 .aniversariante-icone-pastor { color: var(--warn); font-size: 10px; }
 .aniversariantes-banner-close {
   background: transparent; border: none; color: var(--fg-muted); cursor: pointer; font-size: 14px;

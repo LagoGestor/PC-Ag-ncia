@@ -3,9 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { canWrite } from "@/lib/permissions";
 
+// Leitura liberada pra qualquer sessão válida (Executor inclusive) — o aviso de aniversariantes
+// aparece também na visão individual dele em /mobile/[pessoa], só sem poder editar/cadastrar.
 export async function GET() {
   const session = await getSession();
-  if (!canWrite(session)) return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
+  if (!session) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
 
   const lista = await prisma.aniversariante.findMany({ orderBy: { nome: "asc" } });
   return NextResponse.json(lista);
