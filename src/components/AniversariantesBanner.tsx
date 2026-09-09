@@ -2,28 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Aniversariante, fmtDiaMes } from "@/types";
-import { ehAniversarioHoje, ehAniversarioNaSemana, ehAniversarioNoMes, ordenarPorProximoAniversario } from "@/lib/aniversariantes";
+import { diasAteProximoAniversario, ehCargoPastoral, ehAniversarioNosProximosDias, ordenarPorProximoAniversario } from "@/lib/aniversariantes";
 import { useToasts } from "@/hooks/useToasts";
 import { ToastContainer } from "./ToastContainer";
 import { AniversarianteModal } from "./AniversarianteModal";
 
 type SavePayload = { nome: string; ministerio: string; cargo: string; instagram: string; dia: number | null; mes: number | null };
 
-function Grupo({ titulo, lista, onClickNome }: { titulo: string; lista: Aniversariante[]; onClickNome: (a: Aniversariante) => void }) {
-  if (lista.length === 0) return null;
-  return (
-    <div className="aniversariantes-banner-grupo">
-      <span className="aniversariantes-banner-grupo-titulo">{titulo}</span>
-      <div className="aniversariantes-banner-chips">
-        {lista.map((a) => (
-          <button key={a.id} className="aniversariantes-banner-chip" onClick={() => onClickNome(a)}>
-            {a.nome} <span>{fmtDiaMes(a.dia, a.mes)}</span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
+const JANELA_DIAS = 15;
 
 export function AniversariantesBanner() {
   const [lista, setLista] = useState<Aniversariante[] | null>(null);
@@ -38,13 +24,9 @@ export function AniversariantesBanner() {
       .catch(() => setLista([]));
   }, []);
 
-  const { doMes, daSemana, deHoje } = useMemo(() => {
+  const proximos = useMemo(() => {
     const base = lista ?? [];
-    return {
-      doMes: ordenarPorProximoAniversario(base.filter((a) => ehAniversarioNoMes(a))),
-      daSemana: ordenarPorProximoAniversario(base.filter((a) => ehAniversarioNaSemana(a))),
-      deHoje: base.filter((a) => ehAniversarioHoje(a)),
-    };
+    return ordenarPorProximoAniversario(base.filter((a) => ehAniversarioNosProximosDias(a, JANELA_DIAS)));
   }, [lista]);
 
   async function handleSave(data: SavePayload, id?: string) {
@@ -65,17 +47,30 @@ export function AniversariantesBanner() {
     }
   }
 
-  if (dismissed || !lista || (doMes.length === 0 && daSemana.length === 0 && deHoje.length === 0)) return null;
+  if (dismissed || !lista || proximos.length === 0) return null;
 
   return (
     <div className="aniversariantes-banner">
       <div className="aniversariantes-banner-body">
         <span className="aniversariantes-banner-title">
-          <i className="fas fa-cake-candles" /> Aniversariantes
+          <i className="fas fa-cake-candles" /> Aniversariantes do mês
         </span>
-        <Grupo titulo="Aniversariantes do mês" lista={doMes} onClickNome={setEditing} />
-        <Grupo titulo="Aniversariantes da semana" lista={daSemana} onClickNome={setEditing} />
-        <Grupo titulo="Aniversariantes de hoje" lista={deHoje} onClickNome={setEditing} />
+        <div className="aniversariantes-banner-chips">
+          {proximos.map((a) => {
+            const hoje = a.dia && a.mes && diasAteProximoAniversario(a.dia, a.mes) === 0;
+            const pastoral = ehCargoPastoral(a.cargo);
+            return (
+              <button
+                key={a.id}
+                className={`aniversariantes-banner-chip${hoje ? " hoje" : ""}`}
+                onClick={() => setEditing(a)}
+              >
+                {pastoral && <i className="fas fa-star aniversariante-icone-pastor" title="Pastor(a)" />} {a.nome}{" "}
+                <span>{fmtDiaMes(a.dia, a.mes)}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
       <button className="aniversariantes-banner-close" onClick={() => setDismissed(true)} title="Fechar">
         <i className="fas fa-times" />

@@ -1,5 +1,27 @@
 import type { Aniversariante } from "@/types";
 
+export const CARGOS_PASTORAIS = ["Pastor", "Pastora", "Pastor Regional"];
+
+export function ehCargoPastoral(cargo: string): boolean {
+  return CARGOS_PASTORAIS.includes(cargo.trim());
+}
+
+// Quantos dias faltam (0 = hoje) até a próxima ocorrência desse dia/mês, olhando este ano e,
+// se já passou, o próximo — o aniversário em si não tem ano.
+export function diasAteProximoAniversario(dia: number, mes: number, hoje = new Date()): number {
+  const hojeSemHora = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+  for (const ano of [hojeSemHora.getFullYear(), hojeSemHora.getFullYear() + 1]) {
+    const candidato = new Date(ano, mes - 1, dia);
+    const diff = Math.round((candidato.getTime() - hojeSemHora.getTime()) / 86400000);
+    if (diff >= 0) return diff;
+  }
+  return Infinity;
+}
+
+export function ehAniversarioHoje(a: Aniversariante, hoje = new Date()): boolean {
+  return a.dia === hoje.getDate() && a.mes === hoje.getMonth() + 1;
+}
+
 // Segunda-feira e domingo da semana corrente, à meia-noite local.
 export function limitesSemanaAtual(hoje = new Date()): { inicio: Date; fim: Date } {
   const dia = hoje.getDay();
@@ -19,28 +41,22 @@ function caiNoIntervalo(dia: number, mes: number, inicio: Date, fim: Date): bool
   return false;
 }
 
-export function ehAniversarioHoje(a: Aniversariante, hoje = new Date()): boolean {
-  return a.dia === hoje.getDate() && a.mes === hoje.getMonth() + 1;
-}
-
 export function ehAniversarioNaSemana(a: Aniversariante, hoje = new Date()): boolean {
   if (!a.dia || !a.mes) return false;
   const { inicio, fim } = limitesSemanaAtual(hoje);
   return caiNoIntervalo(a.dia, a.mes, inicio, fim);
 }
 
-export function ehAniversarioNoMes(a: Aniversariante, hoje = new Date()): boolean {
-  return a.mes === hoje.getMonth() + 1;
+export function ehAniversarioNosProximosDias(a: Aniversariante, dias: number, hoje = new Date()): boolean {
+  if (!a.dia || !a.mes) return false;
+  return diasAteProximoAniversario(a.dia, a.mes, hoje) <= dias;
 }
 
-// Ordena por dia dentro do mês corrente primeiro, depois cronologicamente pelo resto do ano.
+// Ordena por proximidade real (em dias) do próximo aniversário; sem data conhecida vai para o fim.
 export function ordenarPorProximoAniversario(lista: Aniversariante[], hoje = new Date()): Aniversariante[] {
-  const mesAtual = hoje.getMonth() + 1;
-  const diaAtual = hoje.getDate();
   function chave(a: Aniversariante): number {
-    if (!a.dia || !a.mes) return 9999;
-    const diffMes = (a.mes - mesAtual + 12) % 12;
-    return diffMes * 100 + (diffMes === 0 && a.dia < diaAtual ? a.dia + 100 : a.dia);
+    if (!a.dia || !a.mes) return Infinity;
+    return diasAteProximoAniversario(a.dia, a.mes, hoje);
   }
   return [...lista].sort((a, b) => chave(a) - chave(b));
 }

@@ -2,13 +2,20 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Aniversariante, fmtDiaMes } from "@/types";
-import { ordenarPorProximoAniversario } from "@/lib/aniversariantes";
+import { ehAniversarioHoje, ehAniversarioNaSemana, ordenarPorProximoAniversario } from "@/lib/aniversariantes";
 import { useToasts } from "@/hooks/useToasts";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { ToastContainer } from "./ToastContainer";
 import { AniversarianteModal } from "./AniversarianteModal";
 import { ConfirmModal } from "./ConfirmModal";
 
 type SavePayload = { nome: string; ministerio: string; cargo: string; instagram: string; dia: number | null; mes: number | null };
+
+function destaqueClasse(a: Aniversariante): string {
+  if (ehAniversarioHoje(a)) return "aniversariante-hoje";
+  if (ehAniversarioNaSemana(a)) return "aniversariante-semana";
+  return "";
+}
 
 export function AniversariantesView() {
   const [lista, setLista] = useState<Aniversariante[]>([]);
@@ -18,6 +25,7 @@ export function AniversariantesView() {
   const [editing, setEditing] = useState<Aniversariante | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Aniversariante | null>(null);
   const { toasts, toast } = useToasts();
+  const isMobile = useIsMobile();
 
   function carregar() {
     fetch("/api/aniversariantes")
@@ -108,6 +116,29 @@ export function AniversariantesView() {
         <div className="empty-state">
           <p>Nenhum aniversariante encontrado.</p>
         </div>
+      ) : isMobile ? (
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Nome</th>
+                <th>Cargo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtrada.map((a) => (
+                <tr key={a.id} className={destaqueClasse(a)} onClick={() => openEdit(a)} style={{ cursor: "pointer" }}>
+                  <td>{fmtDiaMes(a.dia, a.mes)}</td>
+                  <td>
+                    <b>{a.nome}</b>
+                  </td>
+                  <td>{a.cargo || "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <div className="table-wrap">
           <table>
@@ -123,7 +154,7 @@ export function AniversariantesView() {
             </thead>
             <tbody>
               {filtrada.map((a) => (
-                <tr key={a.id}>
+                <tr key={a.id} className={destaqueClasse(a)}>
                   <td>{fmtDiaMes(a.dia, a.mes)}</td>
                   <td>
                     <b>{a.nome}</b>
