@@ -1150,6 +1150,11 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 .performance-page-shell { height: 100vh; overflow-y: auto; padding: 20px 24px 60px; max-width: 1200px; margin: 0 auto; }
 .performance-page-topbar { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 20px; }
 
+/* Igual ao #app, mas pra páginas standalone que usam a AppTopbar de verdade (full-bleed) em vez
+   da barrinha simples "Voltar" — topbar fixa no topo, conteúdo rola por baixo. */
+.app-page-shell { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+.app-page-content { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 24px 60px; max-width: 1200px; margin: 0 auto; width: 100%; }
+
 .aniversariantes-banner {
   display: flex; align-items: flex-start; gap: 16px; flex-shrink: 0;
   margin: 16px 24px; padding: 14px 18px;

@@ -47,7 +47,7 @@ export async function proxy(req: NextRequest) {
 
   if (session.nivel === "EXECUTOR" && !isApi) {
     const ownPath = `/mobile/${slugify(session.responsavel ?? "")}`;
-    if (pathname !== ownPath && pathname !== "/minha-conta") {
+    if (pathname !== ownPath && pathname !== "/minha-conta" && pathname !== "/aniversariantes") {
       const url = req.nextUrl.clone();
       url.pathname = ownPath;
       url.search = "";

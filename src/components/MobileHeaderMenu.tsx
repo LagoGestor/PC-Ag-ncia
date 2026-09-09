@@ -77,6 +77,9 @@ export function MobileHeaderMenu() {
           >
             <i className="fas fa-file-pdf" /> Gerar Relatório
           </button>
+          <a className="dropdown-item" href="/aniversariantes">
+            <i className="fas fa-cake-candles" /> Aniversariantes
+          </a>
           <a className="dropdown-item" href="/minha-conta">
             <i className="fas fa-key" /> Alterar Senha
           </a>

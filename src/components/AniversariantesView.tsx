@@ -5,6 +5,8 @@ import { Aniversariante, fmtDiaMes } from "@/types";
 import { ehAniversarioHoje, ehAniversarioNaSemana, ordenarPorProximoAniversario } from "@/lib/aniversariantes";
 import { useToasts } from "@/hooks/useToasts";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useSession } from "./SessionProvider";
+import { canWrite } from "@/lib/permissions";
 import { ToastContainer } from "./ToastContainer";
 import { AniversarianteModal } from "./AniversarianteModal";
 import { ConfirmModal } from "./ConfirmModal";
@@ -26,6 +28,8 @@ export function AniversariantesView() {
   const [deleteTarget, setDeleteTarget] = useState<Aniversariante | null>(null);
   const { toasts, toast } = useToasts();
   const isMobile = useIsMobile();
+  const session = useSession();
+  const writable = canWrite(session);
 
   function carregar() {
     fetch("/api/aniversariantes")
@@ -102,9 +106,11 @@ export function AniversariantesView() {
             onChange={(e) => setBusca(e.target.value)}
             style={{ maxWidth: 260 }}
           />
-          <button className="btn btn-accent" onClick={openNew}>
-            <i className="fas fa-plus" /> Aniversariante
-          </button>
+          {writable && (
+            <button className="btn btn-accent" onClick={openNew}>
+              <i className="fas fa-plus" /> Aniversariante
+            </button>
+          )}
         </div>
       </div>
 
@@ -128,7 +134,12 @@ export function AniversariantesView() {
             </thead>
             <tbody>
               {filtrada.map((a) => (
-                <tr key={a.id} className={destaqueClasse(a)} onClick={() => openEdit(a)} style={{ cursor: "pointer" }}>
+                <tr
+                  key={a.id}
+                  className={destaqueClasse(a)}
+                  onClick={writable ? () => openEdit(a) : undefined}
+                  style={writable ? { cursor: "pointer" } : undefined}
+                >
                   <td>{fmtDiaMes(a.dia, a.mes)}</td>
                   <td>
                     <b>{a.nome}</b>
@@ -149,7 +160,7 @@ export function AniversariantesView() {
                 <th>Ministério(s)</th>
                 <th>Cargo Eclesiástico</th>
                 <th>Instagram</th>
-                <th style={{ textAlign: "center" }}>Ações</th>
+                {writable && <th style={{ textAlign: "center" }}>Ações</th>}
               </tr>
             </thead>
             <tbody>
@@ -170,16 +181,18 @@ export function AniversariantesView() {
                       "—"
                     )}
                   </td>
-                  <td>
-                    <div className="tbl-actions">
-                      <button className="tbl-action-icon" onClick={() => openEdit(a)} title="Editar">
-                        <i className="fas fa-pen" />
-                      </button>
-                      <button className="tbl-action-icon danger" onClick={() => setDeleteTarget(a)} title="Apagar">
-                        <i className="fas fa-trash" />
-                      </button>
-                    </div>
-                  </td>
+                  {writable && (
+                    <td>
+                      <div className="tbl-actions">
+                        <button className="tbl-action-icon" onClick={() => openEdit(a)} title="Editar">
+                          <i className="fas fa-pen" />
+                        </button>
+                        <button className="tbl-action-icon danger" onClick={() => setDeleteTarget(a)} title="Apagar">
+                          <i className="fas fa-trash" />
+                        </button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -189,15 +202,19 @@ export function AniversariantesView() {
 
       <ToastContainer toasts={toasts} />
 
-      <AniversarianteModal open={modalOpen} editing={editing} onClose={() => setModalOpen(false)} onSave={handleSave} />
+      {writable && (
+        <>
+          <AniversarianteModal open={modalOpen} editing={editing} onClose={() => setModalOpen(false)} onSave={handleSave} />
 
-      <ConfirmModal
-        open={!!deleteTarget}
-        title="Apagar aniversariante?"
-        text={`Apagar "${deleteTarget?.nome || "este aniversariante"}" permanentemente?`}
-        onCancel={() => setDeleteTarget(null)}
-        onConfirm={handleDelete}
-      />
+          <ConfirmModal
+            open={!!deleteTarget}
+            title="Apagar aniversariante?"
+            text={`Apagar "${deleteTarget?.nome || "este aniversariante"}" permanentemente?`}
+            onCancel={() => setDeleteTarget(null)}
+            onConfirm={handleDelete}
+          />
+        </>
+      )}
     </div>
   );
 }
