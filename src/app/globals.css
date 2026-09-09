@@ -1147,7 +1147,7 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 
 .aniversariantes-banner {
   display: flex; align-items: flex-start; gap: 16px;
-  margin: 0 24px 16px; padding: 14px 18px;
+  margin: 16px 24px; padding: 14px 18px;
   background: var(--surface2); border: 1px solid var(--border-accent); border-radius: var(--radius-sm);
   position: relative;
 }
