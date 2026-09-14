@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma db push --accept-data-loss && prisma generate && tsx scripts/seed-master.ts && tsx scripts/seed-aniversariantes.ts && next build",
+    "build": "prisma db push --accept-data-loss && prisma generate && tsx scripts/seed-master.ts && tsx scripts/seed-aniversariantes.ts && tsx scripts/fix-card-culto-hope.ts && next build",
     "start": "next start",
     "lint": "eslint"
   },
