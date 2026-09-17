@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { RESPONSAVEIS_VISIVEIS, Tarefa, WHATSAPP_FOTOS_RESPONSAVEL, slugify } from "@/types";
@@ -49,7 +50,31 @@ export default async function MobilePessoaPage({ params }: Props) {
   if (!responsavel) notFound();
 
   const session = await getSession();
-  if (session && session.nivel === "EXECUTOR" && session.responsavel !== responsavel) {
+
+  // Sem sessão chega aqui só pelo crawler de preview do WhatsApp/Facebook (o proxy deixa passar
+  // essa rota sem cookie de propósito, pra pegar a metadata certa) ou por um visitante real sem
+  // login — nos dois casos, mostra um cartão de entrar em vez das tarefas de verdade.
+  if (!session) {
+    return (
+      <div className="login-shell">
+        <div className="login-card" style={{ textAlign: "center" }}>
+          <div className="login-brand">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/img/icone_logo_agencia.png" alt="Agência LBC" />
+            <span>Agência LBC</span>
+          </div>
+          <p style={{ margin: "12px 0 20px", color: "var(--fg-muted)" }}>
+            Entre para ver a lista de tarefas de {responsavel}.
+          </p>
+          <Link href={`/login?next=/mobile/${pessoa}`} className="btn btn-accent login-submit">
+            Entrar
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (session.nivel === "EXECUTOR" && session.responsavel !== responsavel) {
     redirect(`/mobile/${slugify(session.responsavel)}`);
   }
 

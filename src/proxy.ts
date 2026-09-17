@@ -9,6 +9,12 @@ function getSecretKey() {
   return new TextEncoder().encode(process.env.AUTH_SECRET ?? "");
 }
 
+// "/mobile/<pessoa>" (um segmento só, não "/mobile" nem nada mais aninhado) — a página dessa
+// pessoa é a que vira link de compartilhamento no WhatsApp, com foto/nome dela no preview.
+function isPessoaPreviewPath(pathname: string): boolean {
+  return /^\/mobile\/[^/]+$/.test(pathname);
+}
+
 async function readSession(req: NextRequest) {
   const token = req.cookies.get(SESSION_COOKIE)?.value;
   if (!token) return null;
@@ -37,6 +43,13 @@ export async function proxy(req: NextRequest) {
   if (!session) {
     if (isApi) {
       return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
+    }
+    // O crawler de preview do WhatsApp/Facebook busca essa URL sem cookie de sessão — se
+    // redirecionar pro login aqui, ele só vê a metadata genérica do login, nunca a foto/nome
+    // certos da pessoa. Deixa passar: a própria página mostra um cartão de "entrar" pro
+    // visitante anônimo, sem expor nenhuma tarefa.
+    if (isPessoaPreviewPath(pathname)) {
+      return NextResponse.next();
     }
     const url = req.nextUrl.clone();
     url.pathname = "/login";
