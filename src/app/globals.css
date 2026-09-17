@@ -1045,6 +1045,8 @@ textarea.form-control { resize: vertical; min-height: 80px; font-family: var(--f
 .cadastrar-login-shell {
   max-width: 560px;
   margin: 0 auto;
+  height: 100vh;
+  overflow-y: auto;
   padding: 40px 20px 60px;
 }
 

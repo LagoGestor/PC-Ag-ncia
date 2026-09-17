@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import Link from "next/link";
 import { RESPONSAVEIS_VISIVEIS } from "@/types";
 import { useToasts } from "@/hooks/useToasts";
 import { ToastContainer } from "./ToastContainer";
@@ -155,6 +156,12 @@ export function CadastrarLoginClient() {
 
   return (
     <div className="cadastrar-login-shell">
+      <div className="performance-page-topbar" style={{ marginBottom: 16 }}>
+        <Link href="/" className="btn btn-ghost btn-sm">
+          <i className="fas fa-arrow-left" /> Voltar
+        </Link>
+      </div>
+
       <h1 className="fixas-title">Cadastrar Login</h1>
       <p className="fixas-subtitle">Gerencie os acessos ao sistema. Esta página é restrita a contas Master.</p>
 

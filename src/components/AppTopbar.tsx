@@ -144,6 +144,11 @@ export function AppTopbar() {
             <button className="dropdown-item" onClick={exportarCSV}>
               <i className="fas fa-file-csv" /> Exportar CSV
             </button>
+            {session?.nivel === "MASTER" && (
+              <a className="dropdown-item" href="/cadastrarlogin">
+                <i className="fas fa-users-gear" /> Gerenciar Logins
+              </a>
+            )}
             <a className="dropdown-item" href="/minha-conta">
               <i className="fas fa-key" /> Alterar Senha
             </a>
