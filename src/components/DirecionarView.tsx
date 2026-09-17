@@ -21,7 +21,7 @@ export function DirecionarView({ list, onEdit, onToggleArchive, onDelete }: Prop
     );
   }
   return (
-    <div className="direcionar-row">
+    <div className="card-grid">
       {list.map((t) => (
         <TaskCard key={t.id} t={t} onEdit={onEdit} onToggleArchive={onToggleArchive} onDelete={onDelete} />
       ))}
