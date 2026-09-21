@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { RESPONSAVEL_ARMAZENAR, Tarefa } from "@/types";
+import { RESPONSAVEL_ARMAZENAR, Tarefa, TarefaInput } from "@/types";
 import { api } from "@/lib/api";
 import { useToasts } from "@/hooks/useToasts";
 import { useSession } from "./SessionProvider";
@@ -36,7 +36,7 @@ export function AppTopbar() {
     return () => document.removeEventListener("click", close);
   }, [dropdownOpen]);
 
-  async function handleCreate(data: Omit<Tarefa, "id" | "arquivada" | "fixa" | "diaSemana">) {
+  async function handleCreate(data: TarefaInput) {
     try {
       const created = await api.create(data);
       setTarefas((prev) => [created, ...prev]);

@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { AREAS, RESPONSAVEIS, STATUSES, Status, Tarefa, TIPOS } from "@/types";
+import { AREAS, DIAS_SEMANA, RESPONSAVEIS, STATUSES, Status, Tarefa, TIPOS } from "@/types";
 import { useSession } from "./SessionProvider";
 import { canWrite } from "@/lib/permissions";
 
@@ -17,6 +17,8 @@ type FormState = {
   entrega: string;
   horarioPublicacao: string;
   status: Status;
+  fixa: boolean;
+  diaSemana: string;
 };
 
 const empty = (defaultResponsavel?: string): FormState => ({
@@ -31,6 +33,8 @@ const empty = (defaultResponsavel?: string): FormState => ({
   entrega: "",
   horarioPublicacao: "",
   status: "Ativa",
+  fixa: false,
+  diaSemana: "",
 });
 
 interface Props {
@@ -67,6 +71,8 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
         entrega: editing.entrega,
         horarioPublicacao: editing.horarioPublicacao,
         status: editing.status,
+        fixa: editing.fixa,
+        diaSemana: editing.diaSemana,
       });
     } else {
       setForm(empty(responsavelPadrao));
@@ -88,6 +94,10 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
     if (readOnly) return;
     if (!form.tarefa.trim() || !form.area || !form.responsavel) {
       setError("Preencha os campos obrigatórios");
+      return;
+    }
+    if (form.fixa && !form.diaSemana) {
+      setError("Selecione o dia da semana da atividade fixa");
       return;
     }
     onSave(form, editing?.id);
@@ -203,6 +213,8 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
             />
           </div>
 
+          {!form.fixa && (
+            <>
           <div className="form-row">
             <div className="form-group">
               <label>
@@ -254,6 +266,8 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
               />
             </div>
           </div>
+            </>
+          )}
 
           <div className="form-row">
             <div className="form-group">
@@ -272,28 +286,60 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
               </select>
             </div>
 
-            {editing?.fixa && !readOnly && (
+            {!readOnly && canWrite(session) && (
               <div className="form-group">
-                <label>Adicionar à Lista</label>
-                <div className="form-toggle">
-                  <button
-                    type="button"
-                    className={added ? "active" : ""}
-                    disabled={added}
-                    onClick={() => {
-                      onGenerate(editing);
-                      setAdded(true);
-                    }}
-                  >
-                    {added ? <><i className="fas fa-check" /> Sim</> : "Sim"}
-                  </button>
-                  <button type="button" className={!added ? "active" : ""} disabled={added}>
-                    Não
-                  </button>
-                </div>
+                <label>Periodicidade</label>
+                <select
+                  className="form-control"
+                  value={form.fixa ? "Fixa" : "Única"}
+                  onChange={(e) => setForm((f) => ({ ...f, fixa: e.target.value === "Fixa", diaSemana: e.target.value === "Fixa" ? f.diaSemana : "" }))}
+                >
+                  <option>Única</option>
+                  <option>Fixa</option>
+                </select>
               </div>
             )}
           </div>
+
+          {form.fixa && !readOnly && (
+            <div className="form-row">
+              <div className="form-group">
+                <label>
+                  Dia da semana <span>*</span>
+                </label>
+                <select className="form-control" value={form.diaSemana} onChange={(e) => set("diaSemana", e.target.value)}>
+                  <option value="" disabled>
+                    Selecione...
+                  </option>
+                  {DIAS_SEMANA.map((d) => (
+                    <option key={d}>{d}</option>
+                  ))}
+                </select>
+              </div>
+
+              {editing?.fixa && (
+                <div className="form-group">
+                  <label>Adicionar à Lista</label>
+                  <div className="form-toggle">
+                    <button
+                      type="button"
+                      className={added ? "active" : ""}
+                      disabled={added}
+                      onClick={() => {
+                        onGenerate({ ...editing, diaSemana: form.diaSemana });
+                        setAdded(true);
+                      }}
+                    >
+                      {added ? <><i className="fas fa-check" /> Sim</> : "Sim"}
+                    </button>
+                    <button type="button" className={!added ? "active" : ""} disabled={added}>
+                      Não
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {error && <div style={{ color: "var(--danger)", fontSize: 12, marginBottom: 10 }}>{error}</div>}
 

@@ -18,6 +18,8 @@ export interface Tarefa {
   diaSemana: string;
 }
 
+export type TarefaInput = Omit<Tarefa, "id" | "arquivada" | "fixa" | "diaSemana"> & { fixa?: boolean; diaSemana?: string };
+
 export const AREAS = [
   "Comunicação",
   "Lagoinha Brasília",

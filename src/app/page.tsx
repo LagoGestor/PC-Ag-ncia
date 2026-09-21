@@ -5,7 +5,7 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { useToasts } from "@/hooks/useToasts";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { RESPONSAVEL_ARMAZENAR, Status, Tarefa, View } from "@/types";
+import { RESPONSAVEL_ARMAZENAR, Status, Tarefa, TarefaInput, View } from "@/types";
 import { useSession } from "@/components/SessionProvider";
 import { canWrite } from "@/lib/permissions";
 import { Avatar } from "@/components/Avatar";
@@ -95,7 +95,7 @@ export default function Home() {
     setModalOpen(true);
   }
 
-  async function handleSave(data: Omit<Tarefa, "id" | "arquivada" | "fixa" | "diaSemana">, id?: string) {
+  async function handleSave(data: TarefaInput, id?: string) {
     try {
       if (id) {
         const updated = await api.update(id, data);

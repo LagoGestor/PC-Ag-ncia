@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RESPONSAVEL_ARMAZENAR, Status, Tarefa } from "@/types";
+import { RESPONSAVEL_ARMAZENAR, Status, Tarefa, TarefaInput } from "@/types";
 import { api } from "@/lib/api";
 import { useToasts } from "@/hooks/useToasts";
 import { ToastContainer } from "./ToastContainer";
@@ -32,10 +32,10 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
 
   const filtradas = statusFilter ? tarefas.filter((t) => t.status === statusFilter) : tarefas;
 
-  async function handleCreate(data: Omit<Tarefa, "id" | "arquivada" | "fixa" | "diaSemana">) {
+  async function handleCreate(data: TarefaInput) {
     try {
       const created = await api.create(data);
-      if (todasAsTarefas || created.responsavel === responsavel) {
+      if (!created.fixa && (todasAsTarefas || created.responsavel === responsavel)) {
         setTarefas((prev) => [...prev, created].sort((a, b) => (a.entrega || "9999").localeCompare(b.entrega || "9999")));
       }
       toast(

@@ -1,4 +1,4 @@
-import { Tarefa } from "@/types";
+import { Tarefa, TarefaInput } from "@/types";
 
 async function json<T>(res: Response): Promise<T> {
   if (!res.ok) throw new Error(`Erro na requisição: ${res.status}`);
@@ -8,7 +8,7 @@ async function json<T>(res: Response): Promise<T> {
 export const api = {
   list: (): Promise<Tarefa[]> => fetch("/api/tarefas").then((r) => json(r)),
 
-  create: (data: Omit<Tarefa, "id" | "arquivada" | "fixa" | "diaSemana">): Promise<Tarefa> =>
+  create: (data: TarefaInput): Promise<Tarefa> =>
     fetch("/api/tarefas", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
