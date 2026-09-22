@@ -65,6 +65,7 @@ export function CadastrarLoginClient() {
   const { toasts, toast } = useToasts();
 
   const isExecutor = form.nivel === "EXECUTOR";
+  const isDiretor = form.nivel === "DIRETOR_CONTEUDO";
 
   function carregar() {
     fetch("/api/usuarios")
@@ -258,19 +259,19 @@ export function CadastrarLoginClient() {
               ))}
             </select>
           </div>
-          {isExecutor && (
+          {(isExecutor || isDiretor) && (
             <div className="form-group">
               <label>
-                Responsável <span>*</span>
+                Responsável {isExecutor && <span>*</span>}
               </label>
               <select
                 className="form-control"
                 value={form.responsavel}
                 onChange={(e) => setForm((f) => ({ ...f, responsavel: e.target.value }))}
-                required
+                required={isExecutor}
               >
-                <option value="" disabled>
-                  Selecione...
+                <option value="" disabled={isExecutor}>
+                  {isDiretor ? "Não se aplica" : "Selecione..."}
                 </option>
                 {RESPONSAVEIS_VISIVEIS.map((r) => (
                   <option key={r}>{r}</option>

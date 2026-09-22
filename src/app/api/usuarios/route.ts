@@ -41,8 +41,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Foto muito grande." }, { status: 400 });
   }
   const isExecutor = nivel === "EXECUTOR";
+  const isDiretor = nivel === "DIRETOR_CONTEUDO";
   if (isExecutor && !RESPONSAVEIS_VISIVEIS.includes(responsavel)) {
     return NextResponse.json({ error: "Selecione um responsável válido para esse nível." }, { status: 400 });
+  }
+  if (isDiretor && responsavel && !RESPONSAVEIS_VISIVEIS.includes(responsavel)) {
+    return NextResponse.json({ error: "Responsável inválido." }, { status: 400 });
   }
 
   const existente = await prisma.usuario.findUnique({ where: { login } });
@@ -52,7 +56,7 @@ export async function POST(req: NextRequest) {
 
   const senhaHash = await hashPassword(senha);
   const usuario = await prisma.usuario.create({
-    data: { nome, foto, login, senhaHash, nivel, responsavel: isExecutor ? responsavel : "" },
+    data: { nome, foto, login, senhaHash, nivel, responsavel: isExecutor || isDiretor ? responsavel : "" },
     select: { id: true, nome: true, foto: true, login: true, nivel: true, responsavel: true, createdAt: true },
   });
   await confirmarSenhaGravada(usuario.id, senhaHash);
