@@ -271,6 +271,12 @@ export default function Home() {
             </button>
           )}
           <div className="sep" />
+          {session && (
+            <div className="session-identity">
+              <Avatar name={session.nome || session.login} size={28} />
+              <span>{session.nome || session.login}</span>
+            </div>
+          )}
           <div className={`dropdown${dropdownOpen ? " open" : ""}`}>
             <button className="btn btn-ghost icon-btn" onClick={() => setDropdownOpen((v) => !v)}>
               <i className="fas fa-ellipsis-v" />
@@ -304,12 +310,6 @@ export default function Home() {
               </button>
             </div>
           </div>
-          {session && (
-            <div className="session-identity">
-              <Avatar name={session.nome || session.login} size={28} />
-              <span>{session.nome || session.login}</span>
-            </div>
-          )}
         </div>
       </div>
 

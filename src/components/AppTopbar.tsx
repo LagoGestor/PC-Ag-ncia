@@ -124,6 +124,12 @@ export function AppTopbar() {
           </button>
         )}
         <div className="sep" />
+        {session && (
+          <div className="session-identity">
+            <Avatar name={session.nome || session.login} size={28} />
+            <span>{session.nome || session.login}</span>
+          </div>
+        )}
         <div className={`dropdown${dropdownOpen ? " open" : ""}`}>
           <button className="btn btn-ghost icon-btn" onClick={() => setDropdownOpen((v) => !v)}>
             <i className="fas fa-ellipsis-v" />
@@ -157,12 +163,6 @@ export function AppTopbar() {
             </button>
           </div>
         </div>
-        {session && (
-          <div className="session-identity">
-            <Avatar name={session.nome || session.login} size={28} />
-            <span>{session.nome || session.login}</span>
-          </div>
-        )}
       </div>
 
       <TaskModal open={modalOpen} editing={null} onClose={() => setModalOpen(false)} onSave={(data) => handleCreate(data)} onGenerate={() => {}} />
