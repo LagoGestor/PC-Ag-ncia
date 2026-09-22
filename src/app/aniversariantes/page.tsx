@@ -18,11 +18,9 @@ export default async function AniversariantesPage() {
   // casca mobile) mantém uma barra simples só com "Voltar".
   const desktop = session.nivel === "MASTER" || session.nivel === "DIRETOR_CONTEUDO";
   const voltarPara =
-    session.nivel === "MASTER"
+    session.nivel === "MASTER" || session.nivel === "DIRETOR_CONTEUDO"
       ? "/"
-      : session.nivel === "EXECUTOR"
-        ? `/mobile/${slugify(session.responsavel)}`
-        : "/mobile";
+      : `/mobile/${slugify(session.responsavel)}`;
 
   if (desktop) {
     return (

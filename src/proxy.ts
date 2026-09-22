@@ -72,6 +72,7 @@ export async function proxy(req: NextRequest) {
   // uma única pessoa: pode navegar por /mobile (Geral), qualquer /mobile/[pessoa] e a Performance.
   if (session.nivel === "DIRETOR_CONTEUDO" && !isApi) {
     const permitido =
+      pathname === "/" ||
       pathname === "/mobile" ||
       pathname.startsWith("/mobile/") ||
       pathname === "/minha-conta" ||

@@ -14,7 +14,7 @@ export default async function PerformancePage() {
     redirect("/");
   }
 
-  const voltarPara = session.nivel === "MASTER" ? "/" : "/mobile";
+  const voltarPara = session.nivel === "MASTER" || session.nivel === "DIRETOR_CONTEUDO" ? "/" : "/mobile";
 
   return (
     <div className="performance-page-shell">
