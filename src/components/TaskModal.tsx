@@ -269,6 +269,21 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
             </>
           )}
 
+          {form.fixa && (
+            <div className="form-row">
+              <div className="form-group">
+                <label>Horário de Entrega/Publicação</label>
+                <input
+                  type="time"
+                  className="form-control"
+                  value={form.horarioPublicacao}
+                  onChange={(e) => set("horarioPublicacao", e.target.value)}
+                  disabled={readOnly}
+                />
+              </div>
+            </div>
+          )}
+
           <div className="form-row">
             <div className="form-group">
               <label>
