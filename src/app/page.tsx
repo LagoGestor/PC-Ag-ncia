@@ -42,10 +42,15 @@ export default function Home() {
   const isMobile = useIsMobile();
   const session = useSession();
   const writable = canWrite(session);
+  const isDiretor = session?.nivel === "DIRETOR_CONTEUDO";
 
   useEffect(() => {
     if (isMobile && (view === "kanban" || view === "direcionar")) setView("dashboard");
   }, [isMobile, view]);
+
+  useEffect(() => {
+    if (isDiretor && view !== "agenda" && view !== "semanal") setView("agenda");
+  }, [isDiretor, view]);
 
   useEffect(() => {
     api
@@ -323,25 +328,33 @@ export default function Home() {
           <div className="view-tabs">
             {isMobile ? (
               <>
-                <button className={`tab-btn${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>
-                  CARDS
-                </button>
-                <button className={`tab-btn${view === "tabela" ? " active" : ""}`} onClick={() => setView("tabela")}>
-                  LISTA
-                </button>
-                <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
-                  TIME
-                </button>
+                {!isDiretor && (
+                  <button className={`tab-btn${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>
+                    CARDS
+                  </button>
+                )}
+                {!isDiretor && (
+                  <button className={`tab-btn${view === "tabela" ? " active" : ""}`} onClick={() => setView("tabela")}>
+                    LISTA
+                  </button>
+                )}
+                {!isDiretor && (
+                  <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
+                    TIME
+                  </button>
+                )}
                 <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
                   AGENDA
                 </button>
-                <button className={`tab-btn${view === "reunioes" ? " active" : ""}`} onClick={() => setView("reunioes")}>
-                  REUNIÃO
-                </button>
+                {!isDiretor && (
+                  <button className={`tab-btn${view === "reunioes" ? " active" : ""}`} onClick={() => setView("reunioes")}>
+                    REUNIÃO
+                  </button>
+                )}
                 <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
                   FIXO
                 </button>
-                {writable && (
+                {writable && !isDiretor && (
                   <Link href="/performance" className="tab-btn">
                     PERFORMANCE
                   </Link>
@@ -351,37 +364,51 @@ export default function Home() {
                     ANIVERSARIANTES
                   </Link>
                 )}
-                <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")} title="Arquivo">
-                  <i className="fas fa-box-archive" />
-                </button>
+                {!isDiretor && (
+                  <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")} title="Arquivo">
+                    <i className="fas fa-box-archive" />
+                  </button>
+                )}
               </>
             ) : (
               <>
-                <button className={`tab-btn${view === "tabela" ? " active" : ""}`} onClick={() => setView("tabela")}>
-                  <i className="fas fa-table" /> LISTA
-                </button>
-                <button className={`tab-btn${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>
-                  <i className="fas fa-th-large" /> CARDS
-                </button>
-                <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
-                  <i className="fas fa-users" /> TIME
-                </button>
+                {!isDiretor && (
+                  <button className={`tab-btn${view === "tabela" ? " active" : ""}`} onClick={() => setView("tabela")}>
+                    <i className="fas fa-table" /> LISTA
+                  </button>
+                )}
+                {!isDiretor && (
+                  <button className={`tab-btn${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>
+                    <i className="fas fa-th-large" /> CARDS
+                  </button>
+                )}
+                {!isDiretor && (
+                  <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
+                    <i className="fas fa-users" /> TIME
+                  </button>
+                )}
                 <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
                   <i className="fas fa-calendar-days" /> AGENDA
                 </button>
-                <button className={`tab-btn${view === "reunioes" ? " active" : ""}`} onClick={() => setView("reunioes")}>
-                  <i className="fas fa-people-group" /> REUNIÃO
-                </button>
+                {!isDiretor && (
+                  <button className={`tab-btn${view === "reunioes" ? " active" : ""}`} onClick={() => setView("reunioes")}>
+                    <i className="fas fa-people-group" /> REUNIÃO
+                  </button>
+                )}
                 <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
                   <i className="fas fa-repeat" /> FIXOS
                 </button>
-                <button className={`tab-btn${view === "direcionar" ? " active" : ""}`} onClick={() => setView("direcionar")}>
-                  <i className="fas fa-arrow-right-arrow-left" /> DIRECIONAR
-                </button>
-                <button className={`tab-btn${view === "kanban" ? " active" : ""}`} onClick={() => setView("kanban")}>
-                  <i className="fas fa-columns" /> KANBAN
-                </button>
-                {writable && (
+                {!isDiretor && (
+                  <button className={`tab-btn${view === "direcionar" ? " active" : ""}`} onClick={() => setView("direcionar")}>
+                    <i className="fas fa-arrow-right-arrow-left" /> DIRECIONAR
+                  </button>
+                )}
+                {!isDiretor && (
+                  <button className={`tab-btn${view === "kanban" ? " active" : ""}`} onClick={() => setView("kanban")}>
+                    <i className="fas fa-columns" /> KANBAN
+                  </button>
+                )}
+                {writable && !isDiretor && (
                   <Link href="/performance" className="tab-btn">
                     <i className="fas fa-chart-line" /> PERFORMANCE
                   </Link>
@@ -391,9 +418,11 @@ export default function Home() {
                     <i className="fas fa-cake-candles" /> ANIVERSARIANTES
                   </Link>
                 )}
-                <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")}>
-                  <i className="fas fa-box-archive" /> ARQUIVO
-                </button>
+                {!isDiretor && (
+                  <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")}>
+                    <i className="fas fa-box-archive" /> ARQUIVO
+                  </button>
+                )}
               </>
             )}
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { AREAS, DIAS_SEMANA, RESPONSAVEIS, STATUSES, Status, Tarefa, TIPOS } from "@/types";
+import { AREAS, DIAS_SEMANA, RESPONSAVEIS, STATUSES, Status, Tarefa, TIPOS, TIPOS_CRONOGRAMA_POSTAGENS } from "@/types";
 import { useSession } from "./SessionProvider";
 import { canWrite } from "@/lib/permissions";
 
@@ -54,6 +54,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
   const session = useSession();
   const readOnly = !canWrite(session);
   const opcoesResponsavel = responsaveisOptions ?? RESPONSAVEIS;
+  const opcoesTipo = session?.nivel === "DIRETOR_CONTEUDO" ? TIPOS_CRONOGRAMA_POSTAGENS : TIPOS;
   const responsavelPadrao = defaultResponsavel;
 
   useEffect(() => {
@@ -182,7 +183,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
                 disabled={readOnly}
               >
                 <option value="">Selecione...</option>
-                {TIPOS.map((tp) => (
+                {opcoesTipo.map((tp) => (
                   <option key={tp}>{tp}</option>
                 ))}
               </select>

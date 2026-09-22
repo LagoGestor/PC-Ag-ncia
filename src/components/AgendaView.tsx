@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSession } from "./SessionProvider";
 import { FOTOS_RESPONSAVEL, STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa, TIPOS_CRONOGRAMA_POSTAGENS, TIPOS_FORA_DAS_REDES } from "@/types";
 import { Avatar } from "./Avatar";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -45,7 +46,7 @@ function hexToRgb(hex: string): [number, number, number] {
 
 const TIPO_FILTRO_LABEL: Record<TipoFiltro, string> = {
   todas: "Todas as Entregas",
-  cronograma: "Cronograma de Postagens",
+  cronograma: "Cronograma de Postagens no Instagram",
   fora: "Tarefas fora das Redes",
 };
 
@@ -91,10 +92,12 @@ interface Props {
 
 export function AgendaView({ list, onOpenDetail }: Props) {
   const isMobile = useIsMobile();
-  const [mode, setMode] = useState<Mode>("mes");
+  const session = useSession();
+  const apenasCronograma = session?.nivel === "DIRETOR_CONTEUDO";
+  const [mode, setMode] = useState<Mode>("semana");
   const [anchor, setAnchor] = useState(() => new Date());
   const [expandedDay, setExpandedDay] = useState<string | null>(null);
-  const [tipoFiltro, setTipoFiltro] = useState<TipoFiltro>("todas");
+  const [tipoFiltro, setTipoFiltro] = useState<TipoFiltro>(apenasCronograma ? "cronograma" : "todas");
 
   const listFiltrada = useMemo(() => {
     if (tipoFiltro === "todas") return list;
@@ -417,17 +420,19 @@ export function AgendaView({ list, onOpenDetail }: Props) {
         </div>
       </div>
 
-      <div className="agenda-toggle agenda-tipo-filter">
-        <button className={tipoFiltro === "todas" ? "active" : ""} onClick={() => setTipoFiltro("todas")}>
-          Todas as Entregas
-        </button>
-        <button className={tipoFiltro === "cronograma" ? "active" : ""} onClick={() => setTipoFiltro("cronograma")}>
-          Cronograma de Postagens
-        </button>
-        <button className={tipoFiltro === "fora" ? "active" : ""} onClick={() => setTipoFiltro("fora")}>
-          Tarefas fora das Redes
-        </button>
-      </div>
+      {!apenasCronograma && (
+        <div className="agenda-toggle agenda-tipo-filter">
+          <button className={tipoFiltro === "todas" ? "active" : ""} onClick={() => setTipoFiltro("todas")}>
+            Todas as Entregas
+          </button>
+          <button className={tipoFiltro === "cronograma" ? "active" : ""} onClick={() => setTipoFiltro("cronograma")}>
+            Cronograma de Postagens no Instagram
+          </button>
+          <button className={tipoFiltro === "fora" ? "active" : ""} onClick={() => setTipoFiltro("fora")}>
+            Tarefas fora das Redes
+          </button>
+        </div>
+      )}
 
       {mode === "mes" ? (
         <div className="grid-scroll-wrap">
