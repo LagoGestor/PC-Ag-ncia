@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { api } from "@/lib/api";
+import { api, nextOccurrence } from "@/lib/api";
 import { useToasts } from "@/hooks/useToasts";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { RESPONSAVEL_ARMAZENAR, Status, Tarefa, TarefaInput, View } from "@/types";
@@ -133,15 +133,6 @@ export default function Home() {
     } finally {
       setDeleteTarget(null);
     }
-  }
-
-  function nextOccurrence(diaSemana: string): string {
-    const map: Record<string, number> = { Domingo: 0, Segunda: 1, "Terça": 2, Quarta: 3, Quinta: 4, Sexta: 5, "Sábado": 6 };
-    const target = map[diaSemana];
-    const today = new Date();
-    const diff = target === undefined ? 0 : (target - today.getDay() + 7) % 7;
-    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + diff);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   }
 
   async function handleGenerateFromFixa(t: Tarefa) {

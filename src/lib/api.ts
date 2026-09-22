@@ -25,3 +25,12 @@ export const api = {
   remove: (id: string): Promise<void> =>
     fetch(`/api/tarefas/${id}`, { method: "DELETE" }).then(() => undefined),
 };
+
+export function nextOccurrence(diaSemana: string): string {
+  const map: Record<string, number> = { Domingo: 0, Segunda: 1, "Terça": 2, Quarta: 3, Quinta: 4, Sexta: 5, "Sábado": 6 };
+  const target = map[diaSemana];
+  const today = new Date();
+  const diff = target === undefined ? 0 : (target - today.getDay() + 7) % 7;
+  const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + diff);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}

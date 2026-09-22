@@ -25,7 +25,7 @@ export default async function MobileMasterPage() {
   }
 
   const tarefas = await prisma.tarefa.findMany({
-    where: { fixa: false, arquivada: false, responsavel: { not: RESPONSAVEL_ARMAZENAR } },
+    where: { arquivada: false, responsavel: { not: RESPONSAVEL_ARMAZENAR } },
     orderBy: { entrega: "asc" },
   });
 
@@ -37,7 +37,7 @@ export default async function MobileMasterPage() {
           <span>Todas as Tarefas</span>
         </div>
         <div className="mobile-header-right">
-          <span className="mobile-count">{tarefas.length}</span>
+          <span className="mobile-count">{tarefas.filter((t) => !t.fixa).length}</span>
           <MobileHeaderMenu />
         </div>
       </header>
