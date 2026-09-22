@@ -94,6 +94,7 @@ export function AgendaView({ list, onOpenDetail }: Props) {
   const isMobile = useIsMobile();
   const session = useSession();
   const apenasCronograma = session?.nivel === "DIRETOR_CONTEUDO";
+  const responsavelPrioritario = session?.nivel === "DIRETOR_CONTEUDO" ? session.responsavel : "";
   const [mode, setMode] = useState<Mode>("semana");
   const [anchor, setAnchor] = useState(() => new Date());
   const [expandedDay, setExpandedDay] = useState<string | null>(null);
@@ -115,6 +116,11 @@ export function AgendaView({ list, onOpenDetail }: Props) {
     }
     for (const arr of map.values()) {
       arr.sort((a, b) => {
+        if (responsavelPrioritario) {
+          const pa = a.responsavel === responsavelPrioritario ? 0 : 1;
+          const pb = b.responsavel === responsavelPrioritario ? 0 : 1;
+          if (pa !== pb) return pa - pb;
+        }
         if (!a.horarioPublicacao && !b.horarioPublicacao) return 0;
         if (!a.horarioPublicacao) return 1;
         if (!b.horarioPublicacao) return -1;
@@ -122,7 +128,7 @@ export function AgendaView({ list, onOpenDetail }: Props) {
       });
     }
     return map;
-  }, [listFiltrada]);
+  }, [listFiltrada, responsavelPrioritario]);
 
   const today = new Date();
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { DIAS_SEMANA, Tarefa } from "@/types";
+import { useSession } from "./SessionProvider";
 import { Avatar } from "./Avatar";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
@@ -35,12 +36,19 @@ interface Props {
 
 export function AtividadesFixasView({ list, onOpenDetail }: Props) {
   const isMobile = useIsMobile();
+  const session = useSession();
+  const responsavelPrioritario = session?.nivel === "DIRETOR_CONTEUDO" ? session.responsavel : "";
   const byDay = new Map<string, Tarefa[]>();
   for (const t of list) {
     const dia = t.diaSemana || "Sem dia";
     const arr = byDay.get(dia) ?? [];
     arr.push(t);
     byDay.set(dia, arr);
+  }
+  if (responsavelPrioritario) {
+    for (const arr of byDay.values()) {
+      arr.sort((a, b) => (a.responsavel === responsavelPrioritario ? 0 : 1) - (b.responsavel === responsavelPrioritario ? 0 : 1));
+    }
   }
 
   const tiposUsados = Array.from(new Set(list.map((t) => t.tipo).filter(Boolean)));
