@@ -43,13 +43,14 @@ export default function Home() {
   const session = useSession();
   const writable = canWrite(session);
   const isDiretor = session?.nivel === "DIRETOR_CONTEUDO";
+  const meuResponsavel = isDiretor ? session?.responsavel ?? "" : "";
 
   useEffect(() => {
     if (isMobile && (view === "kanban" || view === "direcionar")) setView("dashboard");
   }, [isMobile, view]);
 
   useEffect(() => {
-    if (isDiretor && view !== "agenda" && view !== "semanal") setView("agenda");
+    if (isDiretor && view !== "agenda" && view !== "semanal" && view !== "minhas") setView("agenda");
   }, [isDiretor, view]);
 
   useEffect(() => {
@@ -70,6 +71,7 @@ export default function Home() {
 
   const filtered = useMemo(() => {
     let list = tarefas.filter((t) => {
+      if (view === "minhas") return t.responsavel === meuResponsavel && !t.arquivada && !t.fixa;
       if (view === "direcionar") return t.responsavel === RESPONSAVEL_ARMAZENAR;
       if (t.responsavel === RESPONSAVEL_ARMAZENAR) return false;
       if (view === "arquivadas") return t.arquivada;
@@ -88,7 +90,7 @@ export default function Home() {
       );
     }
     return list;
-  }, [tarefas, view, statusFilter, searchQuery]);
+  }, [tarefas, view, statusFilter, searchQuery, meuResponsavel]);
 
   function openNew() {
     setEditing(null);
@@ -343,6 +345,11 @@ export default function Home() {
                     TIME
                   </button>
                 )}
+                {isDiretor && meuResponsavel && (
+                  <button className={`tab-btn${view === "minhas" ? " active" : ""}`} onClick={() => setView("minhas")}>
+                    MINHAS TAREFAS
+                  </button>
+                )}
                 <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
                   AGENDA
                 </button>
@@ -385,6 +392,11 @@ export default function Home() {
                 {!isDiretor && (
                   <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
                     <i className="fas fa-users" /> TIME
+                  </button>
+                )}
+                {isDiretor && meuResponsavel && (
+                  <button className={`tab-btn${view === "minhas" ? " active" : ""}`} onClick={() => setView("minhas")}>
+                    <i className="fas fa-user-check" /> MINHAS TAREFAS
                   </button>
                 )}
                 <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
@@ -448,6 +460,8 @@ export default function Home() {
             />
           ) : view === "arquivadas" ? (
             <TabelaView key="arquivadas" list={filtered} onEdit={openEdit} onToggleArchive={handleToggleArchive} onDelete={setDeleteTarget} />
+          ) : view === "minhas" ? (
+            <DashboardView list={filtered} onEdit={openEdit} onToggleArchive={handleToggleArchive} onDelete={setDeleteTarget} />
           ) : view === "agenda" ? (
             <AgendaView list={filtered} onOpenDetail={openEdit} />
           ) : view === "semanal" ? (

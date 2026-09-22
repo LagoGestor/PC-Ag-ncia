@@ -153,7 +153,8 @@ export type View =
   | "semanal"
   | "responsaveis"
   | "direcionar"
-  | "reunioes";
+  | "reunioes"
+  | "minhas";
 
 export const MODALIDADES = ["Presencial", "Online"] as const;
 export type Modalidade = (typeof MODALIDADES)[number];
