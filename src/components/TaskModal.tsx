@@ -43,11 +43,12 @@ interface Props {
   onClose: () => void;
   onSave: (data: FormState, id?: string) => void;
   onGenerate: (t: Tarefa) => void;
+  onDelete?: (t: Tarefa) => void;
   responsaveisOptions?: string[];
   defaultResponsavel?: string;
 }
 
-export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsaveisOptions, defaultResponsavel }: Props) {
+export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete, responsaveisOptions, defaultResponsavel }: Props) {
   const [form, setForm] = useState<FormState>(empty());
   const [error, setError] = useState("");
   const [added, setAdded] = useState(false);
@@ -360,6 +361,16 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, responsa
           {error && <div style={{ color: "var(--danger)", fontSize: 12, marginBottom: 10 }}>{error}</div>}
 
           <div className="form-footer">
+            {editing && onDelete && !readOnly && (
+              <button
+                type="button"
+                className="btn btn-ghost dropdown-item-danger"
+                style={{ marginRight: "auto" }}
+                onClick={() => onDelete(editing)}
+              >
+                <i className="fas fa-trash" /> Apagar
+              </button>
+            )}
             <button type="button" className="btn btn-ghost" onClick={onClose}>
               {readOnly ? "Fechar" : "Cancelar"}
             </button>

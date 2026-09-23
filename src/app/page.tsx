@@ -484,6 +484,10 @@ export default function Home() {
         onClose={() => setModalOpen(false)}
         onSave={handleSave}
         onGenerate={handleGenerateFromFixa}
+        onDelete={(t) => {
+          setModalOpen(false);
+          setDeleteTarget(t);
+        }}
       />
 
       <ConfirmModal

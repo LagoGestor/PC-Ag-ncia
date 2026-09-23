@@ -5,6 +5,7 @@ import { RESPONSAVEL_ARMAZENAR, Status, Tarefa, TarefaInput } from "@/types";
 import { api, nextOccurrence } from "@/lib/api";
 import { useToasts } from "@/hooks/useToasts";
 import { ToastContainer } from "./ToastContainer";
+import { ConfirmModal } from "./ConfirmModal";
 import { SummaryBar } from "./SummaryBar";
 import { AniversariantesBanner } from "./AniversariantesBanner";
 import { MobileTaskCard } from "./MobileTaskCard";
@@ -28,6 +29,7 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Tarefa | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Tarefa | null>(null);
   const [aba, setAba] = useState<Aba>("lista");
   const { toasts, toast } = useToasts();
   const session = useSession();
@@ -88,6 +90,19 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
       toast(`"${t.tarefa}" adicionada à lista de tarefas!`, "success");
     } catch {
       toast("Erro ao adicionar tarefa", "error");
+    }
+  }
+
+  async function handleDelete() {
+    if (!deleteTarget) return;
+    try {
+      await api.remove(deleteTarget.id);
+      setTarefas((prev) => prev.filter((t) => t.id !== deleteTarget.id));
+      toast("Tarefa apagada", "info");
+    } catch {
+      toast("Erro ao apagar tarefa", "error");
+    } finally {
+      setDeleteTarget(null);
     }
   }
 
@@ -172,8 +187,20 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
         }}
         onSave={handleSave}
         onGenerate={handleGenerateFromFixa}
+        onDelete={(t) => {
+          setModalOpen(false);
+          setEditing(null);
+          setDeleteTarget(t);
+        }}
         responsaveisOptions={todasAsTarefas ? undefined : [RESPONSAVEL_ARMAZENAR, responsavel!]}
         defaultResponsavel={responsavel}
+      />
+
+      <ConfirmModal
+        open={!!deleteTarget}
+        text={`Apagar "${deleteTarget?.tarefa || "esta tarefa"}" permanentemente?`}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
       />
 
       <ToastContainer toasts={toasts} />
