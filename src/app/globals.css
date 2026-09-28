@@ -410,10 +410,10 @@ td.expandable-clamp2.expanded {
    .task-modal-fields sem grid aplicado). */
 @media (min-width: 769px) {
   .task-modal-box { max-width: 920px; }
-  .task-modal-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; align-items: start; }
-  .task-modal-fields > * { grid-column: 1; }
-  .task-modal-fields > .task-modal-desc { grid-column: 2; grid-row: 1 / -1; height: 100%; display: flex; flex-direction: column; }
-  .task-modal-fields > .task-modal-desc textarea { flex: 1; resize: none; }
+  .task-modal-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; }
+  .task-modal-fields > * { grid-column: 1; align-self: start; }
+  .task-modal-fields > .task-modal-desc { grid-column: 2; grid-row: 1 / -1; align-self: stretch; display: flex; flex-direction: column; }
+  .task-modal-fields > .task-modal-desc textarea { flex: 1; resize: none; min-height: 0; }
 }
 
 .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
