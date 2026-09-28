@@ -107,7 +107,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
 
   return (
     <div className="modal-overlay open">
-      <div className="modal-box">
+      <div className="modal-box task-modal-box">
         <div className="modal-header">
           <span className="modal-title">{editing ? "Editar Tarefa" : "Nova Tarefa"}</span>
           <button className="modal-close" onClick={onClose}>
@@ -121,6 +121,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
               Atividade fixa da semana · {editing.diaSemana}
             </div>
           )}
+          <div className="task-modal-fields">
           <div className="form-group">
             <label>
               Título da tarefa <span>*</span>
@@ -191,7 +192,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
             </div>
           </div>
 
-          <div className="form-group">
+          <div className="form-group task-modal-desc">
             <label>Descrição</label>
             <textarea
               className="form-control"
@@ -357,6 +358,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
               )}
             </div>
           )}
+          </div>
 
           {error && <div style={{ color: "var(--danger)", fontSize: 12, marginBottom: 10 }}>{error}</div>}
 
