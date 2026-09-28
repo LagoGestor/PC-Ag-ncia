@@ -412,7 +412,10 @@ td.expandable-clamp2.expanded {
   .task-modal-box { max-width: 920px; }
   .task-modal-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; }
   .task-modal-fields > * { grid-column: 1; align-self: start; }
-  .task-modal-fields > .task-modal-desc { grid-column: 2; grid-row: 1 / -1; align-self: stretch; display: flex; flex-direction: column; }
+  /* -1 só alcança a última linha do grid EXPLÍCITO, e aqui só declaramos colunas — as linhas
+     são implícitas (uma por campo/form-row). Por isso um span grande (nunca teremos 30 campos
+     numa coluna) força o grid a criar linhas implícitas suficientes pra cobrir a coluna toda. */
+  .task-modal-fields > .task-modal-desc { grid-column: 2; grid-row: 1 / span 30; align-self: stretch; display: flex; flex-direction: column; }
   .task-modal-fields > .task-modal-desc textarea { flex: 1; resize: none; min-height: 0; }
 }
 
