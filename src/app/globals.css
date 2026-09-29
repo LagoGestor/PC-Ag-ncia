@@ -1,19 +1,37 @@
 :root {
+  /* Backgrounds — camadas de profundidade (bg < surface < surface2 < surface3 < elevated/hover) */
   --bg: #080c0a;
   --surface: #0f1a14;
   --surface2: #162017;
   --surface3: #1c2a1f;
+  --surface-elevated: #1a2620; /* dropdowns, modais — um degrau acima de surface2 */
+  --surface-hover: #20302a; /* hover de linhas/itens, acima de surface3 */
+
+  /* Bordas */
   --border: rgba(255,255,255,0.07);
+  --border-hover: rgba(255,255,255,0.14);
   --border-accent: rgba(74,222,128,0.3);
+  --border-active: rgba(74,222,128,0.5);
+
+  /* Texto */
   --fg: #e8f0ea;
+  --fg-secondary: rgba(232,240,234,0.72);
   --fg-muted: rgba(232,240,234,0.5);
+  --fg-disabled: rgba(232,240,234,0.28);
+
+  /* Accent (verde) — ação, sucesso, seleção; não é pra ser a cor de tudo */
   --accent: #4ade80;
-  --accent-dim: rgba(74,222,128,0.15);
   --accent-hover: #86efac;
+  --accent-dim: rgba(74,222,128,0.15);
+  --accent-soft: rgba(74,222,128,0.08);
+
+  /* Estados */
   --danger: #f87171;
   --danger-dim: rgba(248,113,113,0.15);
   --warn: #fbbf24;
+  --warn-dim: rgba(251,191,36,0.15);
   --info: #38bdf8;
+  --info-dim: rgba(56,189,248,0.15);
   --gray: #6b7280;
 
   --status-ativa: #4ade80;
@@ -22,17 +40,38 @@
   --status-concluido: #38bdf8;
   --status-cancelado: #6b7280;
 
-  --radius: 12px;
+  /* Radius — escala consistente, não "tudo 20px" */
+  --radius-xs: 6px;
   --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+
+  /* Elevação — sombra indica profundidade, não decora */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
   --shadow: 0 4px 24px rgba(0,0,0,0.5);
   --shadow-lg: 0 12px 48px rgba(0,0,0,0.7);
+
   --font-head: 'Syne', sans-serif;
   --font-body: 'DM Sans', sans-serif;
 
-  --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+  --transition: 0.15s cubic-bezier(0.4,0,0.2,1);
+  --transition-fast: 0.1s ease;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--radius-xs); }
+/* Esses já têm um estado de foco próprio (borda + halo) — o outline genérico só duplicaria o efeito. */
+.form-control:focus-visible, #globalSearch:focus-visible, .th-filter:focus-visible { outline: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 html { color-scheme: dark; height: 100%; }
 
@@ -104,6 +143,7 @@ a { color: inherit; text-decoration: none; }
   transition: var(--transition);
   outline: none;
 }
+#globalSearch:hover { border-color: var(--border-hover); }
 #globalSearch:focus { border-color: var(--border-accent); background: var(--surface3); box-shadow: 0 0 0 3px var(--accent-dim); }
 #globalSearch::placeholder { color: var(--fg-muted); }
 
@@ -121,12 +161,16 @@ a { color: inherit; text-decoration: none; }
   transition: var(--transition);
   white-space: nowrap;
 }
-.btn-accent { background: var(--accent); color: #000; }
+.btn-accent { background: var(--accent); color: #06170d; }
 .btn-accent:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-accent:active { background: var(--accent); transform: translateY(0); }
 .btn-ghost { background: var(--surface2); color: var(--fg); border: 1px solid var(--border); }
-.btn-ghost:hover { background: var(--surface3); border-color: var(--border-accent); }
+.btn-ghost:hover { background: var(--surface3); border-color: var(--border-hover); }
+.btn-ghost:active { background: var(--surface2); }
 .btn-danger { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(248,113,113,0.2); }
 .btn-danger:hover { background: rgba(248,113,113,0.25); }
+.btn-danger:active { background: var(--danger-dim); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 .btn-sm { padding: 5px 10px; font-size: 11px; }
 .icon-btn { width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
 
@@ -135,8 +179,8 @@ a { color: inherit; text-decoration: none; }
   display: none;
   position: absolute;
   right: 0; top: calc(100% + 8px);
-  background: var(--surface2);
-  border: 1px solid var(--border);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-hover);
   border-radius: var(--radius);
   padding: 6px;
   min-width: 180px;
@@ -149,16 +193,16 @@ a { color: inherit; text-decoration: none; }
   padding: 9px 12px;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  color: var(--fg);
+  color: var(--fg-secondary);
   font-size: 12px;
   font-weight: 500;
-  transition: var(--transition);
+  transition: var(--transition-fast);
   border: none;
   background: none;
   width: 100%;
   text-align: left;
 }
-.dropdown-item:hover { background: var(--surface3); color: var(--accent); }
+.dropdown-item:hover { background: var(--surface-hover); color: var(--fg); }
 
 #summary-bar {
   display: flex;
@@ -181,7 +225,7 @@ a { color: inherit; text-decoration: none; }
   flex-shrink: 0;
   user-select: none;
 }
-.sum-pill:hover { border-color: var(--border-accent); background: var(--surface3); }
+.sum-pill:hover { border-color: var(--border-hover); background: var(--surface-hover); }
 .sum-pill.active { background: var(--accent-dim); border-color: var(--border-accent); }
 .sum-pill .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .sum-pill .label { font-size: 11px; font-weight: 600; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -201,11 +245,11 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
-  transition: var(--transition);
+  transition: var(--transition-fast);
   display: flex; align-items: center; gap: 6px;
 }
-.tab-btn:hover { background: var(--surface2); color: var(--fg); }
-.tab-btn.active { background: var(--accent-dim); border-color: var(--border-accent); color: var(--accent); }
+.tab-btn:hover { background: var(--surface-hover); color: var(--fg-secondary); }
+.tab-btn.active { background: var(--accent-dim); border-color: var(--border-active); color: var(--accent); font-weight: 700; }
 .view-actions { display: flex; gap: 8px; align-items: center; }
 
 #visualizacao { overflow-y: auto; overflow-x: hidden; padding: 20px 24px; min-width: 0; }
