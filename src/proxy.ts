@@ -37,6 +37,11 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // O Cron do Vercel chama isso sem cookie de sessão — a própria rota valida o CRON_SECRET.
+  if (pathname.startsWith("/api/cron/")) {
+    return NextResponse.next();
+  }
+
   const session = await readSession(req);
   const isApi = pathname.startsWith("/api/");
 
