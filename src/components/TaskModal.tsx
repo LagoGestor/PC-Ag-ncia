@@ -12,6 +12,7 @@ type FormState = {
   responsavel: string;
   descricao: string;
   link: string;
+  linksExtras: string;
   solicitacao: string;
   feedback: string;
   entrega: string;
@@ -28,6 +29,7 @@ const empty = (defaultResponsavel?: string): FormState => ({
   responsavel: defaultResponsavel ?? "",
   descricao: "",
   link: "",
+  linksExtras: "",
   solicitacao: new Date().toISOString().split("T")[0],
   feedback: "",
   entrega: "",
@@ -50,6 +52,7 @@ interface Props {
 
 export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete, responsaveisOptions, defaultResponsavel }: Props) {
   const [form, setForm] = useState<FormState>(empty());
+  const [extraLinks, setExtraLinks] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [added, setAdded] = useState(false);
   const session = useSession();
@@ -68,6 +71,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
         responsavel: editing.responsavel,
         descricao: editing.descricao,
         link: editing.link,
+        linksExtras: editing.linksExtras,
         solicitacao: editing.solicitacao,
         feedback: editing.feedback,
         entrega: editing.entrega,
@@ -76,8 +80,10 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
         fixa: editing.fixa,
         diaSemana: editing.diaSemana,
       });
+      setExtraLinks(editing.linksExtras ? editing.linksExtras.split("\n").filter(Boolean) : []);
     } else {
       setForm(empty(responsavelPadrao));
+      setExtraLinks([]);
     }
     setError("");
     setAdded(false);
@@ -102,7 +108,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
       setError("Selecione o dia da semana da atividade fixa");
       return;
     }
-    onSave(form, editing?.id);
+    onSave({ ...form, linksExtras: extraLinks.map((l) => l.trim()).filter(Boolean).join("\n") }, editing?.id);
   }
 
   return (
@@ -205,7 +211,14 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
           </div>
 
           <div className="form-group">
-            <label>Link</label>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <label style={{ marginBottom: 0 }}>Link</label>
+              {!readOnly && (
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setExtraLinks((prev) => [...prev, ""])}>
+                  <i className="fas fa-plus" /> Link
+                </button>
+              )}
+            </div>
             <input
               type="url"
               className="form-control"
@@ -213,7 +226,30 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
               value={form.link}
               onChange={(e) => set("link", e.target.value)}
               disabled={readOnly}
+              style={{ marginTop: 6 }}
             />
+            {extraLinks.map((valor, i) => (
+              <div key={i} style={{ display: "flex", gap: 6, marginTop: 6 }}>
+                <input
+                  type="url"
+                  className="form-control"
+                  placeholder="https://..."
+                  value={valor}
+                  onChange={(e) => setExtraLinks((prev) => prev.map((v, idx) => (idx === i ? e.target.value : v)))}
+                  disabled={readOnly}
+                />
+                {!readOnly && (
+                  <button
+                    type="button"
+                    className="tbl-action-icon danger"
+                    title="Remover link"
+                    onClick={() => setExtraLinks((prev) => prev.filter((_, idx) => idx !== i))}
+                  >
+                    <i className="fas fa-times" />
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
 
           {!form.fixa && (

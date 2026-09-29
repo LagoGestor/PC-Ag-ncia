@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
       responsavel,
       descricao: body.descricao ?? "",
       link: body.link ?? "",
+      linksExtras: body.linksExtras ?? "",
       solicitacao: body.solicitacao ?? "",
       feedback: body.feedback ?? "",
       entrega: body.entrega ?? "",

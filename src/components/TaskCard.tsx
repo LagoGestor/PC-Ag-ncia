@@ -107,9 +107,19 @@ export function TaskCard({ t, onEdit, onToggleArchive, onDelete, onDragStart }: 
         <div className="desc-link-row">
           <span className="desc-link-label">Possui Link:</span>
           {t.link ? (
-            <a className="desc-link-btn" href={t.link} target="_blank" rel="noopener noreferrer">
-              Sim. Clique aqui para abrir
-            </a>
+            <>
+              <a className="desc-link-btn" href={t.link} target="_blank" rel="noopener noreferrer">
+                Sim. Clique aqui para abrir
+              </a>
+              {t.linksExtras
+                .split("\n")
+                .filter(Boolean)
+                .map((url, i) => (
+                  <a key={i} className="desc-link-btn" href={url} target="_blank" rel="noopener noreferrer">
+                    Link {i + 2}
+                  </a>
+                ))}
+            </>
           ) : (
             <span>Não.</span>
           )}

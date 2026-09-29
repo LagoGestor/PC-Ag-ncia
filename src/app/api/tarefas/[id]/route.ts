@@ -12,6 +12,7 @@ const FIELDS = [
   "responsavel",
   "descricao",
   "link",
+  "linksExtras",
   "solicitacao",
   "feedback",
   "entrega",

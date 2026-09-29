@@ -20,6 +20,7 @@ model Tarefa {
   responsavel  String
   descricao    String   @default("")
   link         String   @default("")
+  linksExtras  String   @default("") // links adicionais, um por linha, além do campo "link" acima
   solicitacao  String   @default("")
   feedback     String   @default("")
   entrega      String   @default("")

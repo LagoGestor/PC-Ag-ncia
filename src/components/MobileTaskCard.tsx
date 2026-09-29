@@ -28,6 +28,7 @@ export interface MobileTarefa {
   responsavel: string;
   descricao: string;
   link: string;
+  linksExtras: string;
   solicitacao: string;
   feedback: string;
   entrega: string;
@@ -102,15 +103,32 @@ export function MobileTaskCard({
           <div className="desc-link-row">
             <span className="desc-link-label">Possui Link:</span>
             {t.link ? (
-              <a
-                className="desc-link-btn"
-                href={t.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-              >
-                Sim. Clique aqui para abrir
-              </a>
+              <>
+                <a
+                  className="desc-link-btn"
+                  href={t.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Sim. Clique aqui para abrir
+                </a>
+                {t.linksExtras
+                  .split("\n")
+                  .filter(Boolean)
+                  .map((url, i) => (
+                    <a
+                      key={i}
+                      className="desc-link-btn"
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Link {i + 2}
+                    </a>
+                  ))}
+              </>
             ) : (
               <span>Não.</span>
             )}

@@ -8,6 +8,7 @@ export interface Tarefa {
   responsavel: string;
   descricao: string;
   link: string;
+  linksExtras: string;
   solicitacao: string;
   feedback: string;
   entrega: string;

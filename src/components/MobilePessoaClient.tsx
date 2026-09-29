@@ -80,6 +80,7 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
         responsavel: t.responsavel,
         descricao: t.descricao,
         link: t.link,
+        linksExtras: t.linksExtras,
         solicitacao: data,
         feedback: "",
         entrega: data,
