@@ -9,17 +9,27 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
   }
 
-  const hoje = new Date();
-  const aniversariantes = await prisma.aniversariante.findMany({
-    where: { dia: hoje.getDate(), mes: hoje.getMonth() + 1 },
-  });
+  // ?teste=1 força o envio de uma mensagem fixa, sem depender de hoje ser aniversário de
+  // ninguém — só pra validar que o WhatsApp está mesmo entregando, antes de confiar no cron.
+  const teste = req.nextUrl.searchParams.get("teste") === "1";
 
-  if (aniversariantes.length === 0) {
-    return NextResponse.json({ enviado: false, motivo: "Nenhum aniversariante hoje." });
+  let texto: string;
+  let nomes = "";
+  if (teste) {
+    texto = "✅ Teste de aviso da Agência LBC — se você recebeu isso, está tudo funcionando.";
+  } else {
+    const hoje = new Date();
+    const aniversariantes = await prisma.aniversariante.findMany({
+      where: { dia: hoje.getDate(), mes: hoje.getMonth() + 1 },
+    });
+
+    if (aniversariantes.length === 0) {
+      return NextResponse.json({ enviado: false, motivo: "Nenhum aniversariante hoje." });
+    }
+
+    nomes = aniversariantes.map((a) => a.nome).join(", ");
+    texto = aniversariantes.length === 1 ? `🎂 Hoje é aniversário de ${nomes}!` : `🎂 Hoje é aniversário de: ${nomes}!`;
   }
-
-  const nomes = aniversariantes.map((a) => a.nome).join(", ");
-  const texto = aniversariantes.length === 1 ? `🎂 Hoje é aniversário de ${nomes}!` : `🎂 Hoje é aniversário de: ${nomes}!`;
 
   const idInstance = process.env.GREEN_API_ID_INSTANCE;
   const apiToken = process.env.GREEN_API_TOKEN_INSTANCE;
