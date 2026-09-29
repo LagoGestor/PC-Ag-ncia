@@ -36,8 +36,9 @@ export async function GET(req: NextRequest) {
 
   const idInstance = process.env.GREEN_API_ID_INSTANCE;
   const apiToken = process.env.GREEN_API_TOKEN_INSTANCE;
-  const phone = process.env.WHATSAPP_PHONE;
-  if (!idInstance || !apiToken || !phone) {
+  // Vários números, separados por vírgula (ex.: "556185309734,556199166869").
+  const phones = process.env.WHATSAPP_PHONE?.split(",").map((p) => p.trim()).filter(Boolean) ?? [];
+  if (!idInstance || !apiToken || phones.length === 0) {
     return NextResponse.json(
       { enviado: false, erro: "GREEN_API_ID_INSTANCE/GREEN_API_TOKEN_INSTANCE/WHATSAPP_PHONE não configurados." },
       { status: 500 }
@@ -45,14 +46,18 @@ export async function GET(req: NextRequest) {
   }
 
   const url = `https://api.green-api.com/waInstance${idInstance}/sendMessage/${apiToken}`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chatId: `${phone}@c.us`, message: texto }),
-  });
-  if (!res.ok) {
-    return NextResponse.json({ enviado: false, erro: `Green API respondeu ${res.status}` }, { status: 502 });
+  const erros: string[] = [];
+  for (const phone of phones) {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chatId: `${phone}@c.us`, message: texto }),
+    });
+    if (!res.ok) erros.push(`${phone}: HTTP ${res.status}`);
+  }
+  if (erros.length > 0) {
+    return NextResponse.json({ enviado: erros.length < phones.length, erros }, { status: 502 });
   }
 
-  return NextResponse.json({ enviado: true, aniversariantes: nomes });
+  return NextResponse.json({ enviado: true, aniversariantes: nomes, enviadoPara: phones });
 }
