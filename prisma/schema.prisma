@@ -152,6 +152,15 @@ model Aniversariante {
   atualizadoEm DateTime @updatedAt
 }
 
+model ResponsabilidadeFixa {
+  id           String   @id @default(cuid())
+  responsavel  String
+  atividade    String   @default("")
+  descricao    String   @default("")
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+}
+
 model PostSemanal {
   id                String          @id @default(cuid())
   snapshotId        String

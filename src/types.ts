@@ -265,6 +265,13 @@ export function fmtDiaMes(dia: number | null, mes: number | null): string {
   return `${String(dia).padStart(2, "0")}/${String(mes).padStart(2, "0")}`;
 }
 
+export interface ResponsabilidadeFixa {
+  id: string;
+  responsavel: string;
+  atividade: string;
+  descricao: string;
+}
+
 export interface IntegracaoStatus {
   rede: RedeSocial;
   conectado: boolean;
