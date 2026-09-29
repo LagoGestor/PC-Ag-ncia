@@ -4,8 +4,11 @@ import { prisma } from "@/lib/prisma";
 // Disparado pelo Cron do Vercel (vercel.json) todo dia — sem sessão de usuário, por isso a
 // autenticação é por segredo compartilhado (mesmo padrão dos Cron Jobs do Vercel), não por login.
 export async function GET(req: NextRequest) {
+  // O Cron do Vercel manda o segredo no header Authorization; pra dar pra testar colando o link
+  // direto no navegador (que não manda header nenhum), aceita também por parâmetro ?secret=.
   const secret = process.env.CRON_SECRET;
-  if (secret && req.headers.get("authorization") !== `Bearer ${secret}`) {
+  const secretRecebido = req.headers.get("authorization")?.replace("Bearer ", "") ?? req.nextUrl.searchParams.get("secret");
+  if (secret && secretRecebido !== secret) {
     return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
   }
 
