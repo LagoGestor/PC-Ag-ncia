@@ -44,6 +44,18 @@ function hexToRgb(hex: string): [number, number, number] {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
 
+// Rotina fixa de produção, igual toda semana (não vem do banco). Índice = Date.getDay() (0 = Domingo).
+const CRONOGRAMA_FIXO: [string, string][][] = [
+  [["14h", "Vídeo Recap 10h15"], ["17h", "Foto Recap 10h15"], ["21h", "Foto Culto 18h"]],
+  [["10h", "Criativo / resumo dos cultos - vídeo"], ["15h", "Fotos das 20h"], ["19h", "Agenda Semanal"]],
+  [["10h", "Card culto fé"], ["15h", "Corte de palavra de domingo reels"], ["17h", "Extras"], ["19h", "Criativo design"]],
+  [["10h", "Extra"], ["15h", "Criativo cômico reels"], ["19h", "Carrossel da pregação"]],
+  [["10h", "GC"], ["15h", "Fotos culto fé"], ["19h", "Backstage ministério"]],
+  [["10h", "Card culto domingo"], ["15h", "Convite para o culto criativo"], ["19h", "Criativo design de convite"]],
+  [["11h", "Não desista"], ["17h", "Conheça um Ministério"]],
+];
+const DIAS_FIXO = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+
 const TIPO_FILTRO_LABEL: Record<TipoFiltro, string> = {
   todas: "Todas as Entregas",
   cronograma: "Cronograma de Postagens no Instagram",
@@ -97,6 +109,7 @@ export function AgendaView({ list, onOpenDetail }: Props) {
   const responsavelPrioritario = session?.nivel === "DIRETOR_CONTEUDO" ? session.responsavel : "";
   const [mode, setMode] = useState<Mode>("semana");
   const [anchor, setAnchor] = useState(() => new Date());
+  const [cronogramaFixo, setCronogramaFixo] = useState(false);
   const [expandedDay, setExpandedDay] = useState<string | null>(null);
   const [tipoFiltro, setTipoFiltro] = useState<TipoFiltro>(apenasCronograma ? "cronograma" : "todas");
 
@@ -426,7 +439,18 @@ export function AgendaView({ list, onOpenDetail }: Props) {
         </div>
       </div>
 
-      {!apenasCronograma && (
+      {mode === "semana" && (
+        <div className="agenda-toggle agenda-tipo-filter">
+          <button className={!cronogramaFixo ? "active" : ""} onClick={() => setCronogramaFixo(false)}>
+            Tarefas da Semana
+          </button>
+          <button className={cronogramaFixo ? "active" : ""} onClick={() => setCronogramaFixo(true)}>
+            Cronograma Fixo
+          </button>
+        </div>
+      )}
+
+      {!apenasCronograma && !(mode === "semana" && cronogramaFixo) && (
         <div className="agenda-toggle agenda-tipo-filter">
           <button className={tipoFiltro === "todas" ? "active" : ""} onClick={() => setTipoFiltro("todas")}>
             Todas as Entregas
@@ -515,6 +539,28 @@ export function AgendaView({ list, onOpenDetail }: Props) {
               </div>
             );
           })}
+        </div>
+        </div>
+      ) : cronogramaFixo ? (
+        <div className="grid-scroll-wrap">
+        <div className="week-grid">
+          {DIAS_FIXO.map((nome, dia) => (
+            <div key={nome} className={`week-day-col${dia === today.getDay() ? " today" : ""}`}>
+              <div className="week-day-header">
+                <div className="wd-name">{nome}</div>
+              </div>
+              <div className="week-day-body">
+                {CRONOGRAMA_FIXO[dia].map(([hora, texto]) => (
+                  <div key={hora} className="week-task">
+                    <div className="week-task-title">
+                      <b>{hora} </b>
+                      {texto}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
         </div>
       ) : (
