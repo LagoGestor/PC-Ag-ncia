@@ -45,10 +45,12 @@ export function AtividadesFixasView({ list, onOpenDetail }: Props) {
     arr.push(t);
     byDay.set(dia, arr);
   }
-  if (responsavelPrioritario) {
-    for (const arr of byDay.values()) {
-      arr.sort((a, b) => (a.responsavel === responsavelPrioritario ? 0 : 1) - (b.responsavel === responsavelPrioritario ? 0 : 1));
-    }
+  for (const arr of byDay.values()) {
+    arr.sort(
+      (a, b) =>
+        (a.responsavel === responsavelPrioritario ? 0 : 1) - (b.responsavel === responsavelPrioritario ? 0 : 1) ||
+        (a.horarioPublicacao || "99:99").localeCompare(b.horarioPublicacao || "99:99")
+    );
   }
 
   const tiposUsados = Array.from(new Set(list.map((t) => t.tipo).filter(Boolean)));
@@ -95,7 +97,9 @@ export function AtividadesFixasView({ list, onOpenDetail }: Props) {
                   ) : (
                     items.map((t) => (
                       <div key={t.id} className="fixas-item" style={{ ["--tipo-color" as string]: tipoColor(t.tipo) }}>
-                        {t.tipo && <div className="fixas-item-tipo">{t.tipo}</div>}
+                        {(t.horarioPublicacao || t.tipo) && (
+                          <div className="fixas-item-tipo">{[t.horarioPublicacao, t.tipo].filter(Boolean).join(" - ")}</div>
+                        )}
                         <div className="fixas-item-title" onClick={() => onOpenDetail(t)} title="Ver detalhes">
                           {t.tarefa}
                         </div>
