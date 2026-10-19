@@ -123,11 +123,9 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
       {!todasAsTarefas && <AniversariantesBanner titulo="Aniversariantes da Semana" editable={false} />}
 
       <div className="mobile-actions-row">
-        {writable && (
-          <button className="btn btn-accent" onClick={() => setModalOpen(true)}>
-            <i className="fas fa-plus" /> Nova Tarefa
-          </button>
-        )}
+        <button className="btn btn-accent" onClick={() => setModalOpen(true)}>
+          <i className="fas fa-plus" /> Nova Tarefa
+        </button>
         <div className="agenda-toggle" style={{ marginTop: 10 }}>
           <button className={aba === "lista" ? "active" : ""} onClick={() => setAba("lista")}>
             Lista

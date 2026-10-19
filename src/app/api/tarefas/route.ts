@@ -16,12 +16,13 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
-  if (!canWrite(session)) {
-    return NextResponse.json({ error: "Você não tem permissão para criar tarefas." }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
   }
 
   const body = await req.json();
-  const fixa = !!body.fixa;
+  // Qualquer nível cria tarefa (Executor sempre pra si mesmo, via scopeResponsavel abaixo), mas só Master/Diretor criam atividade fixa.
+  const fixa = canWrite(session) && !!body.fixa;
   const restrito = scopeResponsavel(session);
   const responsavel = restrito || body.responsavel;
 

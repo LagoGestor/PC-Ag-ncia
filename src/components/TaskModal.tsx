@@ -59,8 +59,8 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
   const [added, setAdded] = useState(false);
   const session = useSession();
   const gestor = canWrite(session);
-  // Executor edita só as próprias tarefas (as demais abrem somente leitura); criar/apagar/trocar responsável é do gestor.
-  const readOnly = !(editing ? canEditTarefa(session, editing.responsavel) : gestor);
+  // Executor edita só as próprias tarefas (as demais abrem somente leitura) e cria tarefas só pra si; apagar/trocar responsável é do gestor.
+  const readOnly = !(editing ? canEditTarefa(session, editing.responsavel) : !!session);
   const opcoesResponsavel = responsaveisOptions ?? RESPONSAVEIS;
   const opcoesTipo = session?.nivel === "DIRETOR_CONTEUDO" ? TIPOS_CRONOGRAMA_POSTAGENS : TIPOS;
   const responsavelPadrao = defaultResponsavel;
