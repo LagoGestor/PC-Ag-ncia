@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { AREAS, DIAS_SEMANA, RESPONSAVEIS, STATUSES, Status, Tarefa, TIPOS, TIPOS_CRONOGRAMA_POSTAGENS } from "@/types";
+import { AREAS, DIAS_SEMANA, REDES_SOCIAIS_TAREFA, RESPONSAVEIS, STATUSES, Status, Tarefa, TIPOS, TIPOS_CRONOGRAMA_POSTAGENS } from "@/types";
 import { useSession } from "./SessionProvider";
 import { canEditTarefa, canWrite } from "@/lib/permissions";
 
@@ -9,6 +9,7 @@ type FormState = {
   tarefa: string;
   area: string;
   tipo: string;
+  redeSocial: string;
   responsavel: string;
   descricao: string;
   link: string;
@@ -26,6 +27,7 @@ const empty = (defaultResponsavel?: string): FormState => ({
   tarefa: "",
   area: "",
   tipo: "",
+  redeSocial: "",
   responsavel: defaultResponsavel ?? "",
   descricao: "",
   link: "",
@@ -70,6 +72,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
         tarefa: editing.tarefa,
         area: editing.area,
         tipo: editing.tipo,
+        redeSocial: editing.redeSocial ?? "",
         responsavel: editing.responsavel,
         descricao: editing.descricao,
         link: editing.link,
@@ -184,6 +187,9 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
                 ))}
               </select>
             </div>
+          </div>
+
+          <div className="form-row">
             <div className="form-group">
               <label>Tipo</label>
               <select
@@ -195,6 +201,20 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
                 <option value="">Selecione...</option>
                 {opcoesTipo.map((tp) => (
                   <option key={tp}>{tp}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Rede Social</label>
+              <select
+                className="form-control"
+                value={form.redeSocial}
+                onChange={(e) => set("redeSocial", e.target.value)}
+                disabled={readOnly}
+              >
+                <option value="">Nenhuma</option>
+                {REDES_SOCIAIS_TAREFA.map((r) => (
+                  <option key={r}>{r}</option>
                 ))}
               </select>
             </div>

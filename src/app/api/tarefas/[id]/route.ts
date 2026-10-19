@@ -9,6 +9,7 @@ const FIELDS = [
   "tarefa",
   "area",
   "tipo",
+  "redeSocial",
   "responsavel",
   "descricao",
   "link",

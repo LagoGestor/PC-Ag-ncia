@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useSession } from "./SessionProvider";
-import { FOTOS_RESPONSAVEL, STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa, TIPOS_CRONOGRAMA_POSTAGENS, TIPOS_FORA_DAS_REDES } from "@/types";
+import { FOTOS_RESPONSAVEL, STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa, TIPOS_FORA_DAS_REDES } from "@/types";
 import { Avatar } from "./Avatar";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
@@ -115,8 +115,8 @@ export function AgendaView({ list, onOpenDetail }: Props) {
 
   const listFiltrada = useMemo(() => {
     if (tipoFiltro === "todas") return list;
-    const conjunto = tipoFiltro === "cronograma" ? TIPOS_CRONOGRAMA_POSTAGENS : TIPOS_FORA_DAS_REDES;
-    return list.filter((t) => conjunto.includes(t.tipo));
+    if (tipoFiltro === "cronograma") return list.filter((t) => t.redeSocial === "Instagram");
+    return list.filter((t) => TIPOS_FORA_DAS_REDES.includes(t.tipo));
   }, [list, tipoFiltro]);
 
   const byDay = useMemo(() => {

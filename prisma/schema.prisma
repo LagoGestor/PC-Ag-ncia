@@ -17,6 +17,7 @@ model Tarefa {
   tarefa       String
   area         String
   tipo         String   @default("")
+  redeSocial   String   @default("") // onde a entrega vai ao ar (Instagram, Portal LBC...) — "" = Nenhuma
   responsavel  String
   descricao    String   @default("")
   link         String   @default("")

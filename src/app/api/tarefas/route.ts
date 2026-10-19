@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
       tarefa: body.tarefa,
       area: body.area,
       tipo: body.tipo ?? "",
+      redeSocial: body.redeSocial ?? "",
       responsavel,
       descricao: body.descricao ?? "",
       link: body.link ?? "",

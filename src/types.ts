@@ -5,6 +5,7 @@ export interface Tarefa {
   tarefa: string;
   area: string;
   tipo: string;
+  redeSocial: string;
   responsavel: string;
   descricao: string;
   link: string;
@@ -19,7 +20,14 @@ export interface Tarefa {
   diaSemana: string;
 }
 
-export type TarefaInput = Omit<Tarefa, "id" | "arquivada" | "fixa" | "diaSemana"> & { fixa?: boolean; diaSemana?: string };
+export type TarefaInput = Omit<Tarefa, "id" | "arquivada" | "fixa" | "diaSemana" | "redeSocial"> & {
+  fixa?: boolean;
+  diaSemana?: string;
+  redeSocial?: string;
+};
+
+// "Nenhuma" é salvo como "" (vazio) — por isso não entra nesta lista.
+export const REDES_SOCIAIS_TAREFA = ["Instagram", "Portal LBC", "Portal Missão Global", "Instagram Missão Global", "Whatsapp", "Youtube", "Outra"];
 
 export const AREAS = [
   "Comunicação",
