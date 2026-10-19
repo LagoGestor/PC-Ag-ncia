@@ -5,9 +5,10 @@ import { useSession } from "./SessionProvider";
 import { FOTOS_RESPONSAVEL, STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa, TIPOS_FORA_DAS_REDES } from "@/types";
 import { Avatar } from "./Avatar";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { PostagensSemanaView } from "./PostagensSemanaView";
 
 type Mode = "mes" | "semana";
-type TipoFiltro = "todas" | "cronograma" | "fora";
+type TipoFiltro = "todas" | "cronograma" | "postagens" | "fora";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
@@ -59,6 +60,7 @@ const DIAS_FIXO = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", 
 const TIPO_FILTRO_LABEL: Record<TipoFiltro, string> = {
   todas: "Todas as Entregas",
   cronograma: "Cronograma de Postagens no Instagram",
+  postagens: "Postagens da Semana",
   fora: "Tarefas fora das Redes",
 };
 
@@ -116,6 +118,7 @@ export function AgendaView({ list, onOpenDetail }: Props) {
   const listFiltrada = useMemo(() => {
     if (tipoFiltro === "todas") return list;
     if (tipoFiltro === "cronograma") return list.filter((t) => t.redeSocial === "Instagram");
+    if (tipoFiltro === "postagens") return list.filter((t) => t.redeSocial);
     return list.filter((t) => TIPOS_FORA_DAS_REDES.includes(t.tipo));
   }, [list, tipoFiltro]);
 
@@ -408,6 +411,23 @@ export function AgendaView({ list, onOpenDetail }: Props) {
           return `${firstStr} – ${lastStr}`;
         })();
 
+  if (tipoFiltro === "postagens") {
+    const dias = getWeekDays(anchor);
+    return (
+      <PostagensSemanaView
+        days={dias}
+        byDay={byDay}
+        label={`${dias[0].toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })} – ${dias[6].toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}`}
+        toKey={toKey}
+        onBack={() => setTipoFiltro("todas")}
+        onPrev={() => setAnchor((d) => new Date(d.getFullYear(), d.getMonth(), d.getDate() - 7))}
+        onNext={() => setAnchor((d) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + 7))}
+        onToday={goToday}
+        onOpenDetail={onOpenDetail}
+      />
+    );
+  }
+
   return (
     <div>
       <div className="agenda-toolbar">
@@ -457,6 +477,9 @@ export function AgendaView({ list, onOpenDetail }: Props) {
           </button>
           <button className={tipoFiltro === "cronograma" ? "active" : ""} onClick={() => setTipoFiltro("cronograma")}>
             Cronograma de Postagens no Instagram
+          </button>
+          <button onClick={() => setTipoFiltro("postagens")}>
+            Postagens da Semana
           </button>
           <button className={tipoFiltro === "fora" ? "active" : ""} onClick={() => setTipoFiltro("fora")}>
             Tarefas fora das Redes
