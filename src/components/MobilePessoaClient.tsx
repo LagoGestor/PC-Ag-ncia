@@ -14,7 +14,7 @@ import { CronogramaSemanalView } from "./CronogramaSemanalView";
 import { AgendaView } from "./AgendaView";
 import { AtividadesFixasView } from "./AtividadesFixasView";
 import { useSession } from "./SessionProvider";
-import { canWrite, canChangeStatus } from "@/lib/permissions";
+import { canWrite, canEditTarefa } from "@/lib/permissions";
 
 interface Props {
   // Omitido = modo "todas as tarefas" (usado pelo Diretor de Conteúdo na página /mobile Geral).
@@ -34,7 +34,6 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
   const { toasts, toast } = useToasts();
   const session = useSession();
   const writable = canWrite(session);
-  const canToggleStatus = canChangeStatus(session, responsavel ?? "");
   const todasAsTarefas = !responsavel;
 
   const naoFixas = tarefas.filter((t) => !t.fixa);
@@ -172,7 +171,8 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
                 key={t.id}
                 t={t}
                 showResponsavel={todasAsTarefas}
-                onStatusChange={canToggleStatus ? handleStatusChange : undefined}
+                onStatusChange={canEditTarefa(session, t.responsavel) ? handleStatusChange : undefined}
+                onEdit={canEditTarefa(session, t.responsavel) ? () => openEdit(t) : undefined}
               />
             ))
           )}

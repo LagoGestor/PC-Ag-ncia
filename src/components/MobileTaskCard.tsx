@@ -40,10 +40,12 @@ export function MobileTaskCard({
   t,
   showResponsavel,
   onStatusChange,
+  onEdit,
 }: {
   t: MobileTarefa;
   showResponsavel?: boolean;
   onStatusChange?: (id: string, status: string) => void;
+  onEdit?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const overdue = isOverdue(t.entrega) && t.status !== "Concluído" && t.status !== "Cancelado";
@@ -133,6 +135,18 @@ export function MobileTaskCard({
               <span>Não.</span>
             )}
           </div>
+          {onEdit && (
+            <button
+              className="btn btn-ghost btn-sm"
+              style={{ marginTop: 10 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit();
+              }}
+            >
+              <i className="fas fa-pen" /> Editar
+            </button>
+          )}
         </>
       )}
     </div>

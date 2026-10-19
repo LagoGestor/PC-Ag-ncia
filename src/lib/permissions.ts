@@ -28,8 +28,10 @@ export function canWriteTarefa(session: SessionLike | null, responsavelDaTarefa:
   return canWrite(session);
 }
 
-// Pode ao menos alterar o status da tarefa — Executor, restrito às próprias tarefas.
-export function canChangeStatus(session: SessionLike | null, responsavelDaTarefa: string): boolean {
+// Pode editar as informações da tarefa (título, datas, links, status...) — além de Master/Diretor,
+// o Executor, restrito às próprias tarefas. Criar, apagar, arquivar e trocar o responsável continuam
+// exigindo canWrite.
+export function canEditTarefa(session: SessionLike | null, responsavelDaTarefa: string): boolean {
   if (canWrite(session)) return true;
   return session?.nivel === "EXECUTOR" && session.responsavel === responsavelDaTarefa;
 }

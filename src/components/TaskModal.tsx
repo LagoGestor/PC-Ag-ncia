@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { AREAS, DIAS_SEMANA, RESPONSAVEIS, STATUSES, Status, Tarefa, TIPOS, TIPOS_CRONOGRAMA_POSTAGENS } from "@/types";
 import { useSession } from "./SessionProvider";
-import { canWrite } from "@/lib/permissions";
+import { canEditTarefa, canWrite } from "@/lib/permissions";
 
 type FormState = {
   tarefa: string;
@@ -56,7 +56,9 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
   const [error, setError] = useState("");
   const [added, setAdded] = useState(false);
   const session = useSession();
-  const readOnly = !canWrite(session);
+  const gestor = canWrite(session);
+  // Executor edita só as próprias tarefas (as demais abrem somente leitura); criar/apagar/trocar responsável é do gestor.
+  const readOnly = !(editing ? canEditTarefa(session, editing.responsavel) : gestor);
   const opcoesResponsavel = responsaveisOptions ?? RESPONSAVEIS;
   const opcoesTipo = session?.nivel === "DIRETOR_CONTEUDO" ? TIPOS_CRONOGRAMA_POSTAGENS : TIPOS;
   const responsavelPadrao = defaultResponsavel;
@@ -171,7 +173,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
                 className="form-control"
                 value={form.responsavel}
                 onChange={(e) => set("responsavel", e.target.value)}
-                disabled={readOnly || opcoesResponsavel.length === 1}
+                disabled={readOnly || !gestor || opcoesResponsavel.length === 1}
                 required
               >
                 <option value="" disabled>
@@ -355,7 +357,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
             )}
           </div>
 
-          {form.fixa && !readOnly && (
+          {form.fixa && gestor && (
             <div className="form-row">
               <div className="form-group">
                 <label>
@@ -399,7 +401,7 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
           {error && <div style={{ color: "var(--danger)", fontSize: 12, marginBottom: 10 }}>{error}</div>}
 
           <div className="form-footer">
-            {editing && onDelete && !readOnly && (
+            {editing && onDelete && gestor && (
               <button
                 type="button"
                 className="btn btn-ghost dropdown-item-danger"

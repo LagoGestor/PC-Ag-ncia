@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { canWriteTarefa, canChangeStatus } from "@/lib/permissions";
+import { canWriteTarefa, canEditTarefa } from "@/lib/permissions";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -32,13 +32,17 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
   const touchesArquivada = typeof body.arquivada === "boolean";
   const touchesFixa = typeof body.fixa === "boolean";
-  const camposAlterados = FIELDS.filter((field) => body[field] !== undefined);
-  // Um Executor só pode marcar o status — qualquer outro campo exige Master/Diretor de Conteúdo.
-  const apenasStatus = !touchesArquivada && !touchesFixa && camposAlterados.every((field) => field === "status");
 
-  const permitido = apenasStatus
-    ? canChangeStatus(session, existente.responsavel)
-    : canWriteTarefa(session, existente.responsavel);
+  // Quem não é Master/Diretor (Executor, nas próprias tarefas) edita as informações da tarefa, mas não
+  // arquiva, não vira/deixa de ser fixa, não muda o dia fixo e não passa a tarefa pra outra pessoa.
+  const mudaAlemDoPermitido =
+    (touchesArquivada && body.arquivada !== existente.arquivada) ||
+    (touchesFixa && body.fixa !== existente.fixa) ||
+    (body.diaSemana !== undefined && body.diaSemana !== existente.diaSemana) ||
+    (body.responsavel !== undefined && body.responsavel !== existente.responsavel);
+
+  const permitido =
+    canWriteTarefa(session, existente.responsavel) || (!mudaAlemDoPermitido && canEditTarefa(session, existente.responsavel));
 
   if (!permitido) {
     return NextResponse.json({ error: "Você não tem permissão para editar esta tarefa." }, { status: 403 });
