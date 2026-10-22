@@ -18,36 +18,36 @@ function getWeekDays(anchor: Date): Date[] {
   return Array.from({ length: 7 }, (_, i) => new Date(start.getFullYear(), start.getMonth(), start.getDate() + i));
 }
 
+type Item = Pick<Tarefa, "id" | "tarefa" | "tipo" | "entrega" | "horarioPublicacao" | "status">;
+
 interface Props {
   editable?: boolean;
-  // Só as postagens de Instagram (a tela do Executor, que já está na aba "Instagram").
+  // Aba "Instagram" do Executor: tudo que entra no Instagram, de todos, só pra ver.
   apenasInstagram?: boolean;
 }
 
 export function CronogramaSemanalView({ editable = false, apenasInstagram = false }: Props) {
   const [anchor, setAnchor] = useState(() => new Date());
-  const [tarefas, setTarefas] = useState<Tarefa[] | null>(null);
+  const [tarefas, setTarefas] = useState<Item[] | null>(null);
   const [editing, setEditing] = useState<Tarefa | null>(null);
 
   useEffect(() => {
+    if (apenasInstagram) {
+      // Visão só de leitura do que entra no Instagram, de todos os responsáveis (sem responsável nem detalhes).
+      fetch("/api/postagens-instagram")
+        .then((r) => (r.ok ? r.json() : []))
+        .then(setTarefas)
+        .catch(() => setTarefas([]));
+      return;
+    }
     api
       .list()
-      .then((all) =>
-        setTarefas(
-          all.filter(
-            (t) =>
-              !t.arquivada &&
-              !t.fixa &&
-              t.responsavel !== RESPONSAVEL_ARMAZENAR &&
-              (!apenasInstagram || t.redeSocial === "Instagram")
-          )
-        )
-      )
+      .then((all) => setTarefas(all.filter((t) => !t.arquivada && !t.fixa && t.responsavel !== RESPONSAVEL_ARMAZENAR)))
       .catch(() => setTarefas([]));
   }, [apenasInstagram]);
 
   const byDay = useMemo(() => {
-    const map = new Map<string, Tarefa[]>();
+    const map = new Map<string, Item[]>();
     for (const t of tarefas ?? []) {
       if (!t.entrega) continue;
       const arr = map.get(t.entrega) ?? [];
@@ -121,7 +121,7 @@ export function CronogramaSemanalView({ editable = false, apenasInstagram = fals
                   <div
                     key={t.id}
                     className={`cronograma-task-row${editable ? " cronograma-task-row-editable" : ""}`}
-                    onClick={editable ? () => setEditing(t) : undefined}
+                    onClick={editable ? () => setEditing(t as Tarefa) : undefined}
                   >
                     <div className="cronograma-task-top">
                       <span className="cronograma-task-tipo">{t.tipo || "—"}</span>
