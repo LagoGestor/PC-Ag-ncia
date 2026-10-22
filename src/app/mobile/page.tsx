@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { marcarAtrasadas } from "@/lib/marcarAtrasadas";
 import { RESPONSAVEIS_VISIVEIS, RESPONSAVEL_ARMAZENAR, Tarefa, WHATSAPP_FOTO_AGENCIA, slugify } from "@/types";
 import { MobilePessoaClient } from "@/components/MobilePessoaClient";
 import { MobileHeaderMenu } from "@/components/MobileHeaderMenu";
@@ -24,6 +25,7 @@ export default async function MobileMasterPage() {
     redirect(`/mobile/${slugify(session.responsavel)}`);
   }
 
+  await marcarAtrasadas();
   const tarefas = await prisma.tarefa.findMany({
     where: { arquivada: false, responsavel: { not: RESPONSAVEL_ARMAZENAR } },
     orderBy: { entrega: "asc" },

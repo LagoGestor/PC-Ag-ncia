@@ -1,4 +1,4 @@
-export type Status = "Ativa" | "Pendente" | "Atrasada" | "Concluído" | "Cancelado" | "Inativa";
+export type Status = "Ativa" | "Pendente" | "Atrasada" | "Concluída" | "Cancelada" | "Inativa";
 
 export interface Tarefa {
   id: string;
@@ -101,7 +101,7 @@ export const RESPONSAVEIS = [
 // Tasks assigned to "Armazenar" are only visible in the DIRECIONAR view.
 export const RESPONSAVEIS_VISIVEIS = RESPONSAVEIS.filter((r) => r !== RESPONSAVEL_ARMAZENAR);
 
-export const STATUSES: Status[] = ["Ativa", "Pendente", "Atrasada", "Concluído", "Cancelado", "Inativa"];
+export const STATUSES: Status[] = ["Ativa", "Pendente", "Atrasada", "Concluída", "Cancelada", "Inativa"];
 
 export const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 
@@ -109,8 +109,8 @@ export const STATUS_COLORS: Record<string, string> = {
   Ativa: "#4ade80",
   Pendente: "#fbbf24",
   Atrasada: "#f87171",
-  Concluído: "#38bdf8",
-  Cancelado: "#6b7280",
+  Concluída: "#38bdf8",
+  Cancelada: "#6b7280",
   Inativa: "#ffffff",
 };
 
@@ -118,8 +118,8 @@ export const STATUS_BADGE_CLASS: Record<string, string> = {
   Ativa: "badge-ativa",
   Pendente: "badge-pendente",
   Atrasada: "badge-atrasada",
-  Concluído: "badge-concluido",
-  Cancelado: "badge-cancelado",
+  Concluída: "badge-concluido",
+  Cancelada: "badge-cancelado",
   Inativa: "badge-inativa",
 };
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { canWriteTarefa, canEditTarefa } from "@/lib/permissions";
+import { isOverdue } from "@/lib/atraso";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -55,6 +56,14 @@ export async function PUT(req: NextRequest, { params }: Params) {
   }
   if (touchesArquivada) data.arquivada = body.arquivada;
   if (touchesFixa) data.fixa = body.fixa;
+
+  // Remarcou o prazo pra o futuro e o status ainda era "Atrasada" → volta pra Ativa.
+  const remarcou = data.entrega !== undefined || data.horarioPublicacao !== undefined;
+  if (existente.status === "Atrasada" && remarcou && (data.status === undefined || data.status === "Atrasada")) {
+    if (!isOverdue(String(data.entrega ?? existente.entrega), String(data.horarioPublicacao ?? existente.horarioPublicacao))) {
+      data.status = "Ativa";
+    }
+  }
 
   const tarefa = await prisma.tarefa.update({ where: { id }, data });
 

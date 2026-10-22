@@ -10,7 +10,7 @@ interface Props {
 
 export function SummaryBar({ tarefas, statusFilter, onToggle }: Props) {
   const visible = tarefas.filter((t) => !t.arquivada && t.responsavel !== RESPONSAVEL_ARMAZENAR);
-  const counts: Record<string, number> = { Ativa: 0, Pendente: 0, Atrasada: 0, "Concluído": 0, Cancelado: 0, Inativa: 0 };
+  const counts: Record<string, number> = { Ativa: 0, Pendente: 0, Atrasada: 0, "Concluída": 0, Cancelada: 0, Inativa: 0 };
   visible.forEach((t) => {
     if (counts[t.status] !== undefined) counts[t.status]++;
   });

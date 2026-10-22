@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { marcarAtrasadas } from "@/lib/marcarAtrasadas";
 import { RESPONSAVEIS_VISIVEIS, Tarefa, WHATSAPP_FOTOS_RESPONSAVEL, slugify } from "@/types";
 import { MobilePessoaClient } from "@/components/MobilePessoaClient";
 import { Avatar } from "@/components/Avatar";
@@ -78,6 +79,7 @@ export default async function MobilePessoaPage({ params }: Props) {
     redirect(`/mobile/${slugify(session.responsavel)}`);
   }
 
+  await marcarAtrasadas();
   const tarefas = await prisma.tarefa.findMany({
     where: { fixa: false, arquivada: false, responsavel },
     orderBy: { entrega: "asc" },

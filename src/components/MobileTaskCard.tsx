@@ -3,21 +3,10 @@
 import { useState } from "react";
 import { STATUS_BADGE_CLASS, STATUSES } from "@/types";
 import { Avatar } from "./Avatar";
+import { isAtrasoPendente } from "@/lib/atraso";
 
 function fmtDate(d: string) {
   return d ? d.split("-").reverse().join("/") : "—";
-}
-
-function isOverdue(d: string) {
-  if (!d) return false;
-  const today = new Date();
-  const todayStr =
-    today.getFullYear() +
-    "-" +
-    String(today.getMonth() + 1).padStart(2, "0") +
-    "-" +
-    String(today.getDate()).padStart(2, "0");
-  return d < todayStr;
 }
 
 export interface MobileTarefa {
@@ -48,7 +37,7 @@ export function MobileTaskCard({
   onEdit?: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const overdue = isOverdue(t.entrega) && t.status !== "Concluído" && t.status !== "Cancelado";
+  const overdue = isAtrasoPendente(t.entrega, t.horarioPublicacao, t.status);
 
   return (
     <div className="mob-card" onClick={() => setOpen((v) => !v)}>

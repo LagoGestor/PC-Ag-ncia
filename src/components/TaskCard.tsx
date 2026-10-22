@@ -5,21 +5,10 @@ import { ICONES_AREA, STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa } from "@/types"
 import { Avatar } from "./Avatar";
 import { useSession } from "./SessionProvider";
 import { canWrite } from "@/lib/permissions";
+import { isAtrasoPendente, isOverdue } from "@/lib/atraso";
 
 function fmtDate(d: string) {
   return d ? d.split("-").reverse().join("/") : "—";
-}
-
-function isOverdue(d: string) {
-  if (!d) return false;
-  const today = new Date();
-  const todayStr =
-    today.getFullYear() +
-    "-" +
-    String(today.getMonth() + 1).padStart(2, "0") +
-    "-" +
-    String(today.getDate()).padStart(2, "0");
-  return d < todayStr;
 }
 
 interface Props {
@@ -37,7 +26,7 @@ export function TaskCard({ t, onEdit, onToggleArchive, onDelete, onDragStart }: 
   const color = STATUS_COLORS[t.status] || "#666";
   const badgeClass = STATUS_BADGE_CLASS[t.status] || "";
   const icon = ICONES_AREA[t.area] || "";
-  const overdue = isOverdue(t.entrega) && t.status !== "Concluído" && t.status !== "Cancelado";
+  const overdue = isAtrasoPendente(t.entrega, t.horarioPublicacao, t.status);
 
   return (
     <div
@@ -146,4 +135,4 @@ export function TaskCard({ t, onEdit, onToggleArchive, onDelete, onDragStart }: 
   );
 }
 
-export { fmtDate, isOverdue };
+export { fmtDate };

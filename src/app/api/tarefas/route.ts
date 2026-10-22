@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { canWrite, scopeResponsavel } from "@/lib/permissions";
+import { marcarAtrasadas } from "@/lib/marcarAtrasadas";
 
 export async function GET() {
+  await marcarAtrasadas();
   const session = await getSession();
   const restrito = scopeResponsavel(session);
 

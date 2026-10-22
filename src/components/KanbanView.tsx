@@ -4,7 +4,7 @@ import { useState } from "react";
 import { STATUS_COLORS, Status, Tarefa } from "@/types";
 import { TaskCard } from "./TaskCard";
 
-const COLS: Status[] = ["Pendente", "Ativa", "Atrasada", "Concluído"];
+const COLS: Status[] = ["Pendente", "Ativa", "Atrasada", "Concluída"];
 
 interface Props {
   list: Tarefa[];
