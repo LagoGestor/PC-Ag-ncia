@@ -12,6 +12,7 @@ export function NotificacoesItem() {
   const [podeInstalar, setPodeInstalar] = useState(false);
   const [ios, setIos] = useState(false);
   const [erro, setErro] = useState("");
+  const [resultado, setResultado] = useState("");
 
   useEffect(() => {
     // Lê o navegador depois da primeira renderização (no servidor não existe `navigator`).
@@ -83,6 +84,23 @@ export function NotificacoesItem() {
     }
   }
 
+  async function testar() {
+    setErro("");
+    setResultado("Enviando…");
+    try {
+      const r = await fetch("/api/push/teste", { method: "POST" }).then((x) => x.json());
+      setResultado(
+        r.aparelhos === 0
+          ? `Nenhum aparelho cadastrado para o login ${r.login}. Desative e ative de novo aqui.`
+          : r.enviados > 0
+            ? `Enviado para ${r.enviados} aparelho(s) do login ${r.login}.`
+            : `Falhou: ${r.erros?.[0] ?? "sem detalhes"}`
+      );
+    } catch {
+      setResultado("Não consegui falar com o servidor.");
+    }
+  }
+
   async function instalar() {
     const e = getInstallPrompt();
     if (!e) return;
@@ -108,6 +126,16 @@ export function NotificacoesItem() {
             <i className="fas fa-bell" /> iPhone: toque em Compartilhar → &quot;Adicionar à Tela de Início&quot; e abra o app por lá para ativar notificações.
           </span>
         )
+      )}
+      {ativo && (
+        <button className="dropdown-item" onClick={testar}>
+          <i className="fas fa-paper-plane" /> Testar notificação
+        </button>
+      )}
+      {resultado && (
+        <span className="dropdown-item" style={{ cursor: "default", whiteSpace: "normal", fontSize: 11 }}>
+          {resultado}
+        </span>
       )}
       {erro && (
         <span className="dropdown-item" style={{ cursor: "default", whiteSpace: "normal", fontSize: 11, color: "var(--danger)" }}>

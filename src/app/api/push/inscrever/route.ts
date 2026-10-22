@@ -19,6 +19,8 @@ export async function POST(req: NextRequest) {
     create: { usuarioId: session.sub, endpoint, p256dh, auth },
     update: { usuarioId: session.sub, p256dh, auth },
   });
+  // ?silencioso=1: só atualiza de quem é o aparelho (sem notificação de confirmação).
+  if (req.nextUrl.searchParams.get("silencioso") === "1") return NextResponse.json({ ok: true });
   const teste = await enviarPush([session.sub], { title: "Agência LBC", body: "Notificações ativadas neste aparelho ✅" });
   return NextResponse.json({ ok: true, teste });
 }

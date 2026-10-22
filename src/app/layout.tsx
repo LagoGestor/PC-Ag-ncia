@@ -39,8 +39,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body>
-        <SessionProvider session={clientSession}>{children}</SessionProvider>
-        <PwaRegister />
+        <SessionProvider session={clientSession}>
+          {children}
+          <PwaRegister />
+        </SessionProvider>
       </body>
     </html>
   );
