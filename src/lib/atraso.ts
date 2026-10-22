@@ -22,8 +22,3 @@ export function isOverdue(entrega: string, horario = ""): boolean {
   const { data, hora } = agoraBRT();
   return entrega < data || (entrega === data && !!horario && horario < hora);
 }
-
-// Concluída e Cancelada nunca contam como atrasadas.
-export function isAtrasoPendente(entrega: string, horario: string, status: string): boolean {
-  return status !== "Concluída" && status !== "Cancelada" && isOverdue(entrega, horario);
-}

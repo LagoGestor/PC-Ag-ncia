@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { AREAS, RESPONSAVEIS_VISIVEIS, STATUSES, STATUS_BADGE_CLASS, STATUS_COLORS, Tarefa, TIPOS } from "@/types";
 import { fmtDate } from "./TaskCard";
-import { isAtrasoPendente } from "@/lib/atraso";
 import { Avatar } from "./Avatar";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useSession } from "./SessionProvider";
@@ -132,7 +131,7 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
           </thead>
           <tbody>
             {filtered.map((t) => {
-              const overdue = isAtrasoPendente(t.entrega, t.horarioPublicacao, t.status);
+              const overdue = t.status === "Atrasada";
               return (
                 <tr key={t.id}>
                   <td style={{ textAlign: "center", verticalAlign: "top" }}>
@@ -277,7 +276,7 @@ export function TabelaView({ list, onEdit, onToggleArchive, onDelete }: Props) {
         </thead>
         <tbody>
           {filtered.map((t) => {
-            const overdue = isAtrasoPendente(t.entrega, t.horarioPublicacao, t.status);
+            const overdue = t.status === "Atrasada";
             const descKey = `${t.id}-desc`;
             const titleKey = `${t.id}-title`;
             return (

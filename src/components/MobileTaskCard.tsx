@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { STATUS_BADGE_CLASS, STATUSES } from "@/types";
 import { Avatar } from "./Avatar";
-import { isAtrasoPendente } from "@/lib/atraso";
 
 function fmtDate(d: string) {
   return d ? d.split("-").reverse().join("/") : "—";
@@ -37,7 +36,7 @@ export function MobileTaskCard({
   onEdit?: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const overdue = isAtrasoPendente(t.entrega, t.horarioPublicacao, t.status);
+  const overdue = t.status === "Atrasada";
 
   return (
     <div className="mob-card" onClick={() => setOpen((v) => !v)}>
