@@ -12,12 +12,20 @@ type SavePayload = { nome: string; ministerio: string; cargo: string; instagram:
 const JANELA_DIAS = 15;
 
 interface Props {
-  titulo?: string;
   // Executor não pode editar/cadastrar aniversariante — só ver nome, data e os destaques.
   editable?: boolean;
 }
 
-export function AniversariantesBanner({ titulo = "Aniversariantes do mês", editable = true }: Props) {
+function iniciais(nome: string) {
+  const partes = nome.trim().split(/\s+/);
+  return ((partes[0]?.[0] ?? "") + (partes[1]?.[0] ?? "")).toUpperCase();
+}
+
+function quando(dias: number) {
+  return dias === 0 ? "Hoje" : dias === 1 ? "Amanhã" : `em ${dias} dias`;
+}
+
+export function AniversariantesBanner({ editable = true }: Props) {
   const [lista, setLista] = useState<Aniversariante[] | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const [editing, setEditing] = useState<Aniversariante | null>(null);
@@ -59,26 +67,36 @@ export function AniversariantesBanner({ titulo = "Aniversariantes do mês", edit
     <div className="aniversariantes-banner">
       <div className="aniversariantes-banner-body">
         <span className="aniversariantes-banner-title">
-          <i className="fas fa-cake-candles" /> {titulo}
+          <i className="fas fa-cake-candles" /> Próximos aniversários
+          <span className="aniv-count">
+            {proximos.length} nos próximos {JANELA_DIAS} dias
+          </span>
         </span>
-        <div className="aniversariantes-banner-chips">
+        <div className="aniv-row">
           {proximos.map((a) => {
-            const hoje = a.dia && a.mes && diasAteProximoAniversario(a.dia, a.mes) === 0;
-            const pastoral = ehCargoPastoral(a.cargo);
+            const dias = diasAteProximoAniversario(a.dia!, a.mes!);
             const conteudo = (
               <>
-                {pastoral && <i className="fas fa-star aniversariante-icone-pastor" title="Pastor(a)" />} {a.nome}{" "}
-                <span>{fmtDiaMes(a.dia, a.mes)}</span>
+                <span className="aniv-avatar">
+                  {iniciais(a.nome)}
+                  {ehCargoPastoral(a.cargo) && <i className="fas fa-star aniv-star" title="Pastor(a)" />}
+                </span>
+                <span className="aniv-info">
+                  <span className="aniv-nome">{a.nome}</span>
+                  <span className="aniv-quando">{quando(dias)}</span>
+                </span>
+                <span className="aniv-data">{fmtDiaMes(a.dia, a.mes)}</span>
               </>
             );
+            const cls = `aniv-card${dias === 0 ? " hoje" : ""}`;
             return editable ? (
-              <button key={a.id} className={`aniversariantes-banner-chip${hoje ? " hoje" : ""}`} onClick={() => setEditing(a)}>
+              <button key={a.id} className={cls} onClick={() => setEditing(a)}>
                 {conteudo}
               </button>
             ) : (
-              <span key={a.id} className={`aniversariantes-banner-chip aniversariantes-banner-chip-static${hoje ? " hoje" : ""}`}>
+              <div key={a.id} className={`${cls} aniv-card-static`}>
                 {conteudo}
-              </span>
+              </div>
             );
           })}
         </div>

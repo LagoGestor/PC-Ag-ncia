@@ -121,7 +121,7 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
     <>
       <SummaryBar tarefas={naoFixas} statusFilter={statusFilter} onToggle={(s) => setStatusFilter((cur) => (cur === s ? null : s))} />
 
-      {!todasAsTarefas && <AniversariantesBanner titulo="Aniversariantes da Semana" editable={false} />}
+      {!todasAsTarefas && <AniversariantesBanner editable={false} />}
 
       <div className="mobile-actions-row">
         <button className="btn btn-accent" onClick={() => setModalOpen(true)}>
