@@ -112,12 +112,13 @@ export async function avisarTarefaAtribuida(
   autor: { sub: string; nome: string }
 ): Promise<void> {
   if (t.fixa || t.arquivada || !t.responsavel || t.responsavel === RESPONSAVEL_ARMAZENAR) return;
-  const alvos = await prisma.usuario.findMany({ where: { responsavel: t.responsavel, id: { not: autor.sub } }, select: { id: true } });
-  if (alvos.length === 0) return;
+  const alvos = await prisma.usuario.findMany({ where: { responsavel: t.responsavel }, select: { id: true } });
+  // ponytail: teste temporário — quem criou/atribuiu também recebe. Tirar o autor da lista depois do teste.
+  const destinatarios = [...new Set([...alvos.map((u) => u.id), autor.sub])];
 
   const entrega = t.entrega ? `Entrega ${t.entrega.split("-").reverse().slice(0, 2).join("/")}${t.horarioPublicacao ? " às " + t.horarioPublicacao : ""}` : "";
   await enviarPush(
-    alvos.map((u) => u.id),
+    destinatarios,
     { title: "Nova tarefa para você", body: [t.tarefa, entrega, autor.nome ? `Por ${autor.nome}` : ""].filter(Boolean).join("\n"), url: "/" }
   );
 }
