@@ -23,6 +23,7 @@ import { TaskModal } from "@/components/TaskModal";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { ReportModal } from "@/components/ReportModal";
 import { AniversariantesBanner } from "@/components/AniversariantesBanner";
+import { NotificacoesItem } from "@/components/NotificacoesItem";
 import { fmtDate } from "@/components/TaskCard";
 
 export default function Home() {
@@ -156,8 +157,10 @@ export default function Home() {
         solicitacao: data,
         feedback: "",
         entrega: data,
-        horarioPublicacao: "",
+        horarioPublicacao: t.horarioPublicacao,
         status: "Ativa",
+        redeSocial: t.redeSocial,
+        origemFixaId: t.id,
       });
       setTarefas((prev) => [created, ...prev]);
       toast(`"${t.tarefa}" adicionada à lista de tarefas!`, "success");
@@ -305,6 +308,7 @@ export default function Home() {
                   <i className="fas fa-users-gear" /> Gerenciar Logins
                 </a>
               )}
+              <NotificacoesItem />
               <a className="dropdown-item" href="/minha-conta">
                 <i className="fas fa-key" /> Alterar Senha
               </a>

@@ -27,7 +27,7 @@ async function readSession(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.png|img/).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.png|img/|icons/|sw.js|manifest.webmanifest).*)"],
 };
 
 export async function proxy(req: NextRequest) {

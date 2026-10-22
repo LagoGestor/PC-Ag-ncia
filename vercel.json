@@ -1,8 +1,12 @@
 {
   "crons": [
     {
-      "path": "/api/cron/aniversariantes-hoje",
+      "path": "/api/cron/avisos?momento=manha",
       "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/avisos?momento=tarde",
+      "schedule": "0 18 * * *"
     }
   ]
 }

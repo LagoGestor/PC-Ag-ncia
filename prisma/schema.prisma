@@ -19,6 +19,7 @@ model Tarefa {
   tipo         String   @default("")
   redeSocial   String   @default("") // onde a entrega vai ao ar (Instagram, Portal LBC...) — "" = Nenhuma
   responsavel  String
+  origemFixaId String   @default("") // id da atividade fixa que gerou esta tarefa (evita gerar duas vezes o mesmo dia)
   descricao    String   @default("")
   link         String   @default("")
   linksExtras  String   @default("") // links adicionais, um por linha, além do campo "link" acima
@@ -72,6 +73,25 @@ model Usuario {
   responsavel String      @default("")
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+  pushSubscriptions PushSubscription[]
+}
+
+// Cada aparelho/navegador onde alguém ativou as notificações.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  usuarioId String
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+}
+
+// Chaves VAPID do Web Push, geradas sozinhas no primeiro uso (uma linha só).
+model PushConfig {
+  id         String @id @default("vapid")
+  publicKey  String
+  privateKey String
 }
 
 enum RedeSocial {

@@ -11,6 +11,7 @@ import { Avatar } from "./Avatar";
 import { ToastContainer } from "./ToastContainer";
 import { TaskModal } from "./TaskModal";
 import { ReportModal } from "./ReportModal";
+import { NotificacoesItem } from "./NotificacoesItem";
 import { fmtDate } from "./TaskCard";
 
 // Topbar padrão do app (igual à "/"), pra páginas fora da SPA principal (ex.: Aniversariantes)
@@ -155,6 +156,7 @@ export function AppTopbar() {
                 <i className="fas fa-users-gear" /> Gerenciar Logins
               </a>
             )}
+            <NotificacoesItem />
             <a className="dropdown-item" href="/minha-conta">
               <i className="fas fa-key" /> Alterar Senha
             </a>

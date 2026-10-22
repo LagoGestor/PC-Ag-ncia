@@ -84,8 +84,10 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
         solicitacao: data,
         feedback: "",
         entrega: data,
-        horarioPublicacao: "",
+        horarioPublicacao: t.horarioPublicacao,
         status: "Ativa",
+        redeSocial: t.redeSocial,
+        origemFixaId: t.id,
       });
       setTarefas((prev) => [created, ...prev]);
       toast(`"${t.tarefa}" adicionada à lista de tarefas!`, "success");

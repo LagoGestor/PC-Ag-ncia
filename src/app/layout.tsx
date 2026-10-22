@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { getSession } from "@/lib/auth";
 import { SessionProvider } from "@/components/SessionProvider";
+import { PwaRegister } from "@/components/PwaRegister";
 
 const title = "Gestor de Tarefas";
 const description = "Gestão de tarefas da agência";
@@ -13,7 +14,11 @@ export const metadata: Metadata = {
   description,
   openGraph: { title, description, images: [{ url: shareImage }] },
   twitter: { card: "summary", title, description, images: [shareImage] },
+  appleWebApp: { capable: true, title: "Agência LBC", statusBarStyle: "black-translucent" },
+  icons: { apple: "/icons/apple-touch-icon.png" },
 };
+
+export const viewport: Viewport = { themeColor: "#080c0a" };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const session = await getSession();
@@ -35,6 +40,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body>
         <SessionProvider session={clientSession}>{children}</SessionProvider>
+        <PwaRegister />
       </body>
     </html>
   );

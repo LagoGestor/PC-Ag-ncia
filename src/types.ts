@@ -24,6 +24,7 @@ export type TarefaInput = Omit<Tarefa, "id" | "arquivada" | "fixa" | "diaSemana"
   fixa?: boolean;
   diaSemana?: string;
   redeSocial?: string;
+  origemFixaId?: string;
 };
 
 // "Nenhuma" é salvo como "" (vazio) — por isso não entra nesta lista.

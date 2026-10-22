@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useToasts } from "@/hooks/useToasts";
 import { ToastContainer } from "./ToastContainer";
 import { ReportModal } from "./ReportModal";
+import { NotificacoesItem } from "./NotificacoesItem";
 
 function fmtDate(d: string) {
   return d ? d.split("-").reverse().join("/") : "—";
@@ -80,6 +81,7 @@ export function MobileHeaderMenu() {
           <a className="dropdown-item" href="/aniversariantes">
             <i className="fas fa-cake-candles" /> Aniversariantes
           </a>
+          <NotificacoesItem />
           <a className="dropdown-item" href="/minha-conta">
             <i className="fas fa-key" /> Alterar Senha
           </a>
