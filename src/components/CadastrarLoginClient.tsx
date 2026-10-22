@@ -65,7 +65,6 @@ export function CadastrarLoginClient() {
   const { toasts, toast } = useToasts();
 
   const isExecutor = form.nivel === "EXECUTOR";
-  const isDiretor = form.nivel === "DIRETOR_CONTEUDO";
 
   function carregar() {
     fetch("/api/usuarios")
@@ -259,26 +258,24 @@ export function CadastrarLoginClient() {
               ))}
             </select>
           </div>
-          {(isExecutor || isDiretor) && (
-            <div className="form-group">
-              <label>
-                Responsável {isExecutor && <span>*</span>}
-              </label>
-              <select
-                className="form-control"
-                value={form.responsavel}
-                onChange={(e) => setForm((f) => ({ ...f, responsavel: e.target.value }))}
-                required={isExecutor}
-              >
-                <option value="" disabled={isExecutor}>
-                  {isDiretor ? "Não se aplica" : "Selecione..."}
-                </option>
-                {RESPONSAVEIS_VISIVEIS.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </select>
-            </div>
-          )}
+          <div className="form-group">
+            <label>
+              Responsável {isExecutor && <span>*</span>}
+            </label>
+            <select
+              className="form-control"
+              value={form.responsavel}
+              onChange={(e) => setForm((f) => ({ ...f, responsavel: e.target.value }))}
+              required={isExecutor}
+            >
+              <option value="" disabled={isExecutor}>
+                {isExecutor ? "Selecione..." : "Não se aplica"}
+              </option>
+              {RESPONSAVEIS_VISIVEIS.map((r) => (
+                <option key={r}>{r}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {error && <div style={{ color: "var(--danger)", fontSize: 12, marginBottom: 10 }}>{error}</div>}

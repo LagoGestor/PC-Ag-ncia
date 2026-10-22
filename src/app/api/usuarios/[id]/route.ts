@@ -36,11 +36,11 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Foto muito grande." }, { status: 400 });
   }
   const isExecutor = nivel === "EXECUTOR";
-  const isDiretor = nivel === "DIRETOR_CONTEUDO";
   if (isExecutor && !RESPONSAVEIS_VISIVEIS.includes(responsavel)) {
     return NextResponse.json({ error: "Selecione um responsável válido para esse nível." }, { status: 400 });
   }
-  if (isDiretor && responsavel && !RESPONSAVEIS_VISIVEIS.includes(responsavel)) {
+  // Master e Diretor podem (opcionalmente) ter um responsável vinculado, pra receber as tarefas atribuídas a ele.
+  if (!isExecutor && responsavel && !RESPONSAVEIS_VISIVEIS.includes(responsavel)) {
     return NextResponse.json({ error: "Responsável inválido." }, { status: 400 });
   }
 
@@ -57,7 +57,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   }
 
   const novaSenhaHash = senha ? await hashPassword(senha) : null;
-  const data: Record<string, unknown> = { nome, foto, login, nivel, responsavel: isExecutor || isDiretor ? responsavel : "" };
+  const data: Record<string, unknown> = { nome, foto, login, nivel, responsavel };
   if (novaSenhaHash) data.senhaHash = novaSenhaHash;
 
   const usuario = await prisma.usuario.update({
