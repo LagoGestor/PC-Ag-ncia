@@ -1,4 +1,4 @@
-import { after, NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { canWrite, scopeResponsavel } from "@/lib/permissions";
@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  after(() => avisarTarefaAtribuida(tarefa, session).catch(() => {}));
+  // Espera o envio (em vez de after()) pra garantir que a função não termine antes do aviso sair.
+  await avisarTarefaAtribuida(tarefa, session).catch(() => {});
   return NextResponse.json(tarefa, { status: 201 });
 }
