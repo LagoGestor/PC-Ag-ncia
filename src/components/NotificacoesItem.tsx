@@ -11,6 +11,7 @@ export function NotificacoesItem() {
   const [ocupado, setOcupado] = useState(false);
   const [podeInstalar, setPodeInstalar] = useState(false);
   const [ios, setIos] = useState(false);
+  const [erro, setErro] = useState("");
 
   useEffect(() => {
     // Lê o navegador depois da primeira renderização (no servidor não existe `navigator`).
@@ -35,10 +36,16 @@ export function NotificacoesItem() {
   async function alternar() {
     if (ocupado) return;
     setOcupado(true);
+    setErro("");
+    let etapa = "service worker";
     try {
-      const reg = await navigator.serviceWorker.ready;
+      const reg = await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise<never>((_, rej) => setTimeout(() => rej(new Error("não ficou pronto em 8s — recarregue a página")), 8000)),
+      ]);
       const atual = await reg.pushManager.getSubscription();
       if (atual) {
+        etapa = "desativar";
         await fetch("/api/push/inscrever", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
@@ -48,21 +55,29 @@ export function NotificacoesItem() {
         setAtivo(false);
         return;
       }
+      etapa = "permissão";
       const permissao = await Notification.requestPermission();
       if (permissao !== "granted") {
         setBloqueado(permissao === "denied");
+        if (permissao !== "denied") throw new Error("permissão não concedida");
         return;
       }
-      const { publicKey } = await fetch("/api/push/chave").then((r) => r.json());
+      etapa = "chave do servidor";
+      const chaveRes = await fetch("/api/push/chave");
+      if (!chaveRes.ok) throw new Error(`HTTP ${chaveRes.status}`);
+      const { publicKey } = await chaveRes.json();
+      etapa = "inscrição no navegador";
       const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(publicKey) });
+      etapa = "salvar no servidor";
       const res = await fetch("/api/push/inscrever", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(sub.toJSON()),
       });
-      setAtivo(res.ok);
-    } catch {
-      // Sem permissão/sem suporte: o item continua como estava.
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setAtivo(true);
+    } catch (e) {
+      setErro(`Falhou em "${etapa}": ${e instanceof Error ? `${e.name}: ${e.message}` : String(e)}`);
     } finally {
       setOcupado(false);
     }
@@ -93,6 +108,11 @@ export function NotificacoesItem() {
             <i className="fas fa-bell" /> iPhone: toque em Compartilhar → &quot;Adicionar à Tela de Início&quot; e abra o app por lá para ativar notificações.
           </span>
         )
+      )}
+      {erro && (
+        <span className="dropdown-item" style={{ cursor: "default", whiteSpace: "normal", fontSize: 11, color: "var(--danger)" }}>
+          {erro}
+        </span>
       )}
     </>
   );
