@@ -20,9 +20,11 @@ function getWeekDays(anchor: Date): Date[] {
 
 interface Props {
   editable?: boolean;
+  // Só as postagens de Instagram (a tela do Executor, que já está na aba "Instagram").
+  apenasInstagram?: boolean;
 }
 
-export function CronogramaSemanalView({ editable = false }: Props) {
+export function CronogramaSemanalView({ editable = false, apenasInstagram = false }: Props) {
   const [anchor, setAnchor] = useState(() => new Date());
   const [tarefas, setTarefas] = useState<Tarefa[] | null>(null);
   const [editing, setEditing] = useState<Tarefa | null>(null);
@@ -30,9 +32,19 @@ export function CronogramaSemanalView({ editable = false }: Props) {
   useEffect(() => {
     api
       .list()
-      .then((all) => setTarefas(all.filter((t) => !t.arquivada && !t.fixa && t.responsavel !== RESPONSAVEL_ARMAZENAR)))
+      .then((all) =>
+        setTarefas(
+          all.filter(
+            (t) =>
+              !t.arquivada &&
+              !t.fixa &&
+              t.responsavel !== RESPONSAVEL_ARMAZENAR &&
+              (!apenasInstagram || t.redeSocial === "Instagram")
+          )
+        )
+      )
       .catch(() => setTarefas([]));
-  }, []);
+  }, [apenasInstagram]);
 
   const byDay = useMemo(() => {
     const map = new Map<string, Tarefa[]>();

@@ -35,6 +35,7 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
   const session = useSession();
   const writable = canWrite(session);
   const todasAsTarefas = !responsavel;
+  const isExecutor = session?.nivel === "EXECUTOR";
 
   const naoFixas = tarefas.filter((t) => !t.fixa);
   const fixas = tarefas.filter((t) => t.fixa && !t.arquivada);
@@ -128,7 +129,7 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
         </button>
         <div className="agenda-toggle" style={{ marginTop: 10 }}>
           <button className={aba === "lista" ? "active" : ""} onClick={() => setAba("lista")}>
-            Lista
+            {isExecutor ? "Minhas Atividades" : "Lista"}
           </button>
           {todasAsTarefas ? (
             <>
@@ -141,14 +142,14 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
             </>
           ) : (
             <button className={aba === "cronograma" ? "active" : ""} onClick={() => setAba("cronograma")}>
-              Cronograma de Postagens
+              {isExecutor ? "Instagram" : "Cronograma de Postagens"}
             </button>
           )}
         </div>
       </div>
 
       {aba === "cronograma" ? (
-        <CronogramaSemanalView editable={writable} />
+        <CronogramaSemanalView editable={writable} apenasInstagram={isExecutor} />
       ) : aba === "agenda" ? (
         <AgendaView list={naoFixas} onOpenDetail={openEdit} />
       ) : aba === "fixos" ? (
