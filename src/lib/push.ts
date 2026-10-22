@@ -22,8 +22,14 @@ export interface PushPayload {
 }
 
 // Manda pra todos os aparelhos dos usuários indicados. Aparelho que não existe mais (404/410) é apagado.
-export async function enviarPush(usuarioIds: string[], payload: PushPayload): Promise<number> {
-  if (usuarioIds.length === 0) return 0;
+export interface ResultadoPush {
+  aparelhos: number;
+  enviados: number;
+  erros: string[];
+}
+
+export async function enviarPush(usuarioIds: string[], payload: PushPayload): Promise<ResultadoPush> {
+  if (usuarioIds.length === 0) return { aparelhos: 0, enviados: 0, erros: [] };
   const [vapid, subs] = await Promise.all([
     getVapid(),
     prisma.pushSubscription.findMany({ where: { usuarioId: { in: usuarioIds } } }),
@@ -32,6 +38,7 @@ export async function enviarPush(usuarioIds: string[], payload: PushPayload): Pr
   const corpo = JSON.stringify({ ...payload, url: payload.url ?? "/" });
 
   let enviados = 0;
+  const erros: string[] = [];
   await Promise.all(
     subs.map(async (s) => {
       try {
@@ -39,9 +46,10 @@ export async function enviarPush(usuarioIds: string[], payload: PushPayload): Pr
         enviados++;
       } catch (e) {
         const status = (e as { statusCode?: number }).statusCode;
+        erros.push(`${status ?? "?"}: ${(e as Error).message}`.slice(0, 200));
         if (status === 404 || status === 410) await prisma.pushSubscription.delete({ where: { id: s.id } }).catch(() => {});
       }
     })
   );
-  return enviados;
+  return { aparelhos: subs.length, enviados, erros };
 }

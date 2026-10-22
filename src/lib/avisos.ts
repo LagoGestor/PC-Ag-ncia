@@ -101,7 +101,7 @@ export async function avisarPrazos(momento: "manha" | "tarde", hoje: string): Pr
       title = `Ainda falta entregar hoje${equipe}`;
       body = resumo(deHoje);
     }
-    enviados += await enviarPush([u.id], { title, body, url: "/" });
+    enviados += (await enviarPush([u.id], { title, body, url: "/" })).enviados;
   }
   return enviados;
 }

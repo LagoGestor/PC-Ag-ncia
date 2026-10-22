@@ -19,8 +19,8 @@ export async function POST(req: NextRequest) {
     create: { usuarioId: session.sub, endpoint, p256dh, auth },
     update: { usuarioId: session.sub, p256dh, auth },
   });
-  await enviarPush([session.sub], { title: "Agência LBC", body: "Notificações ativadas neste aparelho ✅" });
-  return NextResponse.json({ ok: true });
+  const teste = await enviarPush([session.sub], { title: "Agência LBC", body: "Notificações ativadas neste aparelho ✅" });
+  return NextResponse.json({ ok: true, teste });
 }
 
 export async function DELETE(req: NextRequest) {

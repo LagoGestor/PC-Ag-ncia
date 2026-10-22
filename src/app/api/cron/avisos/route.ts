@@ -19,11 +19,12 @@ export async function GET(req: NextRequest) {
 
   if (req.nextUrl.searchParams.get("teste") === "1") {
     const usuarios = await prisma.usuario.findMany({ where: { pushSubscriptions: { some: {} } }, select: { id: true } });
-    const enviados = await enviarPush(
+    const r = await enviarPush(
       usuarios.map((u) => u.id),
       { title: "Agência LBC", body: "✅ Teste de aviso — as notificações estão funcionando." }
     );
-    return NextResponse.json({ teste: true, enviados });
+    const totalAparelhos = await prisma.pushSubscription.count();
+    return NextResponse.json({ teste: true, usuariosComAparelho: usuarios.length, aparelhosCadastrados: totalAparelhos, ...r });
   }
 
   const momento = req.nextUrl.searchParams.get("momento") === "tarde" ? "tarde" : "manha";
