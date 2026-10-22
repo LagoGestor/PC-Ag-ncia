@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { canWriteTarefa, canEditTarefa } from "@/lib/permissions";
 import { isOverdue } from "@/lib/atraso";
+import { avisarTarefaAtribuida } from "@/lib/avisos";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -66,6 +67,10 @@ export async function PUT(req: NextRequest, { params }: Params) {
   }
 
   const tarefa = await prisma.tarefa.update({ where: { id }, data });
+
+  if (session && tarefa.responsavel !== existente.responsavel) {
+    after(() => avisarTarefaAtribuida(tarefa, session).catch(() => {}));
+  }
 
   return NextResponse.json(tarefa);
 }

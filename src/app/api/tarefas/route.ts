@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { canWrite, scopeResponsavel } from "@/lib/permissions";
 import { marcarAtrasadas } from "@/lib/marcarAtrasadas";
+import { avisarTarefaAtribuida } from "@/lib/avisos";
 
 export async function GET() {
   await marcarAtrasadas();
@@ -53,5 +54,6 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  after(() => avisarTarefaAtribuida(tarefa, session).catch(() => {}));
   return NextResponse.json(tarefa, { status: 201 });
 }

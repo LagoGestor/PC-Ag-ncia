@@ -105,3 +105,19 @@ export async function avisarPrazos(momento: "manha" | "tarde", hoje: string): Pr
   }
   return enviados;
 }
+
+// Tarefa criada pra alguém (ou passada pra alguém) → avisa essa pessoa, a não ser que ela mesma tenha feito isso.
+export async function avisarTarefaAtribuida(
+  t: { tarefa: string; responsavel: string; entrega: string; horarioPublicacao: string; fixa: boolean; arquivada: boolean },
+  autor: { sub: string; nome: string }
+): Promise<void> {
+  if (t.fixa || t.arquivada || !t.responsavel || t.responsavel === RESPONSAVEL_ARMAZENAR) return;
+  const alvos = await prisma.usuario.findMany({ where: { responsavel: t.responsavel, id: { not: autor.sub } }, select: { id: true } });
+  if (alvos.length === 0) return;
+
+  const entrega = t.entrega ? `Entrega ${t.entrega.split("-").reverse().slice(0, 2).join("/")}${t.horarioPublicacao ? " às " + t.horarioPublicacao : ""}` : "";
+  await enviarPush(
+    alvos.map((u) => u.id),
+    { title: "Nova tarefa para você", body: [t.tarefa, entrega, autor.nome ? `Por ${autor.nome}` : ""].filter(Boolean).join("\n"), url: "/" }
+  );
+}
