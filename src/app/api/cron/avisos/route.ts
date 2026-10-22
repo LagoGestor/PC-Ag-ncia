@@ -23,8 +23,12 @@ export async function GET(req: NextRequest) {
       usuarios.map((u) => u.id),
       { title: "Agência LBC", body: "✅ Teste de aviso — as notificações estão funcionando." }
     );
-    const totalAparelhos = await prisma.pushSubscription.count();
-    return NextResponse.json({ teste: true, usuariosComAparelho: usuarios.length, aparelhosCadastrados: totalAparelhos, ...r });
+    const aparelhos = await prisma.pushSubscription.findMany({
+      select: { endpoint: true, createdAt: true, usuario: { select: { login: true, nivel: true, responsavel: true } } },
+    });
+    const totalAparelhos = aparelhos.length;
+    const detalhes = aparelhos.map((x) => ({ login: x.usuario.login, nivel: x.usuario.nivel, responsavel: x.usuario.responsavel, servico: new URL(x.endpoint).host, desde: x.createdAt }));
+    return NextResponse.json({ teste: true, usuariosComAparelho: usuarios.length, aparelhosCadastrados: totalAparelhos, detalhes, ...r });
   }
 
   const momento = req.nextUrl.searchParams.get("momento") === "tarde" ? "tarde" : "manha";
