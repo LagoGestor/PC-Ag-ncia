@@ -419,11 +419,11 @@ export function AgendaView({ list, onOpenDetail }: Props) {
         byDay={byDay}
         label={`${dias[0].toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })} – ${dias[6].toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}`}
         toKey={toKey}
-        onBack={() => setTipoFiltro("todas")}
+        onBack={() => setTipoFiltro(apenasCronograma ? "cronograma" : "todas")}
         onPrev={() => setAnchor((d) => new Date(d.getFullYear(), d.getMonth(), d.getDate() - 7))}
         onNext={() => setAnchor((d) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + 7))}
         onToday={goToday}
-        onOpenDetail={onOpenDetail}
+        onOpenDetail={(p) => onOpenDetail(p as Tarefa)} // vêm de `list`, então são Tarefas completas
       />
     );
   }
@@ -470,20 +470,24 @@ export function AgendaView({ list, onOpenDetail }: Props) {
         </div>
       )}
 
-      {!apenasCronograma && !(mode === "semana" && cronogramaFixo) && (
+      {!(mode === "semana" && cronogramaFixo) && (
         <div className="agenda-toggle agenda-tipo-filter">
-          <button className={tipoFiltro === "todas" ? "active" : ""} onClick={() => setTipoFiltro("todas")}>
-            Todas as Entregas
-          </button>
+          {!apenasCronograma && (
+            <button className={tipoFiltro === "todas" ? "active" : ""} onClick={() => setTipoFiltro("todas")}>
+              Todas as Entregas
+            </button>
+          )}
           <button className={tipoFiltro === "cronograma" ? "active" : ""} onClick={() => setTipoFiltro("cronograma")}>
             Cronograma de Postagens no Instagram
           </button>
           <button onClick={() => setTipoFiltro("postagens")}>
             Postagens da Semana
           </button>
-          <button className={tipoFiltro === "fora" ? "active" : ""} onClick={() => setTipoFiltro("fora")}>
-            Tarefas fora das Redes
-          </button>
+          {!apenasCronograma && (
+            <button className={tipoFiltro === "fora" ? "active" : ""} onClick={() => setTipoFiltro("fora")}>
+              Tarefas fora das Redes
+            </button>
+          )}
         </div>
       )}
 

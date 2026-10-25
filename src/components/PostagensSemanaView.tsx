@@ -6,23 +6,33 @@ import { Avatar } from "./Avatar";
 
 const WEEKDAYS_LONGO = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 
+export type PostItem = Pick<Tarefa, "id" | "tarefa" | "tipo" | "redeSocial" | "entrega" | "horarioPublicacao" | "status"> & {
+  responsavel?: string;
+};
+
 interface Props {
   days: Date[];
-  byDay: Map<string, Tarefa[]>;
+  byDay: Map<string, PostItem[]>;
   label: string;
   toKey: (d: Date) => string;
+  // Só ver: sem clicar pra abrir e sem mostrar o responsável (Executor).
+  somenteLeitura?: boolean;
   onBack: () => void;
   onPrev: () => void;
   onNext: () => void;
   onToday: () => void;
-  onOpenDetail: (t: Tarefa) => void;
+  onOpenDetail?: (t: PostItem) => void;
 }
 
 // Tela cheia: cobre tudo menos o topo do site (#topbar), por isso a altura do topo é medida em vez de fixa.
-export function PostagensSemanaView({ days, byDay, label, toKey, onBack, onPrev, onNext, onToday, onOpenDetail }: Props) {
+export function PostagensSemanaView({ days, byDay, label, toKey, somenteLeitura, onBack, onPrev, onNext, onToday, onOpenDetail }: Props) {
   const [top, setTop] = useState(0);
   useLayoutEffect(() => {
-    const measure = () => setTop(document.getElementById("topbar")?.offsetHeight ?? 0);
+    // Topo do site: #topbar no desktop, .mobile-header nas telas de celular.
+    const measure = () => {
+      const topo = document.getElementById("topbar") ?? document.querySelector(".mobile-header");
+      setTop(topo ? Math.max(0, topo.getBoundingClientRect().bottom) : 0);
+    };
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
@@ -74,8 +84,8 @@ export function PostagensSemanaView({ days, byDay, label, toKey, onBack, onPrev,
                     <div
                       key={t.id}
                       className="ps-post"
-                      style={{ ["--ps-color" as string]: STATUS_COLORS[t.status] || "var(--gray)" }}
-                      onClick={() => onOpenDetail(t)}
+                      style={{ ["--ps-color" as string]: STATUS_COLORS[t.status] || "var(--gray)", ...(somenteLeitura ? { cursor: "default" } : {}) }}
+                      onClick={somenteLeitura ? undefined : () => onOpenDetail?.(t)}
                     >
                       <div className="ps-post-time">{t.horarioPublicacao || "—"}</div>
                       <div className="ps-post-chips">
@@ -84,9 +94,11 @@ export function PostagensSemanaView({ days, byDay, label, toKey, onBack, onPrev,
                       </div>
                       <div className="ps-post-title">{t.tarefa}</div>
                       <div className="ps-post-foot">
-                        <span className="ps-post-resp">
-                          <Avatar name={t.responsavel} size={22} /> {t.responsavel}
-                        </span>
+                        {!somenteLeitura && t.responsavel && (
+                          <span className="ps-post-resp">
+                            <Avatar name={t.responsavel} size={22} /> {t.responsavel}
+                          </span>
+                        )}
                         <span className={`card-badge ${STATUS_BADGE_CLASS[t.status] || ""}`}>{t.status}</span>
                       </div>
                     </div>

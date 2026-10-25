@@ -13,6 +13,7 @@ import { TaskModal } from "./TaskModal";
 import { CronogramaSemanalView } from "./CronogramaSemanalView";
 import { AgendaView } from "./AgendaView";
 import { AtividadesFixasView } from "./AtividadesFixasView";
+import { PostagensSemanaLeitura } from "./PostagensSemanaLeitura";
 import { useSession } from "./SessionProvider";
 import { canWrite, canEditTarefa } from "@/lib/permissions";
 
@@ -22,7 +23,7 @@ interface Props {
   initialTarefas: Tarefa[];
 }
 
-type Aba = "lista" | "cronograma" | "agenda" | "fixos";
+type Aba = "lista" | "cronograma" | "postagens" | "agenda" | "fixos";
 
 export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
   const [tarefas, setTarefas] = useState<Tarefa[]>(initialTarefas);
@@ -143,14 +144,21 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
               </button>
             </>
           ) : (
-            <button className={aba === "cronograma" ? "active" : ""} onClick={() => setAba("cronograma")}>
-              {isExecutor ? "Instagram" : "Cronograma de Postagens"}
-            </button>
+            <>
+              <button className={aba === "cronograma" ? "active" : ""} onClick={() => setAba("cronograma")}>
+                {isExecutor ? "Instagram" : "Cronograma de Postagens"}
+              </button>
+              <button className={aba === "postagens" ? "active" : ""} onClick={() => setAba("postagens")}>
+                Postagens da Semana
+              </button>
+            </>
           )}
         </div>
       </div>
 
-      {aba === "cronograma" ? (
+      {aba === "postagens" ? (
+        <PostagensSemanaLeitura onBack={() => setAba("lista")} />
+      ) : aba === "cronograma" ? (
         <CronogramaSemanalView editable={writable} apenasInstagram={isExecutor} />
       ) : aba === "agenda" ? (
         <AgendaView list={naoFixas} onOpenDetail={openEdit} />
