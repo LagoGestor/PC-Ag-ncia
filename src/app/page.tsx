@@ -163,7 +163,7 @@ export default function Home() {
         origemFixaId: t.id,
       });
       setTarefas((prev) => [created, ...prev]);
-      toast(`"${t.tarefa}" adicionada à lista de tarefas!`, "success");
+      toast(`"${t.tarefa}" adicionada para ${t.diaSemana.toLowerCase()}, ${data.split("-").reverse().slice(0, 2).join("/")} (${t.responsavel}). Veja na Lista ou na Agenda dessa semana.`, "success");
     } catch (e) {
       toast(`Erro ao adicionar tarefa: ${e instanceof Error ? e.message : ""}`, "error");
     }
