@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { AREAS, DIAS_SEMANA, REDES_SOCIAIS_TAREFA, RESPONSAVEIS, STATUSES, Status, Tarefa, TIPOS, TIPOS_CRONOGRAMA_POSTAGENS } from "@/types";
+import { AREAS, DIAS_SEMANA, REDES_SOCIAIS_TAREFA, RESPONSAVEIS, RESPONSAVEL_ARMAZENAR, STATUSES, Status, Tarefa, TIPOS, TIPOS_CRONOGRAMA_POSTAGENS } from "@/types";
 import { useSession } from "./SessionProvider";
 import { canEditTarefa, canWrite } from "@/lib/permissions";
 
@@ -402,7 +402,26 @@ export function TaskModal({ open, editing, onClose, onSave, onGenerate, onDelete
                       className={added ? "active" : ""}
                       disabled={added}
                       onClick={() => {
-                        onGenerate({ ...editing, diaSemana: form.diaSemana });
+                        // Tarefa em "Armazenar" só aparece em Direcionar — não entra na lista nem na agenda de ninguém.
+                        if (form.responsavel === RESPONSAVEL_ARMAZENAR) {
+                          setError("Escolha um responsável (diferente de Armazenar) para adicionar à lista.");
+                          return;
+                        }
+                        setError("");
+                        // Usa o que está no formulário agora (mesmo sem salvar), não o que estava salvo.
+                        onGenerate({
+                          ...editing,
+                          tarefa: form.tarefa,
+                          area: form.area,
+                          tipo: form.tipo,
+                          redeSocial: form.redeSocial,
+                          responsavel: form.responsavel,
+                          descricao: form.descricao,
+                          link: form.link,
+                          linksExtras: extraLinks.map((l) => l.trim()).filter(Boolean).join("\n"),
+                          horarioPublicacao: form.horarioPublicacao,
+                          diaSemana: form.diaSemana,
+                        });
                         setAdded(true);
                       }}
                     >
