@@ -200,3 +200,9 @@ model PostSemanal {
   salvamentos       Int             @default(0)
   taxaEngajamento   Float           @default(0)
 }
+
+// Marcadores de migrações de dados que devem rodar uma única vez (ver scripts/).
+model Migracao {
+  id        String   @id
+  createdAt DateTime @default(now())
+}
