@@ -91,8 +91,8 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
       });
       setTarefas((prev) => [created, ...prev]);
       toast(`"${t.tarefa}" adicionada à lista de tarefas!`, "success");
-    } catch {
-      toast("Erro ao adicionar tarefa", "error");
+    } catch (e) {
+      toast(`Erro ao adicionar tarefa: ${e instanceof Error ? e.message : ""}`, "error");
     }
   }
 

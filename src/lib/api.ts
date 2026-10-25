@@ -1,7 +1,10 @@
 import { Tarefa, TarefaInput } from "@/types";
 
 async function json<T>(res: Response): Promise<T> {
-  if (!res.ok) throw new Error(`Erro na requisição: ${res.status}`);
+  if (!res.ok) {
+    const motivo = await res.json().then((b) => b?.error as string | undefined).catch(() => undefined);
+    throw new Error(motivo ?? `Erro na requisição: ${res.status}`);
+  }
   return res.json();
 }
 
