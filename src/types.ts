@@ -157,7 +157,6 @@ export const ICONES_AREA: Record<string, string> = {
 };
 
 export type View =
-  | "dashboard"
   | "tabela"
   | "kanban"
   | "arquivadas"

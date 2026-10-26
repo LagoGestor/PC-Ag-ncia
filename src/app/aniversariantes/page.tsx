@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { AniversariantesView } from "@/components/AniversariantesView";
-import { AppTopbar } from "@/components/AppTopbar";
+import { AppHeader } from "@/components/AppHeader";
 import { slugify } from "@/types";
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ export default async function AniversariantesPage() {
   if (desktop) {
     return (
       <div className="app-page-shell">
-        <AppTopbar />
+        <AppHeader ativo="aniversariantes" />
         <div className="app-page-content">
           <AniversariantesView />
         </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { api, nextOccurrence } from "@/lib/api";
 import { useToasts } from "@/hooks/useToasts";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -24,12 +23,15 @@ import { ConfirmModal } from "@/components/ConfirmModal";
 import { ReportModal } from "@/components/ReportModal";
 import { AniversariantesBanner } from "@/components/AniversariantesBanner";
 import { NotificacoesItem } from "@/components/NotificacoesItem";
+import { ViewTabs } from "@/components/ViewTabs";
 import { fmtDate } from "@/components/TaskCard";
+
+const VIEWS_VALIDAS: View[] = ["tabela", "kanban", "arquivadas", "agenda", "semanal", "responsaveis", "direcionar", "reunioes", "minhas"];
 
 export default function Home() {
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<View>("dashboard");
+  const [view, setView] = useState<View>("tabela");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -47,8 +49,13 @@ export default function Home() {
   const meuResponsavel = isDiretor ? session?.responsavel ?? "" : "";
 
   useEffect(() => {
-    if (isMobile && (view === "kanban" || view === "direcionar")) setView("dashboard");
+    if (isMobile && (view === "kanban" || view === "direcionar")) setView("tabela");
   }, [isMobile, view]);
+
+  useEffect(() => {
+    const v = new URLSearchParams(window.location.search).get("view") as View | null;
+    if (v && VIEWS_VALIDAS.includes(v)) setView(v);
+  }, []);
 
   useEffect(() => {
     if (isDiretor && view !== "agenda" && view !== "semanal" && view !== "minhas") setView("agenda");
@@ -333,115 +340,7 @@ export default function Home() {
       <div id="view-container">
         <div id="view-nav">
           <div className="view-tabs">
-            {isMobile ? (
-              <>
-                {!isDiretor && (
-                  <button className={`tab-btn${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>
-                    CARDS
-                  </button>
-                )}
-                {!isDiretor && (
-                  <button className={`tab-btn${view === "tabela" ? " active" : ""}`} onClick={() => setView("tabela")}>
-                    LISTA
-                  </button>
-                )}
-                {!isDiretor && (
-                  <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
-                    TIME
-                  </button>
-                )}
-                {isDiretor && meuResponsavel && (
-                  <button className={`tab-btn${view === "minhas" ? " active" : ""}`} onClick={() => setView("minhas")}>
-                    MINHAS TAREFAS
-                  </button>
-                )}
-                <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
-                  AGENDA
-                </button>
-                {!isDiretor && (
-                  <button className={`tab-btn${view === "reunioes" ? " active" : ""}`} onClick={() => setView("reunioes")}>
-                    REUNIÃO
-                  </button>
-                )}
-                <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
-                  FIXO
-                </button>
-                {writable && !isDiretor && (
-                  <Link href="/performance" className="tab-btn">
-                    PERFORMANCE
-                  </Link>
-                )}
-                {writable && (
-                  <Link href="/aniversariantes" className="tab-btn">
-                    ANIVERSARIANTES
-                  </Link>
-                )}
-                {!isDiretor && (
-                  <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")} title="Arquivo">
-                    <i className="fas fa-box-archive" />
-                  </button>
-                )}
-              </>
-            ) : (
-              <>
-                {!isDiretor && (
-                  <button className={`tab-btn${view === "tabela" ? " active" : ""}`} onClick={() => setView("tabela")}>
-                    <i className="fas fa-table" /> LISTA
-                  </button>
-                )}
-                {!isDiretor && (
-                  <button className={`tab-btn${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>
-                    <i className="fas fa-th-large" /> CARDS
-                  </button>
-                )}
-                {!isDiretor && (
-                  <button className={`tab-btn${view === "responsaveis" ? " active" : ""}`} onClick={() => setView("responsaveis")}>
-                    <i className="fas fa-users" /> TIME
-                  </button>
-                )}
-                {isDiretor && meuResponsavel && (
-                  <button className={`tab-btn${view === "minhas" ? " active" : ""}`} onClick={() => setView("minhas")}>
-                    <i className="fas fa-user-check" /> MINHAS TAREFAS
-                  </button>
-                )}
-                <button className={`tab-btn${view === "agenda" ? " active" : ""}`} onClick={() => setView("agenda")}>
-                  <i className="fas fa-calendar-days" /> AGENDA
-                </button>
-                {!isDiretor && (
-                  <button className={`tab-btn${view === "reunioes" ? " active" : ""}`} onClick={() => setView("reunioes")}>
-                    <i className="fas fa-people-group" /> REUNIÃO
-                  </button>
-                )}
-                <button className={`tab-btn${view === "semanal" ? " active" : ""}`} onClick={() => setView("semanal")}>
-                  <i className="fas fa-repeat" /> FIXOS
-                </button>
-                {!isDiretor && (
-                  <button className={`tab-btn${view === "direcionar" ? " active" : ""}`} onClick={() => setView("direcionar")}>
-                    <i className="fas fa-arrow-right-arrow-left" /> DIRECIONAR
-                  </button>
-                )}
-                {!isDiretor && (
-                  <button className={`tab-btn${view === "kanban" ? " active" : ""}`} onClick={() => setView("kanban")}>
-                    <i className="fas fa-columns" /> KANBAN
-                  </button>
-                )}
-                {writable && !isDiretor && (
-                  <Link href="/performance" className="tab-btn">
-                    <i className="fas fa-chart-line" /> PERFORMANCE
-                  </Link>
-                )}
-                {writable && (
-                  <Link href="/aniversariantes" className="tab-btn">
-                    <i className="fas fa-cake-candles" /> ANIVERSARIANTES
-                  </Link>
-                )}
-                {!isDiretor && (
-                  <button className={`tab-btn${view === "arquivadas" ? " active" : ""}`} onClick={() => setView("arquivadas")}>
-                    <i className="fas fa-box-archive" /> ARQUIVO
-                  </button>
-                )}
-              </>
-            )}
+            <ViewTabs view={view} onSelect={setView} />
           </div>
           <div className="view-actions" />
         </div>
@@ -451,8 +350,6 @@ export default function Home() {
             <div className="empty-state">
               <p>Carregando...</p>
             </div>
-          ) : view === "dashboard" ? (
-            <DashboardView list={filtered} onEdit={openEdit} onToggleArchive={handleToggleArchive} onDelete={setDeleteTarget} />
           ) : view === "tabela" ? (
             <TabelaView key="tabela" list={filtered} onEdit={openEdit} onToggleArchive={handleToggleArchive} onDelete={setDeleteTarget} />
           ) : view === "kanban" ? (

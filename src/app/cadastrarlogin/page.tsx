@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { CadastrarLoginClient } from "@/components/CadastrarLoginClient";
+import { AppHeader } from "@/components/AppHeader";
 
 export const metadata: Metadata = {
   title: "Cadastrar Login - Agência LBC",
@@ -14,5 +15,12 @@ export default async function CadastrarLoginPage() {
     redirect("/");
   }
 
-  return <CadastrarLoginClient />;
+  return (
+    <div className="app-page-shell">
+      <AppHeader />
+      <div className="app-page-content">
+        <CadastrarLoginClient />
+      </div>
+    </div>
+  );
 }
