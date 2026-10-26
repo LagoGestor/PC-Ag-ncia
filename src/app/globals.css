@@ -38,6 +38,7 @@
   --status-pendente: #fbbf24;
   --status-atrasada: #f87171;
   --status-concluido: #38bdf8;
+  --status-agendada: #f472b6;
   --status-cancelado: #6b7280;
 
   /* Radius — escala consistente, não "tudo 20px" */
@@ -325,6 +326,7 @@ a { color: inherit; text-decoration: none; }
 .badge-pendente { background: rgba(251,191,36,0.15); color: #fbbf24; }
 .badge-atrasada { background: rgba(248,113,113,0.15); color: #f87171; }
 .badge-concluido { background: rgba(56,189,248,0.15); color: #38bdf8; }
+.badge-agendada { background: rgba(244,114,182,0.15); color: #f472b6; }
 .badge-cancelado { background: rgba(107,114,128,0.2); color: #9ca3af; }
 .badge-inativa { background: rgba(255,255,255,0.14); color: #ffffff; border: 1px solid rgba(255,255,255,0.3); }
 

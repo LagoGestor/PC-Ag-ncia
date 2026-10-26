@@ -72,7 +72,7 @@ export async function avisarPrazos(momento: "manha" | "tarde", hoje: string): Pr
       arquivada: false,
       fixa: false,
       responsavel: { not: RESPONSAVEL_ARMAZENAR },
-      status: { notIn: ["Concluída", "Cancelada", "Inativa"] },
+      status: { notIn: ["Concluída", "Agendada", "Cancelada", "Inativa"] },
       OR: [{ entrega: hoje }, { status: "Atrasada" }],
     },
     orderBy: { horarioPublicacao: "asc" },
