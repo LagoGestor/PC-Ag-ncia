@@ -3,7 +3,8 @@ import { jwtVerify } from "jose";
 import { slugify } from "@/types";
 
 const SESSION_COOKIE = "agencia_session";
-const PUBLIC_PATHS = new Set(["/login", "/api/auth/login", "/api/auth/logout"]);
+// "/semana" é a página aberta de Postagens da Semana (sem login, só leitura).
+const PUBLIC_PATHS = new Set(["/login", "/api/auth/login", "/api/auth/logout", "/semana"]);
 
 function getSecretKey() {
   return new TextEncoder().encode(process.env.AUTH_SECRET ?? "");

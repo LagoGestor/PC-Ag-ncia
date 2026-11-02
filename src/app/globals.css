@@ -1327,3 +1327,16 @@ tr.aniversariante-semana td { color: var(--accent); font-weight: 700; }
   .ps-title h2 { font-size: 20px; }
   .ps-grid { grid-template-columns: 1fr; gap: 14px; overflow-x: visible; }
 }
+
+/* Página aberta /semana: mesmo visual de Postagens da Semana, mas como página normal (sem tela cheia nem navegação). */
+.semana-publica {
+  min-height: 100vh; padding: 32px 40px 56px; display: flex; flex-direction: column; gap: 28px;
+  background: radial-gradient(1200px 500px at 50% -10%, rgba(74,222,128,0.09), transparent 70%), var(--bg);
+}
+.semana-publica-header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.semana-publica-header h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.3px; color: var(--fg); }
+.semana-publica-header span { font-size: 14px; color: var(--fg-muted); }
+@media (max-width: 768px) {
+  .semana-publica { padding: 20px 14px 40px; gap: 18px; }
+  .semana-publica-header h1 { font-size: 20px; }
+}
