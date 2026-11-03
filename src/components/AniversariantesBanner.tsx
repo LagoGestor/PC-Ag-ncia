@@ -67,7 +67,7 @@ export function AniversariantesBanner({ editable = true }: Props) {
     <div className="aniversariantes-banner">
       <div className="aniversariantes-banner-body">
         <span className="aniversariantes-banner-title">
-          <i className="fas fa-cake-candles" /> Próximos aniversários
+          <i className="fas fa-cake-candles" /> Aniversariantes
           <span className="aniv-count">
             {proximos.length} nos próximos {JANELA_DIAS} dias
           </span>
