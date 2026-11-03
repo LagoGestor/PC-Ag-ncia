@@ -23,7 +23,7 @@ interface Props {
   initialTarefas: Tarefa[];
 }
 
-type Aba = "lista" | "cronograma" | "postagens" | "agenda" | "fixos";
+type Aba = "lista" | "minhas" | "cronograma" | "postagens" | "agenda" | "fixos";
 
 export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
   const [tarefas, setTarefas] = useState<Tarefa[]>(initialTarefas);
@@ -41,6 +41,10 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
   const naoFixas = tarefas.filter((t) => !t.fixa);
   const fixas = tarefas.filter((t) => t.fixa && !t.arquivada);
   const filtradas = statusFilter ? naoFixas.filter((t) => t.status === statusFilter) : naoFixas;
+  // "Minhas Tarefas" na visão geral: quem tem um responsável vinculado ao login (Diretor, Master) vê só as suas.
+  const meuResponsavel = session?.responsavel ?? "";
+  const temMinhas = todasAsTarefas && !isExecutor && !!meuResponsavel;
+  const exibidas = aba === "minhas" ? filtradas.filter((t) => t.responsavel === meuResponsavel) : filtradas;
 
   function openEdit(t: Tarefa) {
     setEditing(t);
@@ -134,6 +138,11 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
           <button className={aba === "lista" ? "active" : ""} onClick={() => setAba("lista")}>
             {isExecutor ? "Minhas Atividades" : "Lista"}
           </button>
+          {temMinhas && (
+            <button className={aba === "minhas" ? "active" : ""} onClick={() => setAba("minhas")}>
+              Minhas Tarefas
+            </button>
+          )}
           {todasAsTarefas ? (
             <>
               <button className={aba === "agenda" ? "active" : ""} onClick={() => setAba("agenda")}>
@@ -166,20 +175,22 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
         <AtividadesFixasView list={fixas} onOpenDetail={openEdit} />
       ) : (
         <div className="mobile-list">
-          {filtradas.length === 0 ? (
+          {exibidas.length === 0 ? (
             <p className="mobile-empty">
               {statusFilter
                 ? `Nenhuma tarefa com status "${statusFilter}".`
-                : todasAsTarefas
+                : aba === "minhas"
+                  ? "Você não tem tarefas no momento."
+                  : todasAsTarefas
                   ? "Nenhuma tarefa cadastrada."
                   : `Nenhuma tarefa para ${responsavel} no momento.`}
             </p>
           ) : (
-            filtradas.map((t) => (
+            exibidas.map((t) => (
               <MobileTaskCard
                 key={t.id}
                 t={t}
-                showResponsavel={todasAsTarefas}
+                showResponsavel={todasAsTarefas && aba !== "minhas"}
                 onStatusChange={canEditTarefa(session, t.responsavel) ? handleStatusChange : undefined}
                 onEdit={canEditTarefa(session, t.responsavel) ? () => openEdit(t) : undefined}
               />
