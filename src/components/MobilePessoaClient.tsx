@@ -155,11 +155,13 @@ export function MobilePessoaClient({ responsavel, initialTarefas }: Props) {
           ) : (
             <>
               <button className={aba === "cronograma" ? "active" : ""} onClick={() => setAba("cronograma")}>
-                {isExecutor ? "Instagram" : "Cronograma de Postagens"}
+                {isExecutor ? "Postagens da Semana" : "Cronograma de Postagens"}
               </button>
-              <button className={aba === "postagens" ? "active" : ""} onClick={() => setAba("postagens")}>
-                Postagens da Semana
-              </button>
+              {!isExecutor && (
+                <button className={aba === "postagens" ? "active" : ""} onClick={() => setAba("postagens")}>
+                  Postagens da Semana
+                </button>
+              )}
             </>
           )}
         </div>
