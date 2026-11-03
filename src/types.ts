@@ -252,6 +252,7 @@ export interface Aniversariante {
   ministerio: string;
   cargo: string;
   instagram: string;
+  foto: string;
   dia: number | null;
   mes: number | null;
 }

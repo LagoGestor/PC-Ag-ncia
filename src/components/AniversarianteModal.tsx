@@ -1,9 +1,11 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Aniversariante, MESES } from "@/types";
+import { resizeImageToDataUrl } from "@/lib/imagem";
 
 type FormState = {
+  foto: string;
   nome: string;
   ministerio: string;
   cargo: string;
@@ -12,13 +14,13 @@ type FormState = {
   mes: string;
 };
 
-const empty: FormState = { nome: "", ministerio: "", cargo: "", instagram: "", dia: "", mes: "" };
+const empty: FormState = { foto: "", nome: "", ministerio: "", cargo: "", instagram: "", dia: "", mes: "" };
 
 interface Props {
   open: boolean;
   editing: Aniversariante | null;
   onClose: () => void;
-  onSave: (data: { nome: string; ministerio: string; cargo: string; instagram: string; dia: number | null; mes: number | null }, id?: string) => void;
+  onSave: (data: { foto: string; nome: string; ministerio: string; cargo: string; instagram: string; dia: number | null; mes: number | null }, id?: string) => void;
 }
 
 export function AniversarianteModal({ open, editing, onClose, onSave }: Props) {
@@ -29,6 +31,7 @@ export function AniversarianteModal({ open, editing, onClose, onSave }: Props) {
     if (!open) return;
     if (editing) {
       setForm({
+        foto: editing.foto ?? "",
         nome: editing.nome,
         ministerio: editing.ministerio,
         cargo: editing.cargo,
@@ -48,6 +51,18 @@ export function AniversarianteModal({ open, editing, onClose, onSave }: Props) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
+  async function handleFoto(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    try {
+      set("foto", await resizeImageToDataUrl(file, 240));
+      setError("");
+    } catch {
+      setError("Não foi possível usar essa imagem.");
+    }
+  }
+
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!form.nome.trim()) {
@@ -56,6 +71,7 @@ export function AniversarianteModal({ open, editing, onClose, onSave }: Props) {
     }
     onSave(
       {
+        foto: form.foto,
         nome: form.nome.trim(),
         ministerio: form.ministerio.trim(),
         cargo: form.cargo.trim(),
@@ -77,6 +93,29 @@ export function AniversarianteModal({ open, editing, onClose, onSave }: Props) {
           </button>
         </div>
         <form onSubmit={handleSubmit} noValidate>
+          <div className="form-group">
+            <label>Foto</label>
+            <div className="cadastrar-login-foto-row">
+              {form.foto ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={form.foto} alt="" className="cadastrar-login-foto-preview" />
+              ) : (
+                <div className="cadastrar-login-foto-placeholder">
+                  <i className="fas fa-user" />
+                </div>
+              )}
+              <label className="btn btn-ghost btn-sm">
+                <i className="fas fa-camera" /> {form.foto ? "Trocar foto" : "Cadastrar foto"}
+                <input type="file" accept="image/*" onChange={handleFoto} style={{ display: "none" }} />
+              </label>
+              {form.foto && (
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => set("foto", "")}>
+                  Remover
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="form-group">
             <label>
               Nome <span>*</span>

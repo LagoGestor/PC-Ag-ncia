@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { canWrite } from "@/lib/permissions";
+import { fotoValida } from "@/lib/fotoAniversariante";
 
 // Leitura liberada pra qualquer sessão válida (Executor inclusive) — o aviso de aniversariantes
 // aparece também na visão individual dele em /mobile/[pessoa], só sem poder editar/cadastrar.
@@ -27,6 +28,7 @@ export async function POST(req: NextRequest) {
       ministerio: typeof body?.ministerio === "string" ? body.ministerio : "",
       cargo: typeof body?.cargo === "string" ? body.cargo : "",
       instagram: typeof body?.instagram === "string" ? body.instagram.replace(/^@/, "") : "",
+      foto: fotoValida(body?.foto),
       dia: typeof body?.dia === "number" ? body.dia : null,
       mes: typeof body?.mes === "number" ? body.mes : null,
     },

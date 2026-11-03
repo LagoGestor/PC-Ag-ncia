@@ -7,6 +7,7 @@ import { useToasts } from "@/hooks/useToasts";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useSession } from "./SessionProvider";
 import { canWrite } from "@/lib/permissions";
+import { FotoAniversariante } from "./FotoAniversariante";
 import { ToastContainer } from "./ToastContainer";
 import { AniversarianteModal } from "./AniversarianteModal";
 import { ConfirmModal } from "./ConfirmModal";
@@ -128,6 +129,7 @@ export function AniversariantesView() {
             <thead>
               <tr>
                 <th>Data</th>
+                <th aria-label="Foto" style={{ width: 52 }} />
                 <th>Nome</th>
                 <th>Cargo</th>
               </tr>
@@ -141,6 +143,9 @@ export function AniversariantesView() {
                   style={writable ? { cursor: "pointer" } : undefined}
                 >
                   <td>{fmtDiaMes(a.dia, a.mes)}</td>
+                  <td>
+                    <FotoAniversariante foto={a.foto} nome={a.nome} size={34} />
+                  </td>
                   <td>
                     <b>{a.nome}</b>
                   </td>
@@ -156,6 +161,7 @@ export function AniversariantesView() {
             <thead>
               <tr>
                 <th>Data</th>
+                <th aria-label="Foto" style={{ width: 56 }} />
                 <th>Nome</th>
                 <th>Ministério(s)</th>
                 <th>Cargo Eclesiástico</th>
@@ -167,6 +173,9 @@ export function AniversariantesView() {
               {filtrada.map((a) => (
                 <tr key={a.id} className={destaqueClasse(a)}>
                   <td>{fmtDiaMes(a.dia, a.mes)}</td>
+                  <td>
+                    <FotoAniversariante foto={a.foto} nome={a.nome} size={38} />
+                  </td>
                   <td>
                     <b>{a.nome}</b>
                   </td>

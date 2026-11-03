@@ -168,6 +168,7 @@ model Aniversariante {
   ministerio   String   @default("")
   cargo        String   @default("")
   instagram    String   @default("")
+  foto         String   @default("") // foto quadrada em data URL (JPEG pequeno), exibida redonda
   dia          Int?
   mes          Int?
   criadoEm     DateTime @default(now())

@@ -78,7 +78,12 @@ export function AniversariantesBanner({ editable = true }: Props) {
             const conteudo = (
               <>
                 <span className="aniv-avatar">
-                  {iniciais(a.nome)}
+                  {a.foto ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={a.foto} alt="" className="aniv-avatar-img" />
+                  ) : (
+                    iniciais(a.nome)
+                  )}
                   {ehCargoPastoral(a.cargo) && <i className="fas fa-star aniv-star" title="Pastor(a)" />}
                 </span>
                 <span className="aniv-info">
